@@ -25,7 +25,7 @@ from .forms import LoginForm
 # def print_hello1(request):
 #     return HttpResponse("Hello Roshan")
 
-  
+
 #login
 def login_view(request):
     if request.method == 'POST':
