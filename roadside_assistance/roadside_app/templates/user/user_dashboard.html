@@ -1,0 +1,191 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
+    <style>
+        body {
+            background-image: url("{% static 'images/home3.jpg' %}");
+        }
+        .update-profile, .view-profile {
+            display: none; /* Hide both sections by default */
+            margin-top: 30px;
+            margin-bottom: 50px; /* Added margin to prevent overlap with the footer */
+        }
+        
+        .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .content {
+            width: 71%;
+            margin-left: 25%;
+            background-color: #ffffff73;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top:-31%
+        }
+        #updateProfileSection {
+           background-color: #f7f7f7;
+           padding: 10px;
+           margin-top: 25px;
+           border-radius: 8px;
+           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+           margin-bottom: -1%;
+       }
+    
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>24*7 Roadside Assistance</h1>
+        <nav>
+            <a href="{% url 'home' %}" class="logout">Log Out</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <button onclick="toggleViewProfile()">View Profile</button>
+            <button onclick="toggleUpdateProfile()">Update Profile</button>
+            <button>Request Assistance</button>
+            <button>Order Items</button>
+            <button>View Service History</button>
+            <button>View/Remove Items from Payment History</button>
+            <button>Send Feedback</button>
+            <button>Chat with Service Providers</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Welcome {{ user.name }} To Your Dashboard</h2>
+
+        <!-- Update Profile Form Section -->
+        <div class="update-profile" id="updateProfileSection">
+            <h3>Update Profile</h3>
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+            <form method="post" action="{% url 'update_profile' %}" id="profileForm">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                
+                <label for="name">Name:</label>
+                {{ form.name }}
+
+                <label for="username">Username:</label>
+                {{ form.username }}
+
+                <label for="address">Address:</label>
+                {{ form.address }}
+
+                <label for="phone">Phone:</label>
+                {{ form.phone }}
+
+                <label for="email">Email:</label>
+                {{ form.email }}
+
+                <label for="role">Role:</label>
+                {{ form.role }}
+
+                <button type="submit">Save Changes</button>
+            </form>
+        </div>
+
+        <!-- View Profile Section -->
+        <div class="view-profile" id="viewProfileSection">
+            <h3>Profile Information</h3>
+            <p><strong>Name:</strong> {{ user.name }}</p>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            <p><strong>Address:</strong> {{ user.address }}</p>
+            <p><strong>Role:</strong> {{ user.role }}</p>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-container">
+            <div class="quick-links">
+                <h4>Quick Links</h4>
+                <a href="#">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+            </div>
+            <p>© 2024 Roadside Assistance. All rights reserved.</p>
+            <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+            <div class="social">
+                <h4>Social</h4>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript to toggle visibility of the sections -->
+    <script>
+        function toggleUpdateProfile() {
+            var updateSection = document.getElementById("updateProfileSection");
+            var viewSection = document.getElementById("viewProfileSection");
+            updateSection.style.display = updateSection.style.display === "none" || updateSection.style.display === "" ? "block" : "none";
+            viewSection.style.display = "none"; // Hide view profile when updating
+        }
+
+        function toggleViewProfile() {
+            var viewSection = document.getElementById("viewProfileSection");
+            var updateSection = document.getElementById("updateProfileSection");
+            viewSection.style.display = viewSection.style.display === "none" || viewSection.style.display === "" ? "block" : "none";
+            updateSection.style.display = "none"; // Hide update profile when viewing
+        }
+
+        // Show the custom success message box on form submission
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('profileForm');
+        
+            // Remove any existing success message on page load
+            const existingMessage = document.querySelector('.alert-success');
+            if (existingMessage) {
+                existingMessage.remove();
+            }
+        
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    const successMessage = document.createElement('div');
+                    successMessage.textContent = 'Your changes have been saved';
+                    successMessage.className = 'alert alert-success'; // Add the class for styling
+        
+                    // Insert the message above the form
+                    form.parentNode.insertBefore(successMessage, form);
+        
+                    // Redirect after a delay
+                    setTimeout(function () {
+                        form.submit(); // Submit the form
+                    }, 1000); // 1 second delay
+                });
+            }
+        });
+        
+        
+    </script>
+</body>
+</html>

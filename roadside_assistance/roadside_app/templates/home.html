@@ -1,0 +1,75 @@
+<!-- roadside_app/templates/roadside_app/home.html -->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>ROAD GUARDIAN</h1>
+        </div>
+        <div class="navbar-links">
+            <a href="{% url 'home' %}" class="active">Home</a>
+            <a href="{% url 'home' %}#services">Services</a>
+            <a href="{% url 'home' %}#contact-us">Contact Us</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="home-container">
+        <h1>Welcome to Roadside Assistance</h1>
+        <div class="button-container">
+            <a href="{% url 'login' %}" class="button">Login</a>
+            <a href="{% url 'register' %}" class="button">Register</a>
+        </div>
+    </div>
+
+    <!-- Services Section -->
+    <div id="services" class="services-container">
+        <h1>Our Services</h1>
+        <section class="services-list">
+            <div class="service">
+                <h2>Towing</h2>
+                <p>We provide 24/7 towing services to help you get your vehicle to a safe location.</p>
+            </div>
+            <div class="service">
+                <h2>Jump Start</h2>
+                <p>Our experts can jump start your vehicle if you run into battery issues.</p>
+            </div>
+            <div class="service">
+                <h2>Tire Change</h2>
+                <p>We offer tire change services to get you back on the road quickly.</p>
+            </div>
+            <div class="service">
+                <h2>Ambulance Services</h2>
+                <p>We offer ambulance services to get you to the hospital quickly.</p>
+            </div>
+            <div class="service">
+                <h2>Petrol Delivering</h2>
+                <p>We offer petrol delivering services to get you to the reach your destination quickly.</p>
+            </div>
+        </section>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <!-- Contact Section -->
+    <div id="contact-us" class="contact-us">
+        <h2>Contact Us</h2>
+        <p>If you have any questions or need assistance, please reach out to us:</p>
+        <p>Email: <a href="mailto:info@roadsideassistance.com">info@roadsideassistance.com</a></p>
+        <p>Phone: +1 234 567 890</p>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br>
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+ 

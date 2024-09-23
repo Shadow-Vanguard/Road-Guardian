@@ -1,0 +1,255 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; 
+    overflow-y: hidden;  
+}
+
+body {
+    background-size: cover;           /* Ensures the image covers the entire background */
+    background-position: center 60%; 
+    background-repeat: no-repeat;
+    background-attachment: fixed;     /* Fix the background image */
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f4f8;
+    color: #333;
+}
+
+header {
+    background-color: #ffffff;
+    color: rgb(0, 0, 0);
+    padding: 15px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+    font-size: 28px;
+    margin: 0;
+}
+
+header nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 20px;
+}
+
+.dashboard-container {
+    display: flex;
+    margin: 30px;
+
+}
+
+.logout {
+    padding: 9px;
+    margin-bottom: 10px;
+    margin-top: 15px;
+    font-size: 18px;
+    border-radius: 6px;
+    text-decoration: none;
+    color: #4CAF50;
+    font-weight: bold;
+    background-color: #fff;
+    border: 1px solid #4CAF50;
+    transition: background-color 0.3s;
+    text-align: center;
+}
+
+.logout:hover {
+    background-color: #ea0606;
+    color: #fff;
+}
+
+.sidebar {
+    width: 20%;
+    height:max-content;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-radius: 6px;
+    color: #4CAF50;
+    font-weight: bold;
+    background-color: #fff;
+    border: 1px solid #4CAF50;
+    transition: background-color 0.3s;
+}
+
+.sidebar button:hover {
+    background-color: #4CAF50;
+    color: #fff;
+}
+
+/* .content {
+    width: 71%;
+    margin-left: 25%;
+    background-color: #ffffff73;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20%;
+} */
+
+.content h2 {
+    margin: 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #4CAF50;
+    font-size: 24px;
+    color: #4CAF50;
+}
+
+footer {
+    background-color: #ffffff84;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+footer .footer-container {
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 10px;
+}
+
+footer .quick-links, footer .social {
+    text-align: left;
+}
+
+footer .quick-links h4, footer .social h4 {
+    margin-bottom: 15px;
+    color: rgb(0, 0, 0);
+}
+
+footer .quick-links a, footer .social a {
+    color: rgb(0,0,0);
+    display: block;
+    text-decoration: none;
+    margin-bottom: 8px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+footer .quick-links a:hover, footer .social a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+
+.button-container a.button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px;
+    background-color: #4CAF50;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.button-container a.button:hover {
+    background-color: #48f14d;
+}
+
+/* Update Profile Section */
+/* #updateProfileSection {
+    background-color: #f7f7f7;
+    padding: 10px;
+    margin-top: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 50%;
+} */
+
+#updateProfileSection h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#updateProfileSection label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+#updateProfileSection input[type="text"],
+#updateProfileSection input[type="email"],
+#updateProfileSection input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+#updateProfileSection input[type="text"]:focus,
+#updateProfileSection input[type="email"]:focus,
+#updateProfileSection input[type="password"]:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+#updateProfileSection button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#updateProfileSection button:hover {
+    background-color: #0056b3;
+}
+
+#updateProfileSection .form-group {
+    margin-bottom: 15px;
+}
+
+#updateProfileSection .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.update-profile .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+
+/* Style for the custom success message */
+.success-message {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+

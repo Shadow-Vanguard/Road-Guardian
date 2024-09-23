@@ -1,0 +1,142 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="{% static 'css/reg.css' %}">
+    <style>
+        body {
+            background-image: url("{% static 'images/home3.jpg' %}");
+        }
+        .reg-container {
+           background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(182, 25, 25, 0.1);
+            width: 500px;
+            text-align: center;
+            margin: 63px 40px 40px auto;
+            box-sizing: border-box; 
+    }
+
+    .reg-container h2 {
+    margin-top: 5px;
+    color: #333;
+}
+
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>ROAD GUARDIAN</h1>
+        </div>
+        <div class="navbar-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}" class="active">Register</a>
+        </div>
+    </nav>
+
+    <div class="reg-container">
+        <h2>Register</h2>
+        <form method="post" id="registrationForm">
+            {% csrf_token %}
+            <div class="input-container">
+                <label for="name">Name:</label>
+                {{ form.name }}
+                {% if form.name.errors %}
+                    <div class="error">{{ form.name.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="phone">Phone:</label>
+                {{ form.phone }}
+                {% if form.phone.errors %}
+                    <div class="error">{{ form.phone.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="address">Address:</label>
+                {{ form.address }}
+                {% if form.address.errors %}
+                    <div class="error">{{ form.address.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="email">Email:</label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                    <div class="error">{{ form.email.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="role">Role:</label>
+                {{ form.role }}
+                {% if form.role.errors %}
+                    <div class="error">{{ form.role.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="username">Username:</label>
+                {{ form.username }}
+                {% if form.username.errors %}
+                    <div class="error">{{ form.username.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="password">Password:</label>
+                {{ form.password }}
+                {% if form.password.errors %}
+                    <div class="error">{{ form.password.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="button-container">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+        <div class="login-link">
+            <p>Already have an account? <a href="{% url 'login' %}" class="button">Log In</a></p>
+        </div>
+    </div>
+
+    <footer class="footer-reg">
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+        <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+    </footer>
+
+    <!-- Modal -->
+    <div id="registrationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+
+    <script>
+        form.addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent default submission to show the modal first
+    
+    // Get form data
+    var name = document.getElementById('name').value;
+    var role = document.getElementById('role').value;
+    
+    // Set modal message
+    modalMessage.textContent = `Registration successful for ${name} as a ${role}.`;
+    
+    // Show the modal
+    modal.style.display = 'block';
+    
+    // Submit the form after a short delay (so the user sees the modal)
+    setTimeout(function() {
+        form.submit(); // Submit the form
+    }, 1000); // Adjust the delay as necessary
+});
+
+    </script> 
+
+</body>
+</html>

@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+    <style>
+        body {
+            background-image: url("{% static 'images/home3.jpg' %}");
+        }
+    
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>24*7 Roadside Assistance</h1>
+        <nav>
+            <a href="{% url 'home' %}" class="logout">Log Out</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <button>View Users</button>
+            <button>View Service Providers</button>
+            <button>Add Service Types</button>
+            <button>Order Items</button>
+            <button>View Feedback </button>
+            <button>View Incident Report</button>
+            <button>Manage Orders</button>
+            <button>Manage Product Details</button>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>Welcome {{ user.name }} To Your Dashboard</h2>
+
+    </div>
+    <footer>
+        <div class="footer-container">
+            <div class="quick-links">
+                <h4>Quick Links</h4>
+                <a href="#">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+            </div>
+            <p>© 2024 Roadside Assistance. All rights reserved.</p>
+            <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+            <div class="social">
+                <h4>Social</h4>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+            </div>
+        </div>
+    </footer>
+
+ 
+</body>
+</html>
