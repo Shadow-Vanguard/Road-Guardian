@@ -9,6 +9,11 @@ from django.contrib.auth import authenticate, login as auth_login
 from .forms import LoginForm
 from django.shortcuts import render
 
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login
+from .forms import LoginForm
+
 from .forms import RegistrationForm
 from django.contrib import messages
 from .forms import RegistrationForm
@@ -25,19 +30,24 @@ from .forms import LoginForm
 # def print_hello1(request):
 #     return HttpResponse("Hello Roshan")
 
-
+  
 #login
+
+
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+
+            if username == 'admin' and password == 'admin123':
+                return render(request,'admin/admin_dashboard.html')  # Ensure that 'admin_dashboard' is properly configured in URLs
+            
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 auth_login(request, user)
-                # Redirect based on user role
-                if user.is_superuser:  # Check if the user is an admin
+                if user.is_superuser:
                     return redirect('admin_dashboard')  # Redirect to admin dashboard
                 elif user.role == 'user':
                     return redirect('user_dashboard')  # Redirect to user dashboard
@@ -49,8 +59,12 @@ def login_view(request):
                 form.add_error(None, 'Invalid username or password')
     else:
         form = LoginForm()
-    
+
     return render(request, 'login.html', {'form': form})
+
+# Admin dashboard view
+def admin_dashboard(request):
+    return render(request, 'admin/admin_dashboard.html')
 
 
 #Registration
@@ -74,9 +88,6 @@ def reg_view(request):
 def home_view(request):
     return render(request, 'home.html')
 
-    
-def admin_dashboard(request):
-    return render(request, 'user/admin_dashboard.html')
 
 
 # views.py
@@ -116,24 +127,6 @@ def  service_provider_dashboard(request):
     
 
 
-
-class PasswordResetRequestView(PasswordResetView):
-    template_name = 'password/password_reset_form.html'
-    email_template_name = 'registration/password_reset_email.html'
-    subject_template_name = 'registration/password_reset_subject.txt'
-    success_url = '/password_reset/done/'
-
-class PasswordResetDoneView(PasswordResetDoneView):
-    template_name = 'registration/password_reset_done.html'
-
-class PasswordResetConfirmView(PasswordResetConfirmView):
-    template_name = 'registration/password_reset_confirm.html'
-    success_url = '/reset/done/'
-
-class PasswordResetCompleteView(PasswordResetCompleteView):
-    template_name = 'registration/password_reset_complete.html'
-
-
 # views.py
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
@@ -171,16 +164,6 @@ def update_profile(request):
 
     return render(request, 'user/user_dashboard.html', {'form': form})
 
-@login_required
-def view_profile(request):
-    user = request.user
-    context = {
-        'user': user,
-    }
-    return render(request, 'view_profile.html', context)
-
-
-
 
 
 
@@ -194,8 +177,8 @@ def admin_dashboard(request):
 
 @login_required
 def view_users(request):
-    # Logic to fetch users
-    return render(request, 'view_users.html')
+    users = CustomUser.objects.all()  # Fetch all users from the database
+    return render(request, 'admin/view_users.html', {'users': users})
 
 @login_required
 def view_service_providers(request):
@@ -235,3 +218,41 @@ def manage_product_details(request):
 def home(request):
     # Redirect after logout
     return render(request, 'home.html')
+
+
+
+#password reset
+# views.py
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
+from .forms import CustomPasswordResetForm, CustomSetPasswordForm
+
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    """
+    Handles the display and processing of the password reset form.
+    """
+    template_name = 'password/password_reset.html'
+    email_template_name = 'password/password_reset_email.html'
+    subject_template_name = 'password/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+    form_class = CustomPasswordResetForm
+
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    """
+    Informs the user that an email has been sent for password reset.
+    """
+    template_name = 'password/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    """
+    Handles the setting of a new password.
+    """
+    template_name = 'password/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+    form_class = CustomSetPasswordForm
+
+class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    """
+    Informs the user that the password has been successfully reset.
+    """
+    template_name = 'password/password_reset_complete.html'

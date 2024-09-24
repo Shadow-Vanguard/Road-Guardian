@@ -48,41 +48,6 @@ class LoginForm(forms.Form):
     password = forms.CharField(widget=forms.PasswordInput, required=True)
 
 
-# # forms.py
-# from django import forms
-# from django.contrib.auth.forms import PasswordResetForm
-# from django.contrib.auth import get_user_model
-
-# class CustomPasswordResetForm(PasswordResetForm):
-#     email = forms.EmailField(
-#         label="Email",
-#         max_length=254,
-#         widget=forms.EmailInput(attrs={'placeholder': 'Enter your email address'}),
-#     )
-
-#     def clean_email(self):
-#         email = self.cleaned_data.get("email")
-#         User = get_user_model()
-#         if not User.objects.filter(email=email).exists():
-#             raise forms.ValidationError("No user with this email address exists.")
-#         return email
-
-# # forms.py
-# from django.contrib.auth.forms import SetPasswordForm
-# from django.contrib.auth import get_user_model
-
-# class CustomSetPasswordForm(SetPasswordForm):
-#     new_password1 = forms.CharField(
-#         label="New password",
-#         widget=forms.PasswordInput(attrs={'placeholder': 'Enter new password'}),
-#     )
-#     new_password2 = forms.CharField(
-#         label="Confirm new password",
-#         widget=forms.PasswordInput(attrs={'placeholder': 'Confirm new password'}),
-#     )
-
-
-# forms.py
 # forms.py
 from django import forms
 from .models import CustomUser
@@ -115,3 +80,35 @@ class CustomUserUpdateForm(forms.ModelForm):
         if CustomUser.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
             raise ValidationError("This username is already taken.")
         return username
+
+
+#forgot password#
+# forms.py
+from django import forms
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from .models import CustomUser
+
+class CustomPasswordResetForm(PasswordResetForm):
+    email = forms.EmailField(
+        max_length=254,
+        widget=forms.EmailInput(attrs={'autocomplete': 'email', 'class': 'form-control'}),
+        label="Email Address"
+    )
+    
+    def get_users(self, email):
+        """
+        Override to return users based on the CustomUser model.
+        """
+        return CustomUser.objects.filter(email__iexact=email, is_active=True)
+
+class CustomSetPasswordForm(SetPasswordForm):
+    new_password1 = forms.CharField(
+        label="New Password",
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control'}),
+        strip=False,
+    )
+    new_password2 = forms.CharField(
+        label="Confirm New Password",
+        widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control'}),
+        strip=False,
+    )

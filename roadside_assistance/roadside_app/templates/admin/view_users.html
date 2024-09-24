@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Users</title>
+    <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Admin - View Users</h1>
+        <nav>
+            <a href="{% url 'home' %}" class="logout">Log Out</a>
+        </nav>
+    </header>
+
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <a href="{% url 'admin_dashboard' %}"><button>Back to Dashboard</button></a>
+        </div>
+
+        <div class="content">
+            <h2>User List</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Role</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone }}</td>
+                        <td>{{ user.address }}</td>
+                        <td>{{ user.get_role_display }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">No users found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+    </footer>
+</body>
+</html>
+    
