@@ -47,15 +47,20 @@ class LoginForm(forms.Form):
     username = forms.CharField(max_length=100, required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True)
 
+#admin update profile
+from django import forms
+from .models import CustomUser
 
-# forms.py
+
+class AdminProfileUpdateForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['username', 'email', 'phone', 'address', 'name']  # Ensure all necessary fields are included
+
+#Update user profile
 from django import forms
 from .models import CustomUser
 from django.core.exceptions import ValidationError
-
-# forms.py
-
-from django import forms
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
 
@@ -72,7 +77,6 @@ class CustomUserUpdateForm(forms.ModelForm):
             'phone': forms.TextInput(attrs={'placeholder': 'Enter your phone number'}),
             'address': forms.TextInput(attrs={'placeholder': 'Enter your address'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Enter your email'}),
-            'role': forms.Select(),
         }
 
     def clean_username(self):
@@ -80,10 +84,10 @@ class CustomUserUpdateForm(forms.ModelForm):
         if CustomUser.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
             raise ValidationError("This username is already taken.")
         return username
+    
+    
+#forgot password
 
-
-#forgot password#
-# forms.py
 from django import forms
 from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
 from .models import CustomUser
@@ -112,3 +116,4 @@ class CustomSetPasswordForm(SetPasswordForm):
         widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control'}),
         strip=False,
     )
+

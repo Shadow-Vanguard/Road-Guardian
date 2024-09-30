@@ -10,8 +10,44 @@
         body {
             background-image: url("{% static 'images/home3.jpg' %}");
         }
-    
-        
+        .content {
+            width: 71%;
+            margin-left:3%;
+            background-color: #ffffff73;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top:0%
+        }
+         .content h2 {
+            margin: 0;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #4CAF50;
+            font-size: 24px;
+            color: #4CAF50;
+        } 
+        .update-profile, .view-profile {
+            display: none; 
+            margin-top: 30px;
+            margin-bottom: 50px; 
+        }
+        #updateProfileSection {
+        background-color: #f7f7f7;
+        padding: 20px;
+        margin-top: 25px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        margin-bottom: 10%;
+
+    }
+    #viewProfileSection {
+           background-color: #fafafac9;
+           padding: 10px;
+           margin-top: 25px;
+           border-radius: 8px;
+           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+           margin-bottom: -1%;
+       }
     </style>
 </head>
 <body>
@@ -24,21 +60,68 @@
 
     <div class="dashboard-container">
         <div class="sidebar">
-            <button a href="{%url 'view_user'}">View Users</button>
-            <button>View Service Providers</button>
-            <button>Add Service Types</button>
-            <button>Order Items</button>
-            <button>View Feedback </button>
-            <button>View Incident Report</button>
-            <button>Manage Orders</button>
-            <button>Manage Product Details</button>
+            <button onclick="toggleViewProfile()">View Profile</button>
+            <button onclick="toggleUpdateProfile()">Update Profile</button>
+            <a href="{% url 'view_users' %}">
+                <button>View Users</button>
+            </a>
+            <button>Manage Service Types</button>
+            <button>View Orders</button>
+            <button>Manage Products</button>
+            <button>View Service History</button>
+            <button>View Feedback/Ratings</button>
+        </div>
+
+        <div class="content">
+            <h2>Welcome Admin To Your Dashboard</h2>
+            <!-- Update Profile Form Section -->
+            <div class="update-profile" id="updateProfileSection">
+                <h3>Update Profile</h3>
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-success">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+                <form method="post" action="{% url 'admin_profile_update' %}" id="AdminProfileUpdateForm">
+                    {% csrf_token %}
+                    
+                    {{ form.non_field_errors }}
+                    
+                    <label for="name">Name:</label>
+                    {{ form.name }}
+    
+                    <label for="username">Username:</label>
+                    {{ form.username }}
+    
+                    <label for="address">Address:</label>
+                    {{ form.address }}
+    
+                    <label for="phone">Phone:</label>
+                    {{ form.phone }}
+    
+                    <label for="email">Email:</label>
+                    {{ form.email }}
+    
+                    <button type="submit">Save Changes</button>
+                </form>
+             
+            </div>
+
+
+        <!-- View Profile Section -->
+        <div class="view-profile" id="viewProfileSection">
+            <h3>Profile Information</h3>
+            <p><strong>Username:</strong> {{ user.username }}</p>
+            <p><strong>Name:</strong> {{ user.name }}</p>
+            <p><strong>Email:</strong> {{ user.email }}</p>
+            <p><strong>Phone:</strong> {{ user.phone }}</p>
+            <p><strong>Address:</strong> {{ user.address }}</p>
+            <p><strong>Role:</strong> {{ user.role }}</p>
+        </div>
+
         </div>
     </div>
 
-    <div class="content">
-        <h2>Welcome {{ user.name }} To Your Dashboard</h2>
-
-    </div>
     <footer>
         <div class="footer-container">
             <div class="quick-links">
@@ -58,7 +141,62 @@
             </div>
         </div>
     </footer>
-
- 
+    <script>
+        // Toggle between profile view and update sections
+        function toggleUpdateProfile() {
+            var updateSection = document.getElementById("updateProfileSection");
+            var viewSection = document.getElementById("viewProfileSection");
+    
+            if (updateSection.style.display === "none" || updateSection.style.display === "") {
+                updateSection.style.display = "block";  // Show the update profile section
+                viewSection.style.display = "none";    // Hide the view profile section
+            } else {
+                updateSection.style.display = "none";  // Hide the update profile section
+            }
+        }
+    
+        function toggleViewProfile() {
+            var viewSection = document.getElementById("viewProfileSection");
+            var updateSection = document.getElementById("updateProfileSection");
+    
+            if (viewSection.style.display === "none" || viewSection.style.display === "") {
+                viewSection.style.display = "block";  // Show the view profile section
+                updateSection.style.display = "none"; // Hide the update profile section
+            } else {
+                viewSection.style.display = "none";   // Hide the view profile section
+            }
+        }
+    
+        // Show the custom success message box on form submission
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('AdminProfileUpdateForm');
+    
+            if (form) {
+                form.addEventListener('submit', function (event) {
+                    event.preventDefault();  // Prevent default form submission
+    
+                    // Remove any existing success message
+                    const existingMessage = document.querySelector('.alert-success');
+                    if (existingMessage) {
+                        existingMessage.remove();
+                    }
+    
+                    // Create and insert the success message above the form
+                    const successMessage = document.createElement('div');
+                    successMessage.textContent = 'Your changes have been saved.';
+                    successMessage.className = 'alert alert-success'; // Add Bootstrap class for styling
+                    
+                    // Insert the message before the form
+                    form.parentNode.insertBefore(successMessage, form);
+    
+                    // Delay form submission by 1 second to show the message
+                    setTimeout(function () {
+                        form.submit(); // Submit the form after delay
+                    }, 1000);
+                });
+            }
+        });
+    </script>
+    
 </body>
 </html>

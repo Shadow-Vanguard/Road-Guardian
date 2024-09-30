@@ -4,76 +4,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
+    <title>Service Providers Dashboard</title>
     <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
     <style>
         body {
             background-image: url("{% static 'images/home3.jpg' %}");
         }
-        .update-profile, .view-profile {
-            display: none; /* Hide both sections by default */
-            margin-top: 30px;
-            margin-bottom: 50px; /* Added margin to prevent overlap with the footer */
-        }
-        
-        .alert {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-        .alert-error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-        }
         .content {
             width: 71%;
-            margin-left: 25%;
+            margin-left:3%;
             background-color: #ffffff73;
             padding: 25px;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-top:-30.5%;
+            margin-top:0%
+        }
+        .update-profile, .view-profile {
+            display: none; 
+            margin-top: 30px;
+            margin-bottom: 50px; 
+        }
+      
+.content h2 {
+    margin: 0;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #4CAF50;
+    font-size: 24px;
+    color: #4CAF50;
+}
+#updateProfileSection {
+    background-color: #f7f7f7;
+    padding: 20px;
+    margin-top: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10%;
+
+}
+#viewProfileSection {
+           background-color: #fafafac9;
+           padding: 10px;
+           margin-top: 25px;
+           border-radius: 8px;
+           box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+           margin-bottom: -1%;
        }
-
-        .content h2 {
-            margin: 0;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #4CAF50;
-            font-size: 24px;
-            color: #4CAF50;
-        }
-        #updateProfileSection {
-            background-color: #f7f7f7;
-            padding: 20px;
-            margin-top: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10%;
-
-        }
-        #viewProfileSection {
-                background-color: #fafafac9;
-                padding: 10px;
-                margin-top: 25px;
-                border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                margin-bottom: -1%;
-            }
-        
     </style>
 </head>
 <body>
     <header>
         <h1>24*7 Roadside Assistance</h1>
         <nav>
-            <a href="#"><i class="fa fa-search"></i></a>
-            <a href="#"><i class="fa fa-bars"></i></a>
             <a href="{% url 'home' %}" class="logout">Log Out</a>
         </nav>
     </header>
@@ -83,18 +64,17 @@
             
             <button onclick="toggleViewProfile()">View Profile</button>
             <button onclick="toggleUpdateProfile()">Update Profile</button>
-            <button>Request Assistance</button>
-            <button>Order Items</button>
+            <button>View Request </button>
+            <button>View Ordered Items</button>
             <button>View Service History</button>
-            <button>View/Remove Items from Payment History</button>
-            <button>Send Feedback</button>
-            <button>Chat with Service Providers</button>
+            <button>View Payment History</button>
+            <button>View Feedback</button>
+            <button>Message From User</button>
         </div>
-    </div>
 
-    <div class="content">
-        <h2>Welcome {{ user.name }} To Your Dashboard</h2>
-
+        <div class="content">
+            <h2>Welcome {{ user.name }} To Your Dashboard</h2>
+            
         <!-- Update Profile Form Section -->
         <div class="update-profile" id="updateProfileSection">
             <h3>Update Profile</h3>
@@ -109,22 +89,23 @@
                 
                 <label for="name">Name:</label>
                 {{ form.name }}
-
+                
                 <label for="username">Username:</label>
                 {{ form.username }}
-
+                
                 <label for="address">Address:</label>
                 {{ form.address }}
-
+                
                 <label for="phone">Phone:</label>
                 {{ form.phone }}
-
+                
                 <label for="email">Email:</label>
                 {{ form.email }}
-
-
+                
+                
                 <button type="submit">Save Changes</button>
-            </form>
+            </form>            
+            
         </div>
 
         <!-- View Profile Section -->
@@ -136,6 +117,8 @@
             <p><strong>Phone:</strong> {{ user.phone }}</p>
             <p><strong>Address:</strong> {{ user.address }}</p>
             <p><strong>Role:</strong> {{ user.role }}</p>
+        </div>
+
         </div>
     </div>
 
@@ -158,8 +141,6 @@
             </div>
         </div>
     </footer>
-
-    <!-- JavaScript to toggle visibility of the sections -->
     <script>
         function toggleUpdateProfile() {
             var updateSection = document.getElementById("updateProfileSection");

@@ -1,5 +1,4 @@
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,10 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
-
     <style>
         body {
             background-image: url("{% static 'images/home4.jpg' %}");
+        }
+        .error-message {
+            color: red;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -34,19 +36,21 @@
                 <label for="id_username">Username:</label>
                 {{ form.username }}
                 {% if form.username.errors %}
-                    <div class="error">{{ form.username.errors }}</div>
+                    <div class="error-message">{{ form.username.errors }}</div>
                 {% endif %}
             </div>
             <div class="input-container">
                 <label for="id_password">Password:</label>
                 {{ form.password }}
                 {% if form.password.errors %}
-                    <div class="error">{{ form.password.errors }}</div>
+                    <div class="error-message">{{ form.password.errors }}</div>
                 {% endif %}
             </div>
+            <!-- Display non-field errors (like deactivation message) -->
             {% if form.non_field_errors %}
-                <div class="message">{{ form.non_field_errors }}</div>
+                <div class="error-message">{{ form.non_field_errors }}</div>
             {% endif %}
+            
             <label for="name">Not Registered Yet?</label>
             <a href="{% url 'register' %}" class="button">Create An Account</a>
             <div class="forgot-password">

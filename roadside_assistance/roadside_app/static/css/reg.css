@@ -101,10 +101,11 @@ body {
     text-align: center;
     margin: 65px 10px 50px auto ; 
     box-sizing: border-box;
-} */
+    margin-top: 10px;
+}
 
-/* .reg-container h2 {
-    margin-bottom: -10px;
+.reg-container h2 {
+    margin-bottom: -7px;
     color: #333;
 } */
 

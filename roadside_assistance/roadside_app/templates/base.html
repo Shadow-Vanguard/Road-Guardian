@@ -1,0 +1,44 @@
+<!-- roadside_app/templates/roadside_app/base.html -->
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Roadside Assistance{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extra_head %}
+    <!-- Additional head content can be added here -->
+    {% endblock %}
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>ROAD GUARDIAN</h1>
+        </div>
+        <div class="navbar-links">
+            <a href="{% url 'home' %}" class="active">Home</a>
+            <a href="{% url 'home' %}#services">Services</a>
+            <a href="{% url 'home' %}#contact-us">Contact Us</a>
+        </div>
+    </nav>
+
+    <!-- Content Block -->
+    <div class="content">
+        {% block content %}
+        <!-- This block will be overridden in child templates -->
+        {% endblock %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+    </footer>
+
+    <!-- Additional JavaScript files can be added here -->
+    {% block extra_js %}
+    {% endblock %}
+</body>
+</html>

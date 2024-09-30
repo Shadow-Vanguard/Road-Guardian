@@ -4,25 +4,134 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Users</title>
+    <title>Admin Dashboard - View Users</title>
     <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
+    <style>
+        body {
+            background-image: url("{% static 'images/home3.jpg' %}");
+        }
+        .content {
+            width: 75%;
+            margin-left: 11%;
+            background-color: #ffffff73;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-top: 3%;
+        }
+        .content h2 {
+            margin: 0;
+            padding-bottom: 30px;
+            border-bottom: 2px solid #4CAF50;
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .table-section {
+            display: none;
+            margin-top: 20px;
+        }
+        .toggle-buttons button {
+            margin-right: 10px;
+            padding: 10px;
+            background-color: #3bc03fd0;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .toggle-buttons button.active {
+            background-color: #2a6c2e;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #000000;
+        }
+        th, td {
+            padding: 12px;
+            text-align: center;
+        }
+        .btn-active {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn-inactive {
+            background-color: #F44336;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        footer {
+    background-color: #ffffff84;
+    color: rgb(0, 0, 0);
+    text-align: center;
+    padding: 10px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+footer .footer-container {
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 10px;
+}
+
+footer .quick-links, footer .social {
+    text-align: left;
+}
+
+footer .quick-links h4, footer .social h4 {
+    margin-bottom: 15px;
+    color: rgb(0, 0, 0);
+}
+
+footer .quick-links a, footer .social a {
+    color: rgb(0,0,0);
+    display: block;
+    text-decoration: none;
+    margin-bottom: 8px;
+    font-size: 16px;
+    transition: color 0.3s ease;
+}
+
+footer .quick-links a:hover, footer .social a:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+    </style>
 </head>
 <body>
     <header>
-        <h1>Admin - View Users</h1>
+        <h1>Admin Dashboard - View Users</h1>
         <nav>
-            <a href="{% url 'home' %}" class="logout">Log Out</a>
+            <a href="{% url 'admin_dashboard' %}" class="logout">Go To Dashboard</a>
         </nav>
     </header>
 
-    <div class="dashboard-container">
-        <div class="sidebar">
-            <a href="{% url 'admin_dashboard' %}"><button>Back to Dashboard</button></a>
+    <div class="content">
+        <h2>Users and Service Providers</h2>
+
+        <!-- Toggle Buttons -->
+        <div class="toggle-buttons">
+            <button id="userButton" onclick="showUsers()">View Users</button>
+            <button id="serviceProviderButton" onclick="showServiceProviders()">View Service Providers</button>
         </div>
 
-        <div class="content">
-            <h2>User List</h2>
-            <table border="1">
+        <!-- Table for Users -->
+        <div id="userTable" class="table-section">
+            <h3>List Of Users</h3>
+            <table>
                 <thead>
                     <tr>
                         <th>Username</th>
@@ -31,31 +140,127 @@
                         <th>Phone</th>
                         <th>Address</th>
                         <th>Role</th>
+                        <th>Active</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
+                        {% if user.role == 'user' %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone }}</td>
+                            <td>{{ user.address }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>{{ user.is_active }}</td>
+                            <td>
+                                <form action="{% url 'toggle_active_status' user.id %}" method="post">
+                                    {% csrf_token %}
+                                    {% if user.is_active %}
+                                        <button type="submit" name="status" value="deactivate" class="btn-active">Deactivate</button>
+                                    {% else %}
+                                        <button type="submit" name="status" value="activate" class="btn-inactive">Activate</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Table for Service Providers -->
+        <div id="serviceProviderTable" class="table-section">
+            <h3>List Of Service Providers</h3>
+            <table>
+                <thead>
                     <tr>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.name }}</td>
-                        <td>{{ user.email }}</td>
-                        <td>{{ user.phone }}</td>
-                        <td>{{ user.address }}</td>
-                        <td>{{ user.get_role_display }}</td>
+                        <th>Username</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Role</th>
+                        <th>Active</th>
+                        <th>Status</th>
                     </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="6">No users found</td>
-                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    {% if user.role == 'service_provider' %}
+                        <tr>
+                            <td>{{ user.username }}</td>
+                            <td>{{ user.name }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.phone }}</td>
+                            <td>{{ user.address }}</td>
+                            <td>{{ user.role }}</td>
+                            <td>{{ user.is_active }}</td>
+                            <td>
+                                <form action="{% url 'toggle_active_status' user.id %}" method="post">
+                                    {% csrf_token %}
+                                    {% if user.is_active %}
+                                        <button type="submit" name="status" value="deactivate" class="btn-active">Deactivate</button>
+                                    {% else %}
+                                        <button type="submit" name="status" value="activate" class="btn-inactive">Activate</button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                        </tr>
+                    {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-
     <footer>
-        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+        <div class="footer-container">
+            <div class="quick-links">
+                <h4>Quick Links</h4>
+                <a href="#">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a>
+            </div>
+            <p>© 2024 Roadside Assistance. All rights reserved.</p>
+            <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+            <div class="social">
+                <h4>Social</h4>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a>
+            </div>
+        </div>
     </footer>
+    <script>
+        function showUsers() {
+            document.getElementById('userTable').style.display = 'block';
+            document.getElementById('serviceProviderTable').style.display = 'none';
+            document.getElementById('userButton').classList.add('active');
+            document.getElementById('serviceProviderButton').classList.remove('active');
+        }
+
+        function showServiceProviders() {
+            document.getElementById('userTable').style.display = 'none';
+            document.getElementById('serviceProviderTable').style.display = 'block';
+            document.getElementById('userButton').classList.remove('active');
+            document.getElementById('serviceProviderButton').classList.add('active');
+        }
+
+        // Automatically show the correct table on page load based on the query parameter
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const showTable = urlParams.get('show');
+            
+            if (showTable === 'service_providers') {
+                showServiceProviders();
+            } else {
+                showUsers();  // Default to showing users
+            }
+        };
+    </script>
 </body>
 </html>
-    
