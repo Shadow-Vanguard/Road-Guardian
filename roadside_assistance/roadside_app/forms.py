@@ -70,7 +70,7 @@ CustomUser = get_user_model()
 class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'name', 'phone', 'address', 'email', 'role']
+        fields = ['username', 'name', 'phone', 'address', 'email']
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'Enter your username'}),
             'name': forms.TextInput(attrs={'placeholder': 'Enter your full name'}),
@@ -116,4 +116,23 @@ class CustomSetPasswordForm(SetPasswordForm):
         widget=forms.PasswordInput(attrs={'autocomplete': 'new-password', 'class': 'form-control'}),
         strip=False,
     )
+
+from django import forms
+from .models import ServiceProvider, ServiceType
+
+class ServiceProviderForm(forms.ModelForm):
+    class Meta:
+        model = ServiceProvider
+        fields = ['service_type', 'certificate', 'area_of_service', 'availability_status']
+        widgets = {
+            'service_type': forms.Select(attrs={'class': 'form-control'}),
+            'certificate': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'area_of_service': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter service area'}),
+            'availability_status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ServiceProviderForm, self).__init__(*args, **kwargs)
+        # Ensure the queryset is correctly set when the form is initialized
+        self.fields['service_type'].queryset = ServiceType.objects.all()
 

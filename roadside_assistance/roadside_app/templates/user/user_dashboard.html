@@ -103,7 +103,7 @@
                     <div class="alert alert-success">{{ message }}</div>
                 {% endfor %}
             {% endif %}
-            <form method="post" action="{% url 'update_profile' %}" id="profileForm">
+            <form method="post" action="{% url 'user_update_profile' %}" id="profileForm">
                 {% csrf_token %}
                 {{ form.non_field_errors }}
                 
@@ -136,6 +136,9 @@
             <p><strong>Phone:</strong> {{ user.phone }}</p>
             <p><strong>Address:</strong> {{ user.address }}</p>
             <p><strong>Role:</strong> {{ user.role }}</p>
+         
+
+        
         </div>
     </div>
 

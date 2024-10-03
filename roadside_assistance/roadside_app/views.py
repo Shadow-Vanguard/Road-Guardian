@@ -13,6 +13,9 @@ from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
+from .forms import RegistrationForm, ServiceProviderForm
+from .models import ServiceProvider
+
 
 
 
@@ -95,15 +98,24 @@ def login_view(request):
     return render(request, 'login.html', {'form': form})
 
 #Registration
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .forms import RegistrationForm, ServiceProviderForm
+from .models import CustomUser, ServiceProvider
+
 def reg_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.set_password(form.cleaned_data['password'])  # Hash the password
-            user.save()
-            messages.success(request, 'Registration successful!')
-            return redirect('login')  # Redirect to the login page after registration
+            user.save()  # Save user before any further actions
+            
+            if user.role == 'service_provider':
+                return redirect('reg2', user_id=user.id)  # Redirect to the service provider registration form
+            else:
+                messages.success(request, 'Registration successful!')
+                return redirect('login')  # Redirect to the login page after registration
         else:
             messages.error(request, 'Registration failed. Please check the details and try again.')
     else:
@@ -111,6 +123,22 @@ def reg_view(request):
     
     return render(request, 'reg.html', {'form': form})
 
+def reg2_view(request, user_id):
+    user = get_object_or_404(CustomUser, id=user_id)  # Get the user or 404
+    if request.method == 'POST':
+        form = ServiceProviderForm(request.POST, request.FILES)
+        if form.is_valid():
+            service_provider = form.save(commit=False)
+            service_provider.user = user  # Link to the service provider's user account
+            service_provider.save()
+            messages.success(request, 'Service provider registration successful!')
+            return redirect('login')  # Redirect to the login page after successful registration
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = ServiceProviderForm()
+    
+    return render(request, 'reg2.html', {'form': form})
 
 def home_view(request):
     return render(request, 'home.html')
@@ -163,7 +191,7 @@ def update_profile(request):
     
 #update_profile
 @login_required
-def update_profile(request):
+def user_update_profile(request):
     user = request.user  # Get the current logged-in user
     if request.method == 'POST':
         form = CustomUserUpdateForm(request.POST, instance=user)
@@ -330,36 +358,76 @@ from django.contrib import messages
 #from .forms import ServiceProviderUpdateForm
 from .models import CustomUser
 
-# @login_required
-# def service_provider_dashboard(request):
-#     return render(request, 'service_provider/serviceprovider_dashboard.html')
+@login_required
+def service_provider_dashboard(request):
+    return render(request, 'service_provider/serviceprovider_dashboard.html')
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
+
+
+from django.contrib.auth.decorators import login_required
+from .models import ServiceProvider
 
 @login_required
 def service_provider_dashboard(request):
     # Get the current logged-in user
     user = request.user  
-    # Pre-fill the form with the current user's data
-    form = CustomUserUpdateForm(instance=user)
+    
+    # Fetch the service provider information if available
+    try:
+        service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
+    except ServiceProvider.DoesNotExist:
+        service_provider = None
 
-    return render(request, 'service_provider/serviceprovider_dashboard.html', {'form': form})
-
-
-#update_profile
-@login_required
-def update_profile(request):
-    user = request.user  # Get the current logged-in user
     if request.method == 'POST':
         form = CustomUserUpdateForm(request.POST, instance=user)
         if form.is_valid():
+            form.save()  # Save the user profile updates
+            
+            # Re-fetch the service provider to ensure updated information is shown
+            try:
+                service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
+            except ServiceProvider.DoesNotExist:
+                service_provider = None
+    else:
+        form = CustomUserUpdateForm(instance=user)
+    
+    # Pass both the form and service provider information to the template
+    return render(request, 'service_provider/serviceprovider_dashboard.html', {
+        'form': form,
+        'service_provider': service_provider,
+    })
+
+#update_profile
+
+@login_required
+def update_profile(request):
+    user = request.user  # Get the current logged-in user
+
+    # Fetch the service provider information if available
+    try:
+        service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
+    except ServiceProvider.DoesNotExist:
+        service_provider = None
+
+    if request.method == 'POST':
+        form = CustomUserUpdateForm(request.POST, instance=user)
+        
+        if form.is_valid():
+            print("Form is valid. Saving...")  # Debugging output
             form.save()  # Save the updated user information
             messages.success(request, 'Your changes have been saved.')
             return redirect('service_provider_dashboard')  # Redirect to the dashboard
         else:
+            print("Form errors:", form.errors)  # Log errors for debugging
             messages.error(request, 'Please correct the errors below.')
     else:
         form = CustomUserUpdateForm(instance=user)  # Load the current user data into the form
 
-    return render(request, 'service_provider/serviceprovider_dashboard.html', {'form': form})
+    # Pass the form and the service provider information to the template
+    return render(request, 'service_provider/serviceprovider_dashboard.html', {
+        'form': form,
+        'service_provider': service_provider,  # Ensure this is passed
+    })
+

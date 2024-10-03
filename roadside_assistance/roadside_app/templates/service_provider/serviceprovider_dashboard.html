@@ -117,6 +117,15 @@
             <p><strong>Phone:</strong> {{ user.phone }}</p>
             <p><strong>Address:</strong> {{ user.address }}</p>
             <p><strong>Role:</strong> {{ user.role }}</p>
+            
+            {% if service_provider %}
+            <p><strong>Service Type:</strong> {{ service_provider.service_type.servicetype_name }}</p>
+        {% else %}
+            <p><strong>Service Type:</strong> Not a service provider</p>
+        {% endif %}
+          
+
+
         </div>
 
         </div>

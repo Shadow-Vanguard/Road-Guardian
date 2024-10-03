@@ -61,3 +61,27 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         related_name='customuser_set',
         blank=True,
     )
+
+
+#tbl_service provider
+
+from django.db import models
+from .models import CustomUser
+
+class ServiceType(models.Model):
+    servicetype_id = models.AutoField(primary_key=True)
+    servicetype_name = models.CharField(max_length=100)
+    
+
+    def __str__(self):
+        return self.servicetype_name
+
+class ServiceProvider(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    service_type = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null=True)  # No need to import again
+    certificate = models.ImageField(upload_to='certificates/')
+    area_of_service = models.CharField(max_length=255)
+    availability_status = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'{self.user.name} - {self.service_type.servicetype_name if self.service_type else "No service type"}'

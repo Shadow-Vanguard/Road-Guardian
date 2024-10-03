@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Provider Registration</title>
+    <link rel="stylesheet" href="{% static 'css/reg2.css' %}">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>ROAD GUARDIAN</h1>
+        </div>
+        <div class="navbar-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        </div>
+    </nav>
+
+    <div class="reg-container">
+        <h2>Service Provider Registration</h2>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="input-container">
+                <label for="service_type">Service Type:</label>
+                {{ form.service_type }}
+                {% if form.service_type.errors %}
+                    <div class="error">{{ form.service_type.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="certificate">Upload Certificate:</label>
+                {{ form.certificate }}
+                {% if form.certificate.errors %}
+                    <div class="error">{{ form.certificate.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="area_of_service">Area of Service:</label>
+                {{ form.area_of_service }}
+                {% if form.area_of_service.errors %}
+                    <div class="error">{{ form.area_of_service.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
+                <label for="availability_status">Availability Status:</label>
+                {{ form.availability_status }}
+                {% if form.availability_status.errors %}
+                    <div class="error">{{ form.availability_status.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="button-container">
+                <button type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+
+    <footer class="footer-reg">
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+        <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+    </footer>
+
+</body>
+</html>

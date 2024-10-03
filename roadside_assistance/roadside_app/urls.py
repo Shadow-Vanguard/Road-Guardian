@@ -3,6 +3,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from .views import login_view
 from . import views  # Import your views here
+from .views import reg_view, reg2_view
 from .views import (
     CustomPasswordResetView,
     CustomPasswordResetDoneView,
@@ -16,13 +17,14 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout, name='logout'),
     path('register/', views.reg_view, name='register'),
-   
+
+    path('register/', reg_view, name='register'),
+    path('register/service/<int:user_id>/', reg2_view, name='reg2'),  # Route for service provider registration
 
 
     # User Dashboard URL
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'), 
-    path('update_profile/', views.update_profile, name='update_profile'),
-    
+    path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
     
 
     #serviceprovider Dashboard URL
@@ -43,8 +45,6 @@ urlpatterns = [
     path('toggle_active_status/<int:user_id>/', views.toggle_active_status, name='toggle_active_status'),
     path('admin-profile-update/', views.admin_profile_update,name='admin_profile_update'),
 
-#     path('admin/profile/', views.view_profile, name='view_profile'),
-#     path('admin/update_profile/', views.update_profile, name='update_profile'),
  ]
 
 
