@@ -19,7 +19,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-top:0%
         }
-         .content h2 {
+        .content h2 {
             margin: 0;
             padding-bottom: 30px;
             border-bottom: 2px solid #4CAF50;
@@ -31,23 +31,88 @@
             margin-top: 30px;
             margin-bottom: 50px; 
         }
-        #updateProfileSection {
-        background-color: #f7f7f7;
-        padding: 20px;
-        margin-top: 25px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-bottom: 10%;
-
-    }
-    #viewProfileSection {
+    
+        #viewProfileSection {
            background-color: #fafafac9;
            padding: 10px;
            margin-top: 25px;
            border-radius: 8px;
            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
            margin-bottom: -1%;
-       }
+        }
+        #updateProfileSection {
+            background-color: #f7f7f7;
+            padding: 20px;
+            margin-top: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-bottom: 10%;
+        }
+
+        #updateProfileSection h3 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #updateProfileSection label {
+            display: block;
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+
+        #updateProfileSection input[type="text"],
+        #updateProfileSection input[type="email"]{
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            box-sizing: border-box;
+        }
+
+        #updateProfileSection input[type="text"]:focus,
+        #updateProfileSection input[type="email"]:focus {
+            border-color: #007BFF;
+            outline: none;
+        }
+
+        #updateProfileSection button {
+            background-color: #007BFF;
+            color: white;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #updateProfileSection button:hover {
+            background-color: #0056b3;
+        }
+
+        #updateProfileSection .form-group {
+            margin-bottom: 15px;
+        }
+
+        #updateProfileSection .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        .update-profile .error-message {
+            color: red;
+            font-size: 14px;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -74,6 +139,7 @@
 
         <div class="content">
             <h2>Welcome Admin To Your Dashboard</h2>
+
             <!-- Update Profile Form Section -->
             <div class="update-profile" id="updateProfileSection">
                 <h3>Update Profile</h3>
@@ -84,41 +150,41 @@
                 {% endif %}
                 <form method="post" action="{% url 'admin_profile_update' %}" id="AdminProfileUpdateForm">
                     {% csrf_token %}
-                    
                     {{ form.non_field_errors }}
-                    
+
                     <label for="name">Name:</label>
                     {{ form.name }}
-    
+                    <span class="error-message" id="nameError"></span>
+
                     <label for="username">Username:</label>
                     {{ form.username }}
-    
+
                     <label for="address">Address:</label>
                     {{ form.address }}
-    
+                    <span class="error-message" id="addressError"></span>
+
                     <label for="phone">Phone:</label>
                     {{ form.phone }}
-    
+                    <span class="error-message" id="phoneError"></span>
+
                     <label for="email">Email:</label>
                     {{ form.email }}
-    
+                    <span class="error-message" id="emailError"></span>
+
                     <button type="submit">Save Changes</button>
                 </form>
-             
             </div>
 
-
-        <!-- View Profile Section -->
-        <div class="view-profile" id="viewProfileSection">
-            <h3>Profile Information</h3>
-            <p><strong>Username:</strong> {{ user.username }}</p>
-            <p><strong>Name:</strong> {{ user.name }}</p>
-            <p><strong>Email:</strong> {{ user.email }}</p>
-            <p><strong>Phone:</strong> {{ user.phone }}</p>
-            <p><strong>Address:</strong> {{ user.address }}</p>
-            <p><strong>Role:</strong> {{ user.role }}</p>
-        </div>
-
+            <!-- View Profile Section -->
+            <div class="view-profile" id="viewProfileSection">
+                <h3>Profile Information</h3>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Name:</strong> {{ user.name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Phone:</strong> {{ user.phone }}</p>
+                <p><strong>Address:</strong> {{ user.address }}</p>
+                <p><strong>Role:</strong> {{ user.role }}</p>
+            </div>
         </div>
     </div>
 
@@ -141,62 +207,89 @@
             </div>
         </div>
     </footer>
+
     <script>
-        // Toggle between profile view and update sections
-        function toggleUpdateProfile() {
-            var updateSection = document.getElementById("updateProfileSection");
-            var viewSection = document.getElementById("viewProfileSection");
-    
-            if (updateSection.style.display === "none" || updateSection.style.display === "") {
-                updateSection.style.display = "block";  // Show the update profile section
-                viewSection.style.display = "none";    // Hide the view profile section
-            } else {
-                updateSection.style.display = "none";  // Hide the update profile section
-            }
+        // Validation Functions
+        function validateName(name) {
+            const nameRegex = /^[A-Z][a-zA-Z\s]*$/;
+            return nameRegex.test(name);
         }
-    
-        function toggleViewProfile() {
-            var viewSection = document.getElementById("viewProfileSection");
-            var updateSection = document.getElementById("updateProfileSection");
-    
-            if (viewSection.style.display === "none" || viewSection.style.display === "") {
-                viewSection.style.display = "block";  // Show the view profile section
-                updateSection.style.display = "none"; // Hide the update profile section
-            } else {
-                viewSection.style.display = "none";   // Hide the view profile section
-            }
+
+        function validatePhone(phone) {
+            const phoneRegex = /^[6-9]\d{9}$/;
+            const noRepeat = /^(?!.*(\d)\1{2})/; // Prevent same digit repeated 3 times
+            return phoneRegex.test(phone) && noRepeat.test(phone);
         }
-    
-        // Show the custom success message box on form submission
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('AdminProfileUpdateForm');
-    
-            if (form) {
-                form.addEventListener('submit', function (event) {
-                    event.preventDefault();  // Prevent default form submission
-    
-                    // Remove any existing success message
-                    const existingMessage = document.querySelector('.alert-success');
-                    if (existingMessage) {
-                        existingMessage.remove();
-                    }
-    
-                    // Create and insert the success message above the form
-                    const successMessage = document.createElement('div');
-                    successMessage.textContent = 'Your changes have been saved.';
-                    successMessage.className = 'alert alert-success'; // Add Bootstrap class for styling
-                    
-                    // Insert the message before the form
-                    form.parentNode.insertBefore(successMessage, form);
-    
-                    // Delay form submission by 1 second to show the message
-                    setTimeout(function () {
-                        form.submit(); // Submit the form after delay
-                    }, 1000);
-                });
+
+        function validateAddress(address) {
+            const addressRegex = /^[a-zA-Z\s]*$/;
+            return addressRegex.test(address);
+        }
+
+        function validateEmail(email) {
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+            return emailRegex.test(email);
+        }
+
+        document.getElementById('AdminProfileUpdateForm').addEventListener('submit', function (e) {
+            // Get form values
+            const name = document.getElementById('{{ form.name.id_for_label }}').value;
+            const phone = document.getElementById('{{ form.phone.id_for_label }}').value;
+            const address = document.getElementById('{{ form.address.id_for_label }}').value;
+            const email = document.getElementById('{{ form.email.id_for_label }}').value;
+
+
+            // Clear previous errors
+            document.getElementById('nameError').innerText = '';
+            document.getElementById('phoneError').innerText = '';
+            document.getElementById('addressError').innerText = '';
+            document.getElementById('emailError').innerText = '';
+        
+
+            let isValid = true;
+
+            // Name validation
+            if (!validateName(name)) {
+                document.getElementById('nameError').innerText = 'Name must start with a capital letter and contain only letters.';
+                isValid = false;
+            }
+
+            // Phone validation
+            if (!validatePhone(phone)) {
+                document.getElementById('phoneError').innerText = 'Phone number must be valid, 10 digits, and without repeating digits.';
+                isValid = false;
+            }
+
+            // Address validation
+            if (!validateAddress(address)) {
+                document.getElementById('addressError').innerText = 'Address must contain only alphabetic characters.';
+                isValid = false;
+            }
+
+            // Email validation
+            if (!validateEmail(email)) {
+                document.getElementById('emailError').innerText = 'Email must be in the format of @gmail.com.';
+                isValid = false;
+            }
+
+           
+
+            // Prevent form submission if not valid
+            if (!isValid) {
+                e.preventDefault();
             }
         });
+
+        // Toggle sections
+        function toggleViewProfile() {
+            document.getElementById('viewProfileSection').style.display = 'block';
+            document.getElementById('updateProfileSection').style.display = 'none';
+        }
+
+        function toggleUpdateProfile() {
+            document.getElementById('viewProfileSection').style.display = 'none';
+            document.getElementById('updateProfileSection').style.display = 'block';
+        }
     </script>
-    
 </body>
 </html>

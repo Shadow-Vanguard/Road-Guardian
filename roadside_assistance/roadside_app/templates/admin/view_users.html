@@ -184,37 +184,57 @@ footer .quick-links a:hover, footer .social a:hover {
                         <th>Phone</th>
                         <th>Address</th>
                         <th>Role</th>
+                        <th>Service Type</th>
+                        <th> Certificate</th>
                         <th>Active</th>
                         <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
-                    {% if user.role == 'service_provider' %}
-                        <tr>
-                            <td>{{ user.username }}</td>
-                            <td>{{ user.name }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>{{ user.phone }}</td>
-                            <td>{{ user.address }}</td>
-                            <td>{{ user.role }}</td>
-                            <td>{{ user.is_active }}</td>
-                            <td>
-                                <form action="{% url 'toggle_active_status' user.id %}" method="post">
-                                    {% csrf_token %}
-                                    {% if user.is_active %}
-                                        <button type="submit" name="status" value="deactivate" class="btn-active">Deactivate</button>
+                        {% if user.role == 'service_provider' %}
+                            <tr>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.name }}</td>
+                                <td>{{ user.email }}</td>
+                                <td>{{ user.phone }}</td>
+                                <td>{{ user.address }}</td>
+                                <td>{{ user.role }}</td>
+                                <td>
+                                    {% if user.serviceprovider.service_type %}
+                                        {{ user.serviceprovider.service_type.servicetype_name }}
                                     {% else %}
-                                        <button type="submit" name="status" value="activate" class="btn-inactive">Activate</button>
+                                        Not a service provider
                                     {% endif %}
-                                </form>
-                            </td>
-                        </tr>
-                    {% endif %}
+                                </td>
+                                    {% if user.serviceprovider.service_type %}
+                                      {{ user.serviceprovider.service_type.servicetype_name }}
+                                    {% else %}
+                                        Not a service provider
+                                    {% endif %}
+                                <td>
+
+                                </td>
+        
+                                <td>{{ user.is_active }}</td>
+                                
+                                <td>
+                                    <form action="{% url 'toggle_active_status' user.id %}" method="post">
+                                        {% csrf_token %}
+                                        {% if user.is_active %}
+                                            <button type="submit" name="status" value="deactivate" class="btn-active">Deactivate</button>
+                                        {% else %}
+                                            <button type="submit" name="status" value="activate" class="btn-inactive">Activate</button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+        
     </div>
     <footer>
         <div class="footer-container">

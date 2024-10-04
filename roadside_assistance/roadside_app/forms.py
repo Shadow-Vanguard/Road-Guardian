@@ -63,6 +63,7 @@ from .models import CustomUser
 from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
+import re
 
 # Get the user model (custom or default)
 CustomUser = get_user_model()
@@ -78,11 +79,43 @@ class CustomUserUpdateForm(forms.ModelForm):
             'address': forms.TextInput(attrs={'placeholder': 'Enter your address'}),
             'email': forms.EmailInput(attrs={'placeholder': 'Enter your email'}),
         }
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if not re.match(r'^[A-Z][a-zA-Z\s]*$', name):
+            raise forms.ValidationError("Name must start with a capital letter and only contain alphabets.")
+        return name
+
+    def clean_phone(self):
+        phone = self.cleaned_data.get('phone')
+        if not re.match(r'^\d{10}$', phone):
+            raise forms.ValidationError("Phone number must be exactly 10 digits.")
+        if re.match(r'^(\d)\1{9}$', phone):
+            raise forms.ValidationError("Invalid phone number format (e.g., 1111111111 or 0000000000 not allowed).")
+        return phone
+
+    def clean_address(self):
+        address = self.cleaned_data.get('address')
+        if not re.match(r'^[A-Za-z\s]*$', address):
+            raise forms.ValidationError("Address must only contain alphabets.")
+        return address
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if not re.match(r'^[a-zA-Z0-9._%+-]+@gmail\.com$', email):
+            raise forms.ValidationError("Email must be a valid @gmail.com address.")
+        return email
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        if not re.match(r'^(?=.*[A-Z])(?=.*[@#$%^&+=]).{6,}$', password):
+            raise forms.ValidationError("Password must contain a capital letter, a special character, and be at least 6 characters long.")
+        return password
 
     def clean_username(self):
         username = self.cleaned_data.get('username')
-        if CustomUser.objects.exclude(pk=self.instance.pk).filter(username=username).exists():
-            raise ValidationError("This username is already taken.")
+        if len(username) < 3:
+            raise forms.ValidationError("Username must be at least 3 characters long.")
+        # Add more username validations if needed
         return username
     
     

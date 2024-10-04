@@ -4,6 +4,8 @@ from django.contrib.auth import views as auth_views
 from .views import login_view
 from . import views  # Import your views here
 from .views import reg_view, reg2_view
+from .views import service_provider_list
+
 from .views import (
     CustomPasswordResetView,
     CustomPasswordResetDoneView,
@@ -44,7 +46,7 @@ urlpatterns = [
     path('view-users/', views.view_users, name='view_users'),
     path('toggle_active_status/<int:user_id>/', views.toggle_active_status, name='toggle_active_status'),
     path('admin-profile-update/', views.admin_profile_update,name='admin_profile_update'),
-
+    path('service-providers/', views.service_provider_list, name='service_provider_list'),
  ]
 
 

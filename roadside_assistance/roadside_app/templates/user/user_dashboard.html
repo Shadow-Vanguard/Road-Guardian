@@ -64,7 +64,40 @@
                 border-radius: 8px;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                 margin-bottom: -1%;
-            }
+        }
+        .update-profile, .view-profile {
+        margin-top: 30px;
+        background-color: #f7f7f7;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .update-profile h3, .view-profile h3 {
+        color: #000000;
+        font-size: 22px;
+        margin-bottom: 15px;
+    }
+
+    .update-profile p, .view-profile p {
+        font-size: 16px;
+        color: #333;
+        margin-bottom: 10px;
+    }
+
+    .view-profile p {
+        padding: 8px;
+        background-color: #ffffff73;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+        .error-message {
+            color: red;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: block;
+        }
         
     </style>
 </head>
@@ -80,7 +113,6 @@
 
     <div class="dashboard-container">
         <div class="sidebar">
-            
             <button onclick="toggleViewProfile()">View Profile</button>
             <button onclick="toggleUpdateProfile()">Update Profile</button>
             <button>Request Assistance</button>
@@ -107,20 +139,30 @@
                 {% csrf_token %}
                 {{ form.non_field_errors }}
                 
+                <!-- Name Field -->
                 <label for="name">Name:</label>
                 {{ form.name }}
+                <span id="nameError" class="error-message"></span>
 
+                <!-- Username Field -->
                 <label for="username">Username:</label>
                 {{ form.username }}
+                <span id="usernameError" class="error-message"></span>
 
+                <!-- Address Field -->
                 <label for="address">Address:</label>
                 {{ form.address }}
+                <span id="addressError" class="error-message"></span>
 
+                <!-- Phone Field -->
                 <label for="phone">Phone:</label>
                 {{ form.phone }}
+                <span id="phoneError" class="error-message"></span>
 
+                <!-- Email Field -->
                 <label for="email">Email:</label>
                 {{ form.email }}
+                <span id="emailError" class="error-message"></span>
 
 
                 <button type="submit">Save Changes</button>
@@ -136,9 +178,6 @@
             <p><strong>Phone:</strong> {{ user.phone }}</p>
             <p><strong>Address:</strong> {{ user.address }}</p>
             <p><strong>Role:</strong> {{ user.role }}</p>
-         
-
-        
         </div>
     </div>
 
@@ -162,50 +201,99 @@
         </div>
     </footer>
 
-    <!-- JavaScript to toggle visibility of the sections -->
+    <!-- JavaScript for Form Validation -->
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('profileForm');
+            const name = document.getElementById('id_name');
+            const username = document.getElementById('id_username');
+            const address = document.getElementById('id_address');
+            const phone = document.getElementById('id_phone');
+            const email = document.getElementById('id_email');
+            
+            
+            // Error elements
+            const nameError = document.getElementById('nameError');
+            const usernameError = document.getElementById('usernameError');
+            const addressError = document.getElementById('addressError');
+            const phoneError = document.getElementById('phoneError');
+            const emailError = document.getElementById('emailError');
+        
+
+            // Name Validation (First letter capital, only alphabets, no numbers)
+            function validateName() {
+                const nameRegex = /^[A-Z][a-zA-Z\s]*$/;
+                if (!nameRegex.test(name.value)) {
+                    nameError.textContent = "Name must start with a capital letter and contain only alphabets.";
+                    return false;
+                }
+                nameError.textContent = "";
+                return true;
+            }
+
+            // Address Validation (Only alphabets, no numbers)
+            function validateAddress() {
+                const addressRegex = /^[a-zA-Z\s]*$/;
+                if (!addressRegex.test(address.value)) {
+                    addressError.textContent = "Address must contain only alphabets.";
+                    return false;
+                }
+                addressError.textContent = "";
+                return true;
+            }
+
+            // Phone Validation (10 digits, no continuous repetitions)
+            function validatePhone() {
+                const phoneRegex = /^\d{10}$/;
+                const repeatedNumbersRegex = /(.)\1{5,}/;
+                if (!phoneRegex.test(phone.value) || repeatedNumbersRegex.test(phone.value)) {
+                    phoneError.textContent = "Phone must be 10 digits and not contain continuous repeated numbers.";
+                    return false;
+                }
+                phoneError.textContent = "";
+                return true;
+            }
+
+            // Email Validation (Must contain '@gmail.com')
+            function validateEmail() {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+                if (!emailRegex.test(email.value)) {
+                    emailError.textContent = "Email must be a valid @gmail.com address.";
+                    return false;
+                }
+                emailError.textContent = "";
+                return true;
+            }
+
+            form.addEventListener('submit', function (event) {
+                let valid = true;
+                if (!validateName()) valid = false;
+                if (!validateAddress()) valid = false;
+                if (!validatePhone()) valid = false;
+                if (!validateEmail()) valid = false;
+                
+                if (!valid) {
+                    event.preventDefault(); // Prevent form submission if any field is invalid
+                }
+            });
+
+            // Real-time validation as the user types
+            name.addEventListener('input', validateName);
+            address.addEventListener('input', validateAddress);
+            phone.addEventListener('input', validatePhone);
+            email.addEventListener('input', validateEmail);
+        });
+
+        // Toggle between profile sections
         function toggleUpdateProfile() {
-            var updateSection = document.getElementById("updateProfileSection");
-            var viewSection = document.getElementById("viewProfileSection");
-            updateSection.style.display = updateSection.style.display === "none" || updateSection.style.display === "" ? "block" : "none";
-            viewSection.style.display = "none"; // Hide view profile when updating
+            document.getElementById('updateProfileSection').style.display = 'block';
+            document.getElementById('viewProfileSection').style.display = 'none';
         }
 
         function toggleViewProfile() {
-            var viewSection = document.getElementById("viewProfileSection");
-            var updateSection = document.getElementById("updateProfileSection");
-            viewSection.style.display = viewSection.style.display === "none" || viewSection.style.display === "" ? "block" : "none";
-            updateSection.style.display = "none"; // Hide update profile when viewing
+            document.getElementById('updateProfileSection').style.display = 'none';
+            document.getElementById('viewProfileSection').style.display = 'block';
         }
-
-        // Show the custom success message box on form submission
-        document.addEventListener('DOMContentLoaded', function () {
-            const form = document.getElementById('profileForm');
-        
-            // Remove any existing success message on page load
-            const existingMessage = document.querySelector('.alert-success');
-            if (existingMessage) {
-                existingMessage.remove();
-            }
-        
-            if (form) {
-                form.addEventListener('submit', function (event) {
-                    const successMessage = document.createElement('div');
-                    successMessage.textContent = 'Your changes have been saved';
-                    successMessage.className = 'alert alert-success'; // Add the class for styling
-        
-                    // Insert the message above the form
-                    form.parentNode.insertBefore(successMessage, form);
-        
-                    // Redirect after a delay
-                    setTimeout(function () {
-                        form.submit(); // Submit the form
-                    }, 1000); // 1 second delay
-                });
-            }
-        });
-        
-        
     </script>
 </body>
 </html>

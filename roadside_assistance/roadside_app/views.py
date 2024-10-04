@@ -347,6 +347,16 @@ def toggle_active_status(request, user_id):
     
     return redirect('view_users')  # Fallback if something goes wrong
 
+def service_provider_list(request):
+    # Fetch all service providers along with their related service type
+    users = CustomUser.objects.prefetch_related('serviceprovider_set__service_type').all()
+    print(users)  # Check if users are being fetched
+
+    return render(request, 'service_provider/serviceprovider_dashboard.html', {
+        'users': users,
+    })
+
+
 
 
 

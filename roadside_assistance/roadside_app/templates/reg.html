@@ -11,23 +11,26 @@
             background-image: url("{% static 'images/home3.jpg' %}");
         }
         .reg-container {
-    background-color: #fff;
-    padding: 20px;  /* Reduced padding */
-    border-radius: 10px;
-    box-shadow: 0 0 15px rgba(182, 25, 25, 0.1);
-    width: 500px;  /* Reduced width */
-    text-align: center;
-    margin: 65px 10px 50px auto;
-    box-sizing: border-box;
-    margin-top: 70px;
-    height: 49rem;  /* Reduced height */
-}
+            background-color: #fff;
+            padding: 20px;  /* Reduced padding */
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(182, 25, 25, 0.1);
+            width: 500px;  /* Reduced width */
+            text-align: center;
+            margin: 65px 10px 50px auto;
+            box-sizing: border-box;
+            margin-top: 70px;
+            height: 49rem;  /* Reduced height */
+        }
 
-
-.reg-container h2 {
-    margin-bottom: 2px;
-    color: #333;
-}
+        .reg-container h2 {
+            margin-bottom: 2px;
+            color: #333;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -50,51 +53,36 @@
             <div class="input-container">
                 <label for="name">Name:</label>
                 {{ form.name }}
-                {% if form.name.errors %}
-                    <div class="error">{{ form.name.errors }}</div>
-                {% endif %}
+                <div class="error" id="nameError"></div>
             </div>
             <div class="input-container">
                 <label for="phone">Phone:</label>
                 {{ form.phone }}
-                {% if form.phone.errors %}
-                    <div class="error">{{ form.phone.errors }}</div>
-                {% endif %}
+                <div class="error" id="phoneError"></div>
             </div>
             <div class="input-container">
                 <label for="address">Address:</label>
                 {{ form.address }}
-                {% if form.address.errors %}
-                    <div class="error">{{ form.address.errors }}</div>
-                {% endif %}
+                <div class="error" id="addressError"></div>
             </div>
             <div class="input-container">
                 <label for="email">Email:</label>
                 {{ form.email }}
-                {% if form.email.errors %}
-                    <div class="error">{{ form.email.errors }}</div>
-                {% endif %}
+                <div class="error" id="emailError"></div>
             </div>
             <div class="input-container">
                 <label for="role">Role:</label>
                 {{ form.role }}
-                {% if form.role.errors %}
-                    <div class="error">{{ form.role.errors }}</div>
-                {% endif %}
             </div>
             <div class="input-container">
                 <label for="username">Username:</label>
                 {{ form.username }}
-                {% if form.username.errors %}
-                    <div class="error">{{ form.username.errors }}</div>
-                {% endif %}
+                <div class="error" id="usernameError"></div>
             </div>
             <div class="input-container">
                 <label for="password">Password:</label>
                 {{ form.password }}
-                {% if form.password.errors %}
-                    <div class="error">{{ form.password.errors }}</div>
-                {% endif %}
+                <div class="error" id="passwordError"></div>
             </div>
             <div class="button-container">
                 <button type="submit">Register</button>
@@ -110,35 +98,136 @@
         <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
     </footer>
 
-    <!-- Modal -->
-    <div id="registrationModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <p id="modalMessage"></p>
-        </div>
-    </div>
-
     <script>
-        form.addEventListener('submit', function(event) {
-    event.preventDefault(); // Prevent default submission to show the modal first
-    
-    // Get form data
-    var name = document.getElementById('name').value;
-    var role = document.getElementById('role').value;
-    
-    // Set modal message
-    modalMessage.textContent = `Registration successful for ${name} as a ${role}.`;
-    
-    // Show the modal
-    modal.style.display = 'block';
-    
-    // Submit the form after a short delay (so the user sees the modal)
-    setTimeout(function() {
-        form.submit(); // Submit the form
-    }, 1000); // Adjust the delay as necessary
-});
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('registrationForm');
+            const nameField = document.getElementById('id_name');
+            const phoneField = document.getElementById('id_phone');
+            const addressField = document.getElementById('id_address');
+            const emailField = document.getElementById('id_email');
+            const usernameField = document.getElementById('id_username');
+            const passwordField = document.getElementById('id_password');
 
-    </script> 
+            // Function to display error message and hide it after a few seconds
+            function showError(element, message) {
+                element.textContent = message;
+                if (message !== "") {
+                    setTimeout(function() {
+                        element.textContent = "";  // Clear the error message after 4 seconds
+                    }, 4000);  // 4000 milliseconds = 4 seconds
+                }
+            }
+
+            // Validation Functions
+            function validateName() {
+                const name = nameField.value.trim();
+                const nameError = document.getElementById('nameError');
+                const nameRegex = /^[A-Z][a-zA-Z\s]*$/;
+                if (!nameRegex.test(name)) {
+                    showError(nameError, "Name must start with a capital letter and only contain alphabets.");
+                    return false;
+                } else {
+                    nameError.textContent = "";
+                    return true;
+                }
+            }
+
+            function validatePhone() {
+                const phone = phoneField.value.trim();
+                const phoneError = document.getElementById('phoneError');
+                const phoneRegex = /^\d{10}$/;
+                const repeatedNumbersRegex = /^(\d)\1{9}$/;
+
+                if (!phoneRegex.test(phone)) {
+                    showError(phoneError, "Phone number must be exactly 10 digits.");
+                    return false;
+                } else if (repeatedNumbersRegex.test(phone)) {
+                    showError(phoneError, "Invalid phone number format (e.g., 1111111111 or 0000000000 not allowed).");
+                    return false;
+                } else {
+                    phoneError.textContent = "";
+                    return true;
+                }
+            }
+
+            function validateAddress() {
+                const address = addressField.value.trim();
+                const addressError = document.getElementById('addressError');
+                const addressRegex = /^[A-Za-z\s]*$/;
+                if (!addressRegex.test(address)) {
+                    showError(addressError, "Address must only contain alphabets.");
+                    return false;
+                } else {
+                    addressError.textContent = "";
+                    return true;
+                }
+            }
+
+            function validateEmail() {
+                const email = emailField.value.trim();
+                const emailError = document.getElementById('emailError');
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+                if (!emailRegex.test(email)) {
+                    showError(emailError, "Email must be a valid @gmail.com address.");
+                    return false;
+                } else {
+                    emailError.textContent = "";
+                    return true;
+                }
+            }
+
+            function validateUsername() {
+                const username = usernameField.value.trim();
+                const usernameError = document.getElementById('usernameError');
+                if (username.length < 3) { // Example condition
+                    showError(usernameError, "Username must be at least 3 characters long.");
+                    return false;
+                } else {
+                    usernameError.textContent = "";
+                    return true;
+                }
+            }
+
+            function validatePassword() {
+                const password = passwordField.value;
+                const passwordError = document.getElementById('passwordError');
+                const passwordRegex = /^(?=.*[A-Z])(?=.*[@#$%^&+=]).{6,}$/;
+                if (!passwordRegex.test(password)) {
+                    showError(passwordError, "Password must contain a capital letter, a special character, and be at least 6 characters long.");
+                    return false;
+                } else {
+                    passwordError.textContent = "";
+                    return true;
+                }
+            }
+
+            // Event Listeners for Real-Time Validation
+            nameField.addEventListener('input', validateName);
+            phoneField.addEventListener('input', validatePhone);
+            addressField.addEventListener('input', validateAddress);
+            emailField.addEventListener('input', validateEmail);
+            usernameField.addEventListener('input', validateUsername);
+            passwordField.addEventListener('input', validatePassword);
+
+            // Final form validation before submission
+            form.addEventListener('submit', function (event) {
+                // Run all validation functions
+                const isNameValid = validateName();
+                const isPhoneValid = validatePhone();
+                const isAddressValid = validateAddress();
+                const isEmailValid = validateEmail();
+                const isUsernameValid = validateUsername();
+                const isPasswordValid = validatePassword();
+
+                // If any validation fails, prevent form submission
+                if (!isNameValid || !isPhoneValid || !isAddressValid || !isEmailValid || !isUsernameValid || !isPasswordValid) {
+                    event.preventDefault();
+                    alert("Please fix the errors before submitting.");
+                }
+            });
+        });
+    </script>
+    
 
 </body>
 </html>

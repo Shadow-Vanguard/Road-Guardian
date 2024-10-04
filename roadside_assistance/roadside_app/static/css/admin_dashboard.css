@@ -93,23 +93,78 @@ header nav a {
     color: #fff;
 }
 
-/* .content {
-    width: 71%;
-    margin-left: 25%;
-    background-color: #ffffff73;
-    padding: 25px;
+/* Update Profile Section */
+#updateProfileSection {
+    background-color: #f7f7f7;
+    padding: 20px;
+    margin-top: 25px;
     border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    margin-top: 20%;
-} 
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-.content h2 {
-    margin: 0;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #4CAF50;
+}
+
+#updateProfileSection h3 {
     font-size: 24px;
-    color: #4CAF50;
-} */
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#updateProfileSection label {
+    display: block;
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+}
+
+#updateProfileSection input[type="text"],
+#updateProfileSection input[type="email"],
+#updateProfileSection input[type="password"] {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+#updateProfileSection input[type="text"]:focus,
+#updateProfileSection input[type="email"]:focus,
+#updateProfileSection input[type="password"]:focus {
+    border-color: #007BFF;
+    outline: none;
+}
+
+#updateProfileSection button {
+    background-color: #007BFF;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#updateProfileSection button:hover {
+    background-color: #0056b3;
+}
+
+#updateProfileSection .form-group {
+    margin-bottom: 15px;
+}
+
+#updateProfileSection .form-group:last-child {
+    margin-bottom: 0;
+}
+
+.update-profile .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
 
 footer {
     background-color: #ffffff84;
