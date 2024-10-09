@@ -1,0 +1,138 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Request Assistance</title>
+    <link rel="stylesheet" href="{% static 'css/request_assistance.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Request Assistance</h1>
+        <a href="{% url 'user_dashboard' %}" class="logout">Go To Dashboard</a>
+    </header>
+
+    <div class="services-container">
+        <div class="service">
+            <img src="{% static 'images/towing-vehicle.png' %}" alt="Tow Truck">
+            <button>Tow Truck</button>
+            <p>Need your vehicle towed? We're here 24/7!</p>
+        </div>
+
+        <div class="service">
+            <img src="{% static 'images/gas-station.png' %}" alt="Petrol Bunk">
+            <button>Petrol Bunk</button>
+            <p>Out of fuel? We can deliver petrol/diesel to you.</p>
+        </div>
+
+        <div class="service">
+            <img src="{% static 'images/ambulace1.jpg' %}" alt="Ambulance">
+            <button>Ambulance Service</button>
+            <p>Emergency medical assistance on the go.</p>
+        </div>
+
+        <div class="service">
+            <img src="{% static 'images/repair-shop.png' %}" alt="Workshops">
+            <button>Workshops</button>
+            <p>Need vehicle repairs? Find the nearest workshops</p>
+            <!-- <ul>
+                <li>Battery Jump Start</li>
+                <li>Flat Tire Assistance</li>
+                <li>Lockout Service</li>
+                <li>Mechanical Breakdown Service</li>
+            </ul> -->
+        </div>
+    </div><br><br><br><br><br><br><br><br><br>
+
+    <footer>
+        <p>&copy; 2024 Roadside Assistance</p>
+    </footer>
+<!-- 
+    <div class="container mt-5">
+        <h2 class="text-center mb-4">Request Assistance</h2>
+        <p class="text-center">Select a service and view available providers in your area.</p> -->
+
+        <!-- Service Types Section -->
+        <!-- <div class="row">
+            <div class="col-md-4">
+                <h3>Service Types</h3>
+                <ul class="list-group">
+                    {% for service_type in service_types %}
+                        <li class="list-group-item">
+                            {{ service_type.servicetype_name }}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div> -->
+
+            <!-- Service Providers Section -->
+            <!-- <div class="col-md-8">
+                <h3>Available Providers</h3>
+                {% if service_providers %}
+                    <ul class="list-group">
+                        {% for provider in service_providers %}
+                            <li class="list-group-item">
+                                <strong>{{ provider.user.name }}</strong> - {{ provider.service_type.servicetype_name }}<br>
+                                <span>Service Area: {{ provider.area_of_service }}</span><br>
+                                {% if provider.availability_status %}
+                                    <span class="badge bg-success">Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Unavailable</span>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No providers available at this moment.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div> -->
+    
+    <!-- <style>
+        .container {
+            max-width: 960px;
+            margin: auto;
+        }
+        .list-group-item {
+            margin-bottom: 10px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .badge {
+            font-size: 1rem;
+        }
+        .services-container {
+            display: flex;
+            justify-content: space-around;
+            margin: 20px 0;
+        }
+        .service {
+            text-align: center;
+            width: 23%;
+        }
+        .service img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        .service button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .service button:hover {
+            background-color: #0056b3;
+        }
+    </style> -->
+    
+</body>
+</html>

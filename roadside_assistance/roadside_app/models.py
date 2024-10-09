@@ -66,22 +66,25 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 #tbl_service provider
 
 from django.db import models
-from .models import CustomUser
+from django.conf import settings
 
+# ServiceType model (Admin can add different types of services)
 class ServiceType(models.Model):
     servicetype_id = models.AutoField(primary_key=True)
     servicetype_name = models.CharField(max_length=100)
-    
 
     def __str__(self):
         return self.servicetype_name
 
+
+# ServiceProvider model (For service providers registering in the system)
 class ServiceProvider(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    service_type = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null=True)  # No need to import again
-    certificate = models.ImageField(upload_to='certificates/')
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Reference to CustomUser
+    service_type = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null=True)  # Service type can be null if removed
+    certificate = models.ImageField(upload_to='certificates/')  # Certificate upload field
     area_of_service = models.CharField(max_length=255)
     availability_status = models.BooleanField(default=True)
 
     def __str__(self):
+        # Checks if the service type is available before displaying it
         return f'{self.user.name} - {self.service_type.servicetype_name if self.service_type else "No service type"}'

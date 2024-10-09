@@ -49,9 +49,15 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.cache.UpdateCacheMiddleware',
+    'django.middleware.cache.FetchFromCacheMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
 ]
 
 ROOT_URLCONF = 'roadside_assistance.urls'
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 
 TEMPLATES = [
     {
@@ -143,4 +149,3 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'road.guardian08@gmail.com'
 EMAIL_HOST_PASSWORD = 'ebnr ihyf zflz trls'  # Fetch from environment variables
-

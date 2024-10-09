@@ -143,13 +143,56 @@ def reg2_view(request, user_id):
 def home_view(request):
     return render(request, 'home.html')
 
-def logout(request):
-    auth_logout(request)
-    request.session.flush()  
-    return redirect('login')
+from django.shortcuts import redirect
+from django.contrib.auth import logout
+from django.contrib import messages
+
+def logout_view(request):
+    logout(request)  # This deletes the session
+    messages.success(request, "You have successfully logged out.")
+    return redirect('home')  # Redirect to login page after logout
 
 
-#user
+
+#password reset
+
+from django.contrib.auth import views as auth_views
+from django.urls import reverse_lazy
+from .forms import CustomPasswordResetForm, CustomSetPasswordForm
+
+class CustomPasswordResetView(auth_views.PasswordResetView):
+    """
+    Handles the display and processing of the password reset form.
+    """
+    template_name = 'password/password_reset.html'
+    email_template_name = 'password/password_reset_email.html'
+    subject_template_name = 'password/password_reset_subject.txt'
+    success_url = reverse_lazy('password_reset_done')
+    form_class = CustomPasswordResetForm
+
+class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
+    """
+    Informs the user that an email has been sent for password reset.
+    """
+    template_name = 'password/password_reset_done.html'
+
+class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
+    """
+    Handles the setting of a new password.
+    """
+    template_name = 'password/password_reset_confirm.html'
+    success_url = reverse_lazy('password_reset_complete')
+    form_class = CustomSetPasswordForm
+
+class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
+    """
+    Informs the user that the password has been successfully reset.
+    """
+    template_name = 'password/password_reset_complete.html'
+
+
+
+# User View
 
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -214,43 +257,33 @@ def view_profile(request):
     }
     return render(request, 'view_profile.html', context)
 
+from django.shortcuts import render
+from .models import ServiceType, ServiceProvider
 
-#password reset
+# Request_Assistance
 
-from django.contrib.auth import views as auth_views
-from django.urls import reverse_lazy
-from .forms import CustomPasswordResetForm, CustomSetPasswordForm
+from django.shortcuts import render
+from .models import ServiceType, ServiceProvider
 
-class CustomPasswordResetView(auth_views.PasswordResetView):
-    """
-    Handles the display and processing of the password reset form.
-    """
-    template_name = 'password/password_reset.html'
-    email_template_name = 'password/password_reset_email.html'
-    subject_template_name = 'password/password_reset_subject.txt'
-    success_url = reverse_lazy('password_reset_done')
-    form_class = CustomPasswordResetForm
+def request_assistance(request):
+    # Fetch all service types
+    service_types = ServiceType.objects.all()
 
-class CustomPasswordResetDoneView(auth_views.PasswordResetDoneView):
-    """
-    Informs the user that an email has been sent for password reset.
-    """
-    template_name = 'password/password_reset_done.html'
+    # Fetch all service providers
+    service_providers = ServiceProvider.objects.select_related('user', 'service_type').all()
 
-class CustomPasswordResetConfirmView(auth_views.PasswordResetConfirmView):
-    """
-    Handles the setting of a new password.
-    """
-    template_name = 'password/password_reset_confirm.html'
-    success_url = reverse_lazy('password_reset_complete')
-    form_class = CustomSetPasswordForm
+    context = {
+        'service_types': service_types,
+        'service_providers': service_providers,
+    }
+    return render(request, 'user/request_assistance.html', context)
 
-class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
-    """
-    Informs the user that the password has been successfully reset.
-    """
-    template_name = 'password/password_reset_complete.html'
 
+from django.shortcuts import render
+
+def request_assistance_view(request):
+    # Add any necessary context data here
+    return render(request, 'request_assistance.html')
 
 #Admin
 

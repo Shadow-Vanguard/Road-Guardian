@@ -17,7 +17,7 @@ urlpatterns = [
     
     path('', views.home_view, name='home'),
     path('login/', views.login_view, name='login'),
-    path('logout/', views.logout, name='logout'),
+    path('logout/', views.logout_view, name='logout'),
     path('register/', views.reg_view, name='register'),
 
     path('register/', reg_view, name='register'),
@@ -27,6 +27,8 @@ urlpatterns = [
     # User Dashboard URL
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'), 
     path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
+    path('request-assistance/', views.request_assistance, name='request_assistance'),
+
     
 
     #serviceprovider Dashboard URL

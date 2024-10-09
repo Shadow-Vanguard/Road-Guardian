@@ -40,6 +40,27 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-top:-30.5%;
        }
+       .sidebar a {
+                display: block;
+                text-align: center;
+                width: 93%;
+                padding: 12px;
+                margin-bottom: 15px;
+                font-size: 18px;
+                border-radius: 6px;
+                color: #4CAF50;
+                font-weight: bold;
+                background-color: #fff;
+                border: 1px solid #4CAF50;
+                text-decoration: none;
+                transition: background-color 0.3s, color 0.3s;
+            }
+
+            .sidebar a:hover {
+                background-color: #4CAF50;
+                color: #fff;
+            }
+
 
         .content h2 {
             margin: 0;
@@ -66,38 +87,38 @@
                 margin-bottom: -1%;
         }
         .update-profile, .view-profile {
-        margin-top: 30px;
-        background-color: #f7f7f7;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    }
-
-    .update-profile h3, .view-profile h3 {
-        color: #000000;
-        font-size: 22px;
-        margin-bottom: 15px;
-    }
-
-    .update-profile p, .view-profile p {
-        font-size: 16px;
-        color: #333;
-        margin-bottom: 10px;
-    }
-
-    .view-profile p {
-        padding: 8px;
-        background-color: #ffffff73;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-
-        .error-message {
-            color: red;
-            font-size: 0.9em;
-            margin-top: 5px;
-            display: block;
+            margin-top: 30px;
+            background-color: #f7f7f7;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
+            .update-profile h3, .view-profile h3 {
+                color: #000000;
+                font-size: 22px;
+                margin-bottom: 15px;
+            }
+
+            .update-profile p, .view-profile p {
+                font-size: 16px;
+                color: #333;
+                margin-bottom: 10px;
+            }
+
+            .view-profile p {
+                padding: 8px;
+                background-color: #ffffff73;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+            }
+
+            .error-message {
+                    color: red;
+                    font-size: 0.9em;
+                    margin-top: 5px;
+                    display: block;
+                }
         
     </style>
 </head>
@@ -107,7 +128,7 @@
         <nav>
             <a href="#"><i class="fa fa-search"></i></a>
             <a href="#"><i class="fa fa-bars"></i></a>
-            <a href="{% url 'home' %}" class="logout">Log Out</a>
+            <a href="{% url 'logout' %}" class="logout">Log Out</a>
         </nav>
     </header>
 
@@ -115,7 +136,7 @@
         <div class="sidebar">
             <button onclick="toggleViewProfile()">View Profile</button>
             <button onclick="toggleUpdateProfile()">Update Profile</button>
-            <button>Request Assistance</button>
+            <a href="{% url 'request_assistance' %}">Request Assistance</a>
             <button>Order Items</button>
             <button>View Service History</button>
             <button>View/Remove Items from Payment History</button>
@@ -125,7 +146,7 @@
     </div>
 
     <div class="content">
-        <h2>Welcome {{ user.name }} To Your Dashboard</h2>
+        <h2>Welcome {{ user.name }} To Your Dashboard</h2>  
 
         <!-- Update Profile Form Section -->
         <div class="update-profile" id="updateProfileSection">
