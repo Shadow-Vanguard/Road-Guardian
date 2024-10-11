@@ -190,6 +190,7 @@ class CustomPasswordResetCompleteView(auth_views.PasswordResetCompleteView):
     """
     template_name = 'password/password_reset_complete.html'
 
+########################################################################################################
 
 
 # User View
@@ -216,7 +217,7 @@ def user_dashboard(request):
         if form.is_valid():
             form.save()  # Save the updated user information
             messages.success(request, 'Your changes have been saved.')
-            return redirect('user_dashboard')  # Redirect to display the success message
+            # return redirect('user_dashboard') # Redirect to display the success message
         else:
             messages.error(request, 'Please correct the errors below.')
     else:
@@ -284,6 +285,86 @@ from django.shortcuts import render
 def request_assistance_view(request):
     # Add any necessary context data here
     return render(request, 'request_assistance.html')
+
+# request_towtruck
+from django.shortcuts import render
+from .models import ServiceProvider, ServiceType
+
+def tow_truck_request(request):
+    try:
+        # Fetch the service type for 'Towing Service'
+        towing_service_type = ServiceType.objects.get(servicetype_name='Towing Service')
+    except ServiceType.DoesNotExist:
+        towing_service_type = None
+
+    # Fetch only the service providers who offer 'Towing Service'
+    service_providers = ServiceProvider.objects.filter(service_type=towing_service_type) if towing_service_type else []
+
+    context = {
+        'service_providers': service_providers,  # Pass only the towing service providers to the template
+    }
+    return render(request, 'user/towtruck_request.html', context)
+
+
+
+# request_petrolbunk
+def petrol_bunk_request(request):
+    try:
+        # Fetch the service type for 'Towing Service'
+        towing_service_type = ServiceType.objects.get(servicetype_name='Petrol Bunk')
+    except ServiceType.DoesNotExist:
+        towing_service_type = None
+
+    # Fetch only the service providers who offer 'Towing Service'
+    service_providers = ServiceProvider.objects.filter(service_type=towing_service_type) if towing_service_type else []
+
+    context = {
+        'service_providers': service_providers,  # Pass only the towing service providers to the template
+    }
+    return render(request, 'user/petrolbunk_request.html', context)
+
+#request_ambulance
+def ambulance_request(request):
+    try:
+        # Fetch the service type for 'Towing Service'
+        towing_service_type = ServiceType.objects.get(servicetype_name='Ambulance Service')
+    except ServiceType.DoesNotExist:
+        towing_service_type = None
+
+    # Fetch only the service providers who offer 'Towing Service'
+    service_providers = ServiceProvider.objects.filter(service_type=towing_service_type) if towing_service_type else []
+
+    context = {
+        'service_providers': service_providers,  # Pass only the towing service providers to the template
+    }
+    return render(request, 'user/ambulance_request.html', context)
+
+
+#request_workshop
+from django.shortcuts import render
+from .models import ServiceType, ServiceProvider
+
+def workshop_request(request):
+    # Fetch the service type for 'Workshop Service' (case-insensitive)
+    workshop_service_type = ServiceType.objects.filter(servicetype_name__iexact='Workshop Service').first()
+    
+    if workshop_service_type:
+        # Fetch only the service providers who offer 'Workshop Service'
+        service_providers = ServiceProvider.objects.filter(service_type=workshop_service_type)
+    else:
+        service_providers = []
+
+    # Log for debugging
+    print("Service Type:", workshop_service_type)
+    print("Service Providers:", service_providers)
+
+    context = {
+        'service_providers': service_providers,
+    }
+    return render(request, 'user/workshop_request.html', context)
+
+
+########################################################################################################
 
 #Admin
 
@@ -390,6 +471,7 @@ def service_provider_list(request):
     })
 
 
+########################################################################################################
 
 
 

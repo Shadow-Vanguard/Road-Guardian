@@ -17,25 +17,25 @@
     <div class="services-container">
         <div class="service">
             <img src="{% static 'images/towing-vehicle.png' %}" alt="Tow Truck">
-            <button>Tow Truck</button>
+            <a href="{% url 'towtruck_request' %}"><button>Tow Truck</button></a>
             <p>Need your vehicle towed? We're here 24/7!</p>
         </div>
 
         <div class="service">
             <img src="{% static 'images/gas-station.png' %}" alt="Petrol Bunk">
-            <button>Petrol Bunk</button>
+            <a href="{% url 'petrolbunk_request' %}"><button>Petrol Bunk</button></a>
             <p>Out of fuel? We can deliver petrol/diesel to you.</p>
         </div>
 
         <div class="service">
             <img src="{% static 'images/ambulace1.jpg' %}" alt="Ambulance">
-            <button>Ambulance Service</button>
+            <a href="{% url 'ambulance_request' %}"><button>Ambulance Service</button></a>
             <p>Emergency medical assistance on the go.</p>
         </div>
 
         <div class="service">
             <img src="{% static 'images/repair-shop.png' %}" alt="Workshops">
-            <button>Workshops</button>
+            <a href="{% url 'workshop_request' %}"><button>Workshops</button></a>
             <p>Need vehicle repairs? Find the nearest workshops</p>
             <!-- <ul>
                 <li>Battery Jump Start</li>

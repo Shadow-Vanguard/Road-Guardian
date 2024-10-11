@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tow Truck Request</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        header {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .list-group-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            background-color: #fff;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        .bg-success {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .bg-danger {
+            background-color: #f44336;
+            color: white;
+        }
+        .logout {
+        padding: 9px;
+        margin-bottom: 10px;
+        margin-top: 15px;
+        font-size: 18px;
+        border-radius: 6px;
+        text-decoration: none;
+        color: #4CAF50;
+        font-weight: bold;
+        background-color: #fff;
+        border: 1px solid #0e40c7;
+        transition: background-color 0.3s;
+        text-align: center;
+    }
+
+    .logout:hover {
+        background-color: #ea0606;
+        color: #fff;
+    }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Tow Truck Service Providers</h1>
+        <h1>Request Assistance</h1>
+        <a href="{% url 'request_assistance' %}" class="logout">Go To Request Page</a>
+    </header>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Status</th>
+                <th>Book</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for provider in service_providers %}
+            <tr>
+                <td>{{ provider.user.name }}</td>
+                <td>{{ provider.user.phone }}</td>
+                <td>{{ provider.area_of_service }}</td>
+                <td>
+                    {% if provider.availability_status %}
+                        <span class="badge bg-success">Available</span>
+                    {% else %}
+                        <span class="badge bg-danger">Unavailable</span>
+                    {% endif %}
+                </td>
+                <td><button>Click here to book</button></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" style="text-align: center;">No service providers available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        
+    </table>
+
+</body>
+</html>

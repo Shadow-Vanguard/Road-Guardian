@@ -119,7 +119,64 @@
                     margin-top: 5px;
                     display: block;
                 }
-        
+            footer {
+                background-color: #ffffff84;
+                color: rgb(0, 0, 0);
+                text-align: center;
+                padding: 10px 0;
+                position: absolute;
+                bottom: 0; /* Ensure it stays at the bottom */
+                width: 100%;
+    }
+
+    footer .footer-container {
+        display: flex;
+        justify-content: space-around;
+        padding-bottom: 80px;
+        margin-top: px; /* Adjust margin as needed */
+    }
+
+    footer .quick-links, footer .social {
+        text-align: left;
+    }
+
+    footer .quick-links h4, footer .social h4 {
+        margin-bottom: 15px;
+        color: rgb(0, 0, 0);
+    }
+
+    footer .quick-links a, footer .social a {
+        color: rgb(0,0,0);
+        display: block;
+        text-decoration: none;
+        margin-bottom: 2px;
+        font-size: 16px;
+        transition: color 0.3s ease;
+    }
+
+    footer .quick-links a:hover, footer .social a:hover {
+        color: #ffffff;
+        text-decoration: underline;
+    }
+
+    .tooltip {
+            display: none;
+            position: absolute;
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Make sure the tooltip is on top */
+        }
+
+        /* Position the tooltip above the email label */
+        #emailLabel {
+            position: relative;
+    }
+
     </style>
 </head>
 <body>
@@ -152,9 +209,9 @@
         <div class="update-profile" id="updateProfileSection">
             <h3>Update Profile</h3>
             {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success">{{ message }}</div>
-                {% endfor %}
+               {% for message in messages %}
+                   <div class="alert alert-success" id="successMessage">{{ message }}</div>
+               {% endfor %}
             {% endif %}
             <form method="post" action="{% url 'user_update_profile' %}" id="profileForm">
                 {% csrf_token %}
@@ -181,10 +238,10 @@
                 <span id="phoneError" class="error-message"></span>
 
                 <!-- Email Field -->
-                <label for="email">Email:</label>
-                {{ form.email }}
+                <label for="email" id="emailLabel">Email:</label>
+                <input type="email" name="email" value="{{ form.email.value }}" readonly>
+                <span id="emailTooltip" class="tooltip">Can't change email due to security reasons</span>
                 <span id="emailError" class="error-message"></span>
-
 
                 <button type="submit">Save Changes</button>
             </form>
@@ -224,6 +281,35 @@
 
     <!-- JavaScript for Form Validation -->
     <script>
+         // Function to hide success message after a few seconds
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessage = document.getElementById('successMessage');
+            if (successMessage) {
+                setTimeout(function () {
+                    successMessage.classList.add('fade-out');
+                }, 3000); // Adjust the timeout (3000ms = 3 seconds)
+                
+                // Completely remove the message from the DOM after the fade-out
+                setTimeout(function () {
+                    successMessage.style.display = 'none';
+                }, 3500); // Slightly longer to match the fade-out duration
+            }
+        });
+         // JavaScript to handle hover functionality for the email label
+        const emailLabel = document.getElementById('emailLabel');
+        const emailTooltip = document.getElementById('emailTooltip');
+
+        // Show tooltip when mouse enters email label
+        emailLabel.addEventListener('mouseover', function () {
+            emailTooltip.style.display = 'block';
+            emailTooltip.style.left = emailLabel.getBoundingClientRect().left + 'px';
+            emailTooltip.style.top = (emailLabel.getBoundingClientRect().top - emailTooltip.offsetHeight - 5) + 'px'; // Position above the label
+        });
+
+        // Hide tooltip when mouse leaves email label
+        emailLabel.addEventListener('mouseout', function () {
+            emailTooltip.style.display = 'none';
+        });
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('profileForm');
             const name = document.getElementById('id_name');

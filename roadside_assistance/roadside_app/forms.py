@@ -77,7 +77,7 @@ class CustomUserUpdateForm(forms.ModelForm):
             'name': forms.TextInput(attrs={'placeholder': 'Enter your full name'}),
             'phone': forms.TextInput(attrs={'placeholder': 'Enter your phone number'}),
             'address': forms.TextInput(attrs={'placeholder': 'Enter your address'}),
-            'email': forms.EmailInput(attrs={'placeholder': 'Enter your email'}),
+            'email': forms.EmailInput(attrs={'readonly': 'readonly'}),
         }
     def clean_name(self):
         name = self.cleaned_data.get('name')

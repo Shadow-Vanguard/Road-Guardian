@@ -207,14 +207,15 @@ footer .quick-links a:hover, footer .social a:hover {
                                         Not a service provider
                                     {% endif %}
                                 </td>
+                                <td>
                                     {% if user.serviceprovider.service_type %}
                                       {{ user.serviceprovider.service_type.servicetype_name }}
                                     {% else %}
                                         Not a service provider
                                     {% endif %}
-                                <td>
-
                                 </td>
+
+    
         
                                 <td>{{ user.is_active }}</td>
                                 

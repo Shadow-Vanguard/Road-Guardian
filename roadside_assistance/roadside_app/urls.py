@@ -28,8 +28,11 @@ urlpatterns = [
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'), 
     path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
     path('request-assistance/', views.request_assistance, name='request_assistance'),
-
-    
+    #request
+    path('towtruck-request/', views.tow_truck_request, name='towtruck_request'),
+    path('petrolbunk-request/', views.petrol_bunk_request, name='petrolbunk_request'),
+    path('ambulance-request/', views.ambulance_request, name='ambulance_request'),
+    path('workshop-request/', views.workshop_request, name='workshop_request'),
 
     #serviceprovider Dashboard URL
     path('serviceprovider_dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
