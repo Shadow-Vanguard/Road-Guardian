@@ -85,7 +85,7 @@ body {
     min-height: calc(100vh - 60px); /* Adjust for navbar height */
     margin-top: 80px; /* Space for navbar */
     text-align: center;
-    color: #1eecbcb0;
+    color: #000000c4;
 }
 
 .button-container a.button {

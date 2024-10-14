@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'roadside_app.cache_control.CacheControlMiddleware',
     
 ]
 
@@ -150,3 +151,6 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'road.guardian08@gmail.com'
 EMAIL_HOST_PASSWORD = 'ebnr ihyf zflz trls'  # Fetch from environment variables
+
+
+LOGOUT_REDIRECT_URL = '/'

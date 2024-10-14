@@ -47,12 +47,11 @@ def is_user_active(username):
     except User.DoesNotExist:
         return False  # User does not exist
 
-
-from django.contrib.auth import authenticate, login as auth_login
-from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from django.contrib import messages
-from .forms import LoginForm
-from .models import CustomUser  # Assuming you have a CustomUser model
+from django.shortcuts import redirect, render
+from django.http import HttpResponseRedirect
+from django.utils.cache import add_never_cache_headers
 
 def login_view(request):
     if request.method == 'POST':
@@ -69,33 +68,44 @@ def login_view(request):
                     messages.error(request, "Your account has been deactivated. Please contact admin.")
                     return render(request, 'login.html', {'form': form})  # Return the form with the message
                 else:
-                    # Log the user in
+                    # Log the user in and create session
                     auth_login(request, user)
-                    
+                    request.session['user_id'] = user.id  # Store the user ID in session
+
                     # Redirect based on the user role
-                    if user.is_superuser:  # Admin user
+                    if user.is_superuser:
                         return redirect('admin_dashboard')
-                    elif user.role == 'user':  # Regular user
+                    elif user.role == 'user':
                         return redirect('user_dashboard')
-                    elif user.role == 'service_provider':  # Service provider
+                    elif user.role == 'service_provider':
                         return redirect('service_provider_dashboard')
                     else:
                         return redirect('home')  # Default redirection
             else:
-                # If authentication failed, show an appropriate message
+                # Authentication failed, show appropriate message
                 try:
-                    user = CustomUser.objects.get(username=username)  # Change according to your user model
-                    if not user.is_active:  # Check if the user is inactive
+                    user = CustomUser.objects.get(username=username)
+                    if not user.is_active:
                         messages.error(request, "Your account has been deactivated. Please contact support.")
                     else:
                         messages.error(request, 'Invalid username or password.')
                 except CustomUser.DoesNotExist:
                     messages.error(request, 'Invalid username or password.')
-
     else:
         form = LoginForm()
 
     return render(request, 'login.html', {'form': form})
+
+from django.contrib.auth import logout as auth_logout
+from django.http import HttpResponseRedirect
+
+def logout_view(request):
+    # Log the user out and clear session
+    auth_logout(request)
+    request.session.flush()  # Clear all session data
+    
+    # Redirect to the login page or home page
+    return HttpResponseRedirect('/')
 
 #Registration
 from django.shortcuts import render, redirect, get_object_or_404
@@ -206,6 +216,13 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CustomUserUpdateForm
 from django.contrib.auth.decorators import login_required
+
+
+from django.contrib.auth.decorators import login_required
+
+@login_required(login_url='/login/')  # Redirect to login if not authenticated
+def user_dashboard(request):
+    return render(request, 'user_dashboard.html')
 
 # View Profile
 @login_required

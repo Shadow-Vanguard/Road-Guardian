@@ -185,9 +185,14 @@
         <nav>
             <a href="#"><i class="fa fa-search"></i></a>
             <a href="#"><i class="fa fa-bars"></i></a>
-            <a href="{% url 'logout' %}" class="logout">Log Out</a>
+            <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="logout">Log Out</button>
+            </form>
         </nav>
     </header>
+    
+    
 
     <div class="dashboard-container">
         <div class="sidebar">
@@ -402,5 +407,12 @@
             document.getElementById('viewProfileSection').style.display = 'block';
         }
     </script>
+    <script>
+        window.history.pushState(null, "", window.location.href); 
+        window.onpopstate = function() {
+            window.history.pushState(null, "", window.location.href);
+        };
+    </script>
+    
 </body>
 </html>
