@@ -78,11 +78,15 @@ class ServiceType(models.Model):
 
 
 # ServiceProvider model (For service providers registering in the system)
+from django.conf import settings
+from django.db import models
+
 class ServiceProvider(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Reference to CustomUser
     service_type = models.ForeignKey(ServiceType, on_delete=models.SET_NULL, null=True)  # Service type can be null if removed
     certificate = models.ImageField(upload_to='certificates/')  # Certificate upload field
-    area_of_service = models.CharField(max_length=255)
+    area_of_service = models.CharField(max_length=255)  # Area of service as text
+    location = models.TextField(default='')   # Field to store location details as text
     availability_status = models.BooleanField(default=True)
 
     def __str__(self):

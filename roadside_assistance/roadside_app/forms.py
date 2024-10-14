@@ -95,8 +95,9 @@ class CustomUserUpdateForm(forms.ModelForm):
 
     def clean_address(self):
         address = self.cleaned_data.get('address')
-        if not re.match(r'^[A-Za-z\s]*$', address):
-            raise forms.ValidationError("Address must only contain alphabets.")
+        # Updated regex to allow specific special characters
+        if not re.match(r'^[A-Za-z\s.,()]*$', address):
+            raise forms.ValidationError("Address must only contain alphabets, periods (.), commas (,), and parentheses (()).")
         return address
 
     def clean_email(self):
@@ -118,7 +119,21 @@ class CustomUserUpdateForm(forms.ModelForm):
         # Add more username validations if needed
         return username
     
-    
+from .models import ServiceProvider 
+class ServiceProviderLocationUpdateForm(forms.ModelForm):
+    class Meta:
+        model = ServiceProvider
+        fields = ['location']
+        widgets = {
+            'location': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your location here...'}),
+        }
+
+        def clean_location(self):
+            location = self.cleaned_data.get('location')
+            # Add any specific validation for location if needed
+            return location
+
+
 #forgot password
 
 from django import forms
@@ -156,11 +171,12 @@ from .models import ServiceProvider, ServiceType
 class ServiceProviderForm(forms.ModelForm):
     class Meta:
         model = ServiceProvider
-        fields = ['service_type', 'certificate', 'area_of_service', 'availability_status']
+        fields = ['service_type', 'certificate', 'area_of_service', 'location', 'availability_status']
         widgets = {
             'service_type': forms.Select(attrs={'class': 'form-control'}),
             'certificate': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'area_of_service': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter service area'}),
+            'area_of_service': forms.Select(attrs={'class': 'form-control'}),  # Use a dropdown for districts
+            'location': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your location here...'}),
             'availability_status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
@@ -168,4 +184,3 @@ class ServiceProviderForm(forms.ModelForm):
         super(ServiceProviderForm, self).__init__(*args, **kwargs)
         # Ensure the queryset is correctly set when the form is initialized
         self.fields['service_type'].queryset = ServiceType.objects.all()
-

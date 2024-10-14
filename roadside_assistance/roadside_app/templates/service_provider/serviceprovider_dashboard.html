@@ -100,6 +100,29 @@
         color: #ffffff;
         text-decoration: underline;
     }
+    .scrollable-container {
+        max-height: 400px; /* Set the max height you want */
+        overflow-y: auto; /* Enable vertical scrolling */
+        margin-top: 25px; /* Optional: Space between the sidebar and the form */
+    }
+    .tooltip {
+            display: none;
+            position: absolute;
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Make sure the tooltip is on top */
+        }
+
+        /* Position the tooltip above the email label */
+        #emailLabel {
+            position: relative;
+    }
+
 
     </style>
 </head>
@@ -127,41 +150,43 @@
             <h2>Welcome {{ user.name }} To Your Dashboard</h2>
             
             <!-- Update Profile Form Section -->
-            <div class="update-profile" id="updateProfileSection">
-                <h3>Update Profile</h3>
-                {% if messages %}
-                    {% for message in messages %}
-                        <div class="alert alert-success">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-                <form method="post" action="{% url 'update_profile_service_provider' %}" id="profileForm">
-                    {% csrf_token %}
-                    {{ form.non_field_errors }}
-                    
-                    <label for="name">Name:</label>
-                    {{ form.name }}
-                    <span id="nameError" class="error-message"></span>
-                    
-                    <label for="username">Username:</label>
-                    {{ form.username }}
-                    
-                    <label for="address">Address:</label>
-                    {{ form.address }}
-                    <span id="addressError" class="error-message"></span>
-                    
-                    <label for="phone">Phone:</label>
-                    {{ form.phone }}
-                    <span id="phoneError" class="error-message"></span>
-                    
-                    <label for="email">Email:</label>
-                    {{ form.email }}
-                    <span id="emailError" class="error-message"></span>
-                    
-                    
-                    <button type="submit">Save Changes</button>
-                </form>
-            </div>
+            <div class="scrollable-container">
+                <div class="update-profile" id="updateProfileSection">
+                    <h3>Update Profile</h3>
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-success">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    <form method="post" action="{% url 'update_profile_service_provider' %}" id="profileForm">
+                        {% csrf_token %}
+                        {{ form.non_field_errors }}
 
+                        <label for="name">Name:</label>
+                        {{ form.name }}
+                        <span id="nameError" class="error-message"></span>
+
+                        <label for="username">Username:</label>
+                        {{ form.username }}
+
+                        <label for="address">Address:</label>
+                        {{ form.address }}
+                        <span id="addressError" class="error-message"></span>
+
+                        <label for="phone">Phone:</label>
+                        {{ form.phone }}
+                        <span id="phoneError" class="error-message"></span>
+
+                        <label for="email" id="emailLabel">Email:</label>
+                        <input type="email" name="email" value="{{ form.email.value }}" readonly>
+                        <span id="emailTooltip" class="tooltip">Can't change email due to security reasons</span>
+                        <span id="emailError" class="error-message"></span>
+                                
+                        <button type="submit">Save Changes</button>
+                    </form>
+                </div>
+            </div>
+            
             <!-- View Profile Section -->
             <div class="view-profile" id="viewProfileSection">
                 <h3>Profile Information</h3>
@@ -177,6 +202,13 @@
                 {% else %}
                 <p><strong>Service Type:</strong> Not a service provider</p>
                 {% endif %}
+
+                <p><strong>Area Of Service:</strong> {{ service_provider.area_of_service }}</p>
+                <p><strong>Location:</strong> {{ service_provider.location }}</p>
+
+
+
+
             </div>
         </div>
     </div>
@@ -213,8 +245,23 @@
             const addressError = document.getElementById('addressError');
             const phoneError = document.getElementById('phoneError');
             const emailError = document.getElementById('emailError');
-            
 
+        // JavaScript to handle hover functionality for the email label
+        const emailLabel = document.getElementById('emailLabel');
+        const emailTooltip = document.getElementById('emailTooltip');
+
+        // Show tooltip when mouse enters email label
+        emailLabel.addEventListener('mouseover', function () {
+            emailTooltip.style.display = 'block';
+            emailTooltip.style.left = emailLabel.getBoundingClientRect().left + 'px';
+            emailTooltip.style.top = (emailLabel.getBoundingClientRect().top - emailTooltip.offsetHeight - 5) + 'px'; // Position above the label
+        });
+
+        // Hide tooltip when mouse leaves email label
+        emailLabel.addEventListener('mouseout', function () {
+            emailTooltip.style.display = 'none';
+        });
+            
            // Name Validation
             function validateName() {
                 const nameValue = name.value;
@@ -230,14 +277,18 @@
             // Address Validation (Alphabets only)
             function validateAddress() {
                 const addressValue = address.value;
-                const addressRegex = /^[a-zA-Z\s]*$/;
+                // Updated regex to allow alphabets, spaces, periods, commas, and parentheses
+                const addressRegex = /^[a-zA-Z\s.,()]*$/;
+                
                 if (!addressRegex.test(addressValue)) {
-                    addressError.textContent = "Address must contain only alphabetic characters.";
+                    addressError.textContent = "Address must contain only alphabets, periods (.), commas (,), and parentheses (()).";
                     return false;
                 }
+                
                 addressError.textContent = "";
                 return true;
             }
+
 
             // Phone Validation (Exactly 10 digits, no repetition)
             function validatePhone() {
@@ -299,6 +350,12 @@
             viewProfileSection.style.display = 'none';
             updateProfileSection.style.display = updateProfileSection.style.display === 'none' ? 'block' : 'none';
         }
+    </script>
+    <script>
+        window.history.pushState(null, "", window.location.href); 
+        window.onpopstate = function() {
+            window.history.pushState(null, "", window.location.href);
+        };
     </script>
 </body>
 </html>
