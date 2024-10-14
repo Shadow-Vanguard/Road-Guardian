@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tow Truck Request</title>
+    <title>WorkShop Request</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -125,7 +125,7 @@
 </head>
 <body>
     <header>
-        <h1>Tow Truck Service Providers</h1>
+        <h1>WorkShop Service Providers</h1>
         <h1>Request Assistance</h1>
         <a href="{% url 'request_assistance' %}" class="logout">Go To Request Page</a>
     </header>
@@ -155,13 +155,8 @@
                 </td>
                 <td><button>Click here to book</button></td>
             </tr>
-            {% empty %}
-            <tr>
-                <td colspan="5" style="text-align: center;">No service providers available.</td>
-            </tr>
             {% endfor %}
         </tbody>
-        
     </table>
 
 </body>

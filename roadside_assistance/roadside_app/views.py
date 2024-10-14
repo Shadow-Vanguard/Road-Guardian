@@ -66,7 +66,7 @@ def login_view(request):
 
             if user is not None:
                 if not user.is_active:  # Check if the user is active
-                    messages.error(request, "Your account has been deactivated.Please contact admin")
+                    messages.error(request, "Your account has been deactivated. Please contact admin.")
                     return render(request, 'login.html', {'form': form})  # Return the form with the message
                 else:
                     # Log the user in
@@ -82,7 +82,7 @@ def login_view(request):
                     else:
                         return redirect('home')  # Default redirection
             else:
-                # If authentication failed, check if the user exists
+                # If authentication failed, show an appropriate message
                 try:
                     user = CustomUser.objects.get(username=username)  # Change according to your user model
                     if not user.is_active:  # Check if the user is inactive

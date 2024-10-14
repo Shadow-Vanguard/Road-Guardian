@@ -14,6 +14,43 @@
             color: red;
             margin-top: 10px;
         }
+        /* Error message styling */
+        .error-message {
+            color: #ff4d4d;              /* Error text in a bright red color */
+            background-color: #ffe6e6;    /* Light red background for visibility */
+            padding: 10px;                /* Padding around the error message */
+            border: 1px solid #ff0000;    /* Solid red border to highlight the error */
+            border-radius: 5px;           /* Slight rounding of the corners */
+            font-weight: bold;            /* Bold font to emphasize the error */
+            margin-bottom: 10px;          /* Margin at the bottom to separate it from other elements */
+            opacity: 1;                   /* Set initial opacity for visibility */
+            transition: opacity 0.5s ease-in-out; /* Smooth fade effect on hiding */
+        }
+
+        /* Messages block for Django messaging framework */
+        .messages {
+            list-style-type: none;        /* Remove bullet points from the list */
+            padding: 0;                   /* Remove padding from the list */
+        }
+
+        .messages li {
+            color: #ff4d4d;               /* Red text for the error message */
+            background-color: #ffe6e6;     /* Light red background */
+            padding: 10px;                /* Add padding inside the list item */
+            border: 1px solid #ff0000;     /* Red border for each list item */
+            border-radius: 5px;           /* Rounded corners */
+            font-weight: bold;            /* Bold font for emphasis */
+            margin-bottom: 10px;          /* Space between messages */
+            opacity: 1;                   /* Set initial opacity */
+            transition: opacity 0.5s ease-in-out; /* Smooth fade effect on hiding */
+        }
+
+        /* Class to hide the error message */
+        .hidden {
+            opacity: 0;                   /* Reduce opacity to 0 for fade-out effect */
+            transition: opacity 0.5s ease-in-out; /* Smooth transition */
+        }
+
     </style>
 </head>
 <body>
@@ -30,6 +67,16 @@
 
     <div class="login-container">
         <h2>Login</h2>
+        
+        <!-- Display any form-wide error messages -->
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    
         <form method="post" id="loginForm">
             {% csrf_token %}
             <div class="input-container">
@@ -39,6 +86,7 @@
                     <div class="error-message">{{ form.username.errors }}</div>
                 {% endif %}
             </div>
+            
             <div class="input-container">
                 <label for="id_password">Password:</label>
                 {{ form.password }}
@@ -46,22 +94,42 @@
                     <div class="error-message">{{ form.password.errors }}</div>
                 {% endif %}
             </div>
-            <!-- Display non-field errors (like deactivation message) -->
+    
+            <!-- Handle non-field errors such as account deactivation -->
             {% if form.non_field_errors %}
                 <div class="error-message">{{ form.non_field_errors }}</div>
             {% endif %}
             
-            <label for="name">Not Registered Yet?</label>
-            <a href="{% url 'register' %}" class="button">Create An Account</a>
             <div class="forgot-password">
                 <a href="{% url 'password_reset' %}">Forgot Password?</a>
             </div>
+            
             <div class="button-container">
                 <button type="submit">Login</button>
             </div>
         </form>
+    
+        <label for="name">Not Registered Yet?</label>
+        <a href="{% url 'register' %}" class="button">Create An Account</a>
     </div>
-
+    
+    <!-- Add the JavaScript to hide the error messages after 3 seconds -->
+    <script>
+        // Wait for the DOM to fully load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get all messages
+            const messages = document.querySelectorAll('.messages, .error-message');
+            
+            // Set a timeout to hide the messages after 3 seconds
+            setTimeout(function() {
+                messages.forEach(function(message) {
+                    message.style.display = 'none';  // Hide the message
+                });
+            }, 3000);  // 3000 milliseconds = 3 seconds
+        });
+    </script>
+    
+    
     <footer class="footer-login">
         <p>© 2024 Roadside Assistance. All rights reserved.</p>
         <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>

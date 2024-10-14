@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    
 ]
 
 ROOT_URLCONF = 'roadside_assistance.urls'
