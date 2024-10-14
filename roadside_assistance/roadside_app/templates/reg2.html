@@ -46,6 +46,13 @@
                 {% endif %}
             </div>
             <div class="input-container">
+                <label for="location">Location:</label>
+                {{ form.location }}
+                {% if form.location.errors %}
+                    <div class="error">{{ form.location.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="input-container">
                 <label for="availability_status">Availability Status:</label>
                 {{ form.availability_status }}
                 {% if form.availability_status.errors %}

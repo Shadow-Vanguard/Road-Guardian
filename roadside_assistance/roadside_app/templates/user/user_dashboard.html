@@ -64,7 +64,7 @@
 
         .content h2 {
             margin: 0;
-            padding-bottom: 15px;
+            padding-bottom: 25px;
             border-bottom: 2px solid #4CAF50;
             font-size: 24px;
             color: #4CAF50;
@@ -176,6 +176,11 @@
         #emailLabel {
             position: relative;
     }
+    .scrollable-container {
+        max-height: 400px; /* Set the max height you want */
+        overflow-y: auto; /* Enable vertical scrolling */
+        margin-top: 25px; /* Optional: Space between the sidebar and the form */
+    }
 
     </style>
 </head>
@@ -200,7 +205,7 @@
             <button onclick="toggleUpdateProfile()">Update Profile</button>
             <a href="{% url 'request_assistance' %}">Request Assistance</a>
             <button>Order Items</button>
-            <button>View Service History</button>
+            <a href="{% url 'service_history' %}">View Service History</a>
             <button>View/Remove Items from Payment History</button>
             <button>Send Feedback</button>
             <button>Chat with Service Providers</button>
@@ -211,45 +216,47 @@
         <h2>Welcome {{ user.name }} To Your Dashboard</h2>  
 
         <!-- Update Profile Form Section -->
-        <div class="update-profile" id="updateProfileSection">
-            <h3>Update Profile</h3>
-            {% if messages %}
-               {% for message in messages %}
-                   <div class="alert alert-success" id="successMessage">{{ message }}</div>
-               {% endfor %}
-            {% endif %}
-            <form method="post" action="{% url 'user_update_profile' %}" id="profileForm">
-                {% csrf_token %}
-                {{ form.non_field_errors }}
-                
-                <!-- Name Field -->
-                <label for="name">Name:</label>
-                {{ form.name }}
-                <span id="nameError" class="error-message"></span>
+        <div class="scrollable-container">
+           <div class="update-profile" id="updateProfileSection">
+                <h3>Update Profile</h3>
+                {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success" id="successMessage">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+                <form method="post" action="{% url 'user_update_profile' %}" id="profileForm">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    
+                    <!-- Name Field -->
+                    <label for="name">Name:</label>
+                    {{ form.name }}
+                    <span id="nameError" class="error-message"></span>
 
-                <!-- Username Field -->
-                <label for="username">Username:</label>
-                {{ form.username }}
-                <span id="usernameError" class="error-message"></span>
+                    <!-- Username Field -->
+                    <label for="username">Username:</label>
+                    {{ form.username }}
+                    <span id="usernameError" class="error-message"></span>
 
-                <!-- Address Field -->
-                <label for="address">Address:</label>
-                {{ form.address }}
-                <span id="addressError" class="error-message"></span>
+                    <!-- Address Field -->
+                    <label for="address">Address:</label>
+                    {{ form.address }}
+                    <span id="addressError" class="error-message"></span>
 
-                <!-- Phone Field -->
-                <label for="phone">Phone:</label>
-                {{ form.phone }}
-                <span id="phoneError" class="error-message"></span>
+                    <!-- Phone Field -->
+                    <label for="phone">Phone:</label>
+                    {{ form.phone }}
+                    <span id="phoneError" class="error-message"></span>
 
-                <!-- Email Field -->
-                <label for="email" id="emailLabel">Email:</label>
-                <input type="email" name="email" value="{{ form.email.value }}" readonly>
-                <span id="emailTooltip" class="tooltip">Can't change email due to security reasons</span>
-                <span id="emailError" class="error-message"></span>
+                    <!-- Email Field -->
+                    <label for="email" id="emailLabel">Email:</label>
+                    <input type="email" name="email" value="{{ form.email.value }}" readonly>
+                    <span id="emailTooltip" class="tooltip">Can't change email due to security reasons</span>
+                    <span id="emailError" class="error-message"></span>
 
-                <button type="submit">Save Changes</button>
-            </form>
+                    <button type="submit">Save Changes</button>
+                </form>
+            </div>
         </div>
 
         <!-- View Profile Section -->

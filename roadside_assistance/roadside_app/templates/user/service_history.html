@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+            margin: 0;
+        }
+
+        header {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin: 0;
+            color:#4CAF50;
+        }
+
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .logout {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background-color: #ea0606;
+            color: #fff;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Your Service History</h1>
+        <a href="{% url 'user_dashboard' %}" class="logout">Go To Dashboard</a>
+    </header>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Service Type</th>
+                <th>Provider Name</th>
+                <th>Status</th>
+                <th>Request Time</th>
+                <th>Location</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for booking in bookings %}
+            <tr>
+                <td>{{ booking.service_type.servicetype_name }}</td>
+                <td>{{ booking.service_provider.user.name }}</td>
+                <td>{{ booking.get_status_display }}</td>
+                <td>{{ booking.request_time }}</td>
+                <td>{{ booking.location }}</td>
+                <td>{{ booking.description }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">No service history available.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    
+</body>
+</html>

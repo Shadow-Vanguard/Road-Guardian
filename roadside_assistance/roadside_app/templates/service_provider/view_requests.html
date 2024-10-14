@@ -1,0 +1,237 @@
+<!-- templates/service_provider/view_requests.html -->
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Requests</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        header {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        .back-btn {
+            margin-top: 20px;
+            display: block;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: #45a049;
+        }
+
+        .container {
+            margin-top: 50px;
+        }
+
+        .list-group-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+            background-color: #fff;
+        }
+
+        .badge {
+            font-size: 12px;
+            padding: 5px 10px;
+            border-radius: 3px;
+        }
+
+        .bg-success {
+            background-color: #4CAF50;
+            padding: 8px 10px;
+            font-size: 14px; 
+            color: white;
+        }
+
+        .bg-danger {
+            background-color: #f44336;
+            color: white;
+        }
+
+        .logout {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #0e40c7;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background-color: #ea0606;
+            color: #fff;
+        }
+
+        button {
+            background-color: #4CAF50; 
+            border: none; 
+            color: white; 
+            padding: 8px 10px; 
+            text-align: center; 
+            text-decoration: none; 
+            display: inline-block; 
+            font-size: 14px; 
+            border-radius: 5px;
+            transition: background-color 0.3s ease; 
+            cursor: pointer; 
+        }
+
+        button:hover {
+            background-color: #45a049; 
+        } 
+        footer {
+                background-color: #ffffff84;
+                color: rgb(0, 0, 0);
+                text-align: center;
+                padding: 10px 0;
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+        }
+        button[type="submit"] {
+            background-color: #4CAF50;  
+            color: white;              
+            padding: 12px 20px;      
+            border: none;           
+            border-radius: 5px;     
+            cursor: pointer;            
+            font-size: 16px;            
+            transition: background-color 0.3s ease; 
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;  
+        }
+
+        button[type="submit"]:active {
+            background-color: #3e8e41;
+        }
+
+        button[type="submit"]:focus {
+            outline: none;             
+            box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5); /
+        }
+
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>View Requests</h1>
+        <a href="{% url 'service_provider_dashboard' %}" class="logout">Go To Dashboard</a>
+    </header>
+    
+    <div class="content">
+        
+        {% if bookings %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Service Type</th>
+                        <th>Location</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.user.name }}</td>
+                            <td>{{ booking.service_type.servicetype_name }}</td>
+                            <td>{{ booking.location }}</td>
+                            <td>{{ booking.description }}</td>
+                            <td>{{ booking.get_status_display }}</td>
+                            <td>
+                                {% if booking.status == 'pending' %}
+                                    <form action="{% url 'approve_booking' booking.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit">Approve</button>
+                                    </form>
+                                {% else %}
+                                    Approved
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No booking requests found.</p>
+        {% endif %}
+    </div>
+    
+    <footer>
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+    </footer>
+</body>
+</html>

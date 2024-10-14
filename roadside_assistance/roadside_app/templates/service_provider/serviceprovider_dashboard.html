@@ -69,43 +69,43 @@
                 position: absolute;
                 bottom: 0; /* Ensure it stays at the bottom */
                 width: 100%;
-    }
+        }
 
-    footer .footer-container {
-        display: flex;
-        justify-content: space-around;
-        padding-bottom: 80px;
-        margin-top: px; /* Adjust margin as needed */
-    }
+        footer .footer-container {
+            display: flex;
+            justify-content: space-around;
+            padding-bottom: 80px;
+            margin-top: px; /* Adjust margin as needed */
+        }
 
-    footer .quick-links, footer .social {
-        text-align: left;
-    }
+        footer .quick-links, footer .social {
+            text-align: left;
+        }
 
-    footer .quick-links h4, footer .social h4 {
-        margin-bottom: 15px;
-        color: rgb(0, 0, 0);
-    }
+        footer .quick-links h4, footer .social h4 {
+            margin-bottom: 15px;
+            color: rgb(0, 0, 0);
+        }
 
-    footer .quick-links a, footer .social a {
-        color: rgb(0,0,0);
-        display: block;
-        text-decoration: none;
-        margin-bottom: 2px;
-        font-size: 16px;
-        transition: color 0.3s ease;
-    }
+        footer .quick-links a, footer .social a {
+            color: rgb(0,0,0);
+            display: block;
+            text-decoration: none;
+            margin-bottom: 2px;
+            font-size: 16px;
+            transition: color 0.3s ease;
+        }
 
-    footer .quick-links a:hover, footer .social a:hover {
-        color: #ffffff;
-        text-decoration: underline;
-    }
-    .scrollable-container {
-        max-height: 400px; /* Set the max height you want */
-        overflow-y: auto; /* Enable vertical scrolling */
-        margin-top: 25px; /* Optional: Space between the sidebar and the form */
-    }
-    .tooltip {
+        footer .quick-links a:hover, footer .social a:hover {
+            color: #ffffff;
+            text-decoration: underline;
+        }
+        .scrollable-container {
+            max-height: 400px; /* Set the max height you want */
+            overflow-y: auto; /* Enable vertical scrolling */
+            margin-top: 25px; /* Optional: Space between the sidebar and the form */
+        }
+        .tooltip {
             display: none;
             position: absolute;
             background-color: #f44336;
@@ -138,7 +138,7 @@
         <div class="sidebar">
             <button onclick="toggleViewProfile()">View Profile</button>
             <button onclick="toggleUpdateProfile()">Update Profile</button>
-            <button>View Request</button>
+            <button onclick="window.location.href='{% url 'view_requests' %}'">View Request</button>
             <button>View Ordered Items</button>
             <button>View Service History</button>
             <button>View Payment History</button>

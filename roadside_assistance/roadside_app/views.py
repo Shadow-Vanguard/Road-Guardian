@@ -113,6 +113,10 @@ from django.contrib import messages
 from .forms import RegistrationForm, ServiceProviderForm
 from .models import CustomUser, ServiceProvider
 
+from django.shortcuts import render, redirect
+from .models import ServiceProvider, ServiceType  # assuming these are your models
+from .forms import ServiceProviderForm
+
 def reg_view(request):
     if request.method == 'POST':
         form = RegistrationForm(request.POST)
@@ -133,6 +137,9 @@ def reg_view(request):
     
     return render(request, 'reg.html', {'form': form})
 
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+
 def reg2_view(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)  # Get the user or 404
     if request.method == 'POST':
@@ -148,7 +155,12 @@ def reg2_view(request, user_id):
     else:
         form = ServiceProviderForm()
     
-    return render(request, 'reg2.html', {'form': form})
+    return render(request, 'reg2.html', {'form': form}) 
+
+
+# def reg3_view(request, service_type_id):
+#     service_type = ServiceType.objects.get(id=service_type_id)
+#     return render(request, 'reg3.html', {'service_type': service_type})
 
 def home_view(request):
     return render(request, 'home.html')
@@ -362,23 +374,136 @@ from django.shortcuts import render
 from .models import ServiceType, ServiceProvider
 
 def workshop_request(request):
-    # Fetch the service type for 'Workshop Service' (case-insensitive)
-    workshop_service_type = ServiceType.objects.filter(servicetype_name__iexact='Workshop Service').first()
-    
-    if workshop_service_type:
-        # Fetch only the service providers who offer 'Workshop Service'
-        service_providers = ServiceProvider.objects.filter(service_type=workshop_service_type)
-    else:
-        service_providers = []
+    try:
+        # Fetch the service type for 'Towing Service'
+        towing_service_type = ServiceType.objects.get(servicetype_name='Workshop  Service')
+    except ServiceType.DoesNotExist:
+        towing_service_type = None
 
-    # Log for debugging
-    print("Service Type:", workshop_service_type)
-    print("Service Providers:", service_providers)
+    # Fetch only the service providers who offer 'Towing Service'
+    service_providers = ServiceProvider.objects.filter(service_type=towing_service_type) if towing_service_type else []
 
     context = {
-        'service_providers': service_providers,
+        'service_providers': service_providers,  # Pass only the towing service providers to the template
     }
     return render(request, 'user/workshop_request.html', context)
+
+
+# #book service
+# from django.shortcuts import render
+
+# def towtruck_view(request):
+#     return render(request, 'towtruck.html')
+
+# def workshop_view(request):
+#     return render(request, 'workshop.html')
+
+# def ambulance_view(request):
+#     return render(request, 'ambulance.html')
+
+# def petrolbunk_view(request):
+#     return render(request, 'petrolbunk.html')
+
+
+# from django.shortcuts import render, redirect, get_object_or_404
+# from .forms import TowingServiceForm, PetrolBunkServiceForm, WorkshopServiceForm, AmbulanceServiceForm
+# from .models import ServiceProvider
+
+# def create_towing_service(request):
+#     if request.method == 'POST':
+#         form = TowingServiceForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('login')  # Redirect to a success page
+#     else:
+#         form = TowingServiceForm()
+#     return render(request, 'towing_service_form.html', {'form': form})
+
+# def create_petrol_bunk_service(request):
+#     if request.method == 'POST':
+#         form = PetrolBunkServiceForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('login')  # Redirect to a success page
+#     else:
+#         form = PetrolBunkServiceForm()
+#     return render(request, 'petrol_bunk_service_form.html', {'form': form})
+
+# def create_workshop_service(request):
+#     if request.method == 'POST':
+#         form = WorkshopServiceForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('login')  # Redirect to a success page
+#     else:
+#         form = WorkshopServiceForm()
+#     return render(request, 'workshop_service_form.html', {'form': form})
+
+# def create_ambulance_service(request):
+#     if request.method == 'POST':
+#         form = AmbulanceServiceForm(request.POST)
+#         if form.is_valid():
+#             form.save()
+#             return redirect('login')  # Redirect to a success page
+#     else:
+#         form = AmbulanceServiceForm()
+#     return render(request, 'ambulance_service_form.html', {'form': form})
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .forms import BookingForm
+from .models import ServiceProvider, ServiceType
+from django.contrib import messages
+
+def book_service(request, provider_id):
+    service_provider = get_object_or_404(ServiceProvider, id=provider_id)
+
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user  # Assign the logged-in user to the booking
+            booking.service_provider = service_provider  # Automatically assign the service provider
+            booking.save()
+            messages.success(request, 'Your service request has been submitted successfully!')
+            return redirect('request_assistance')  # Redirect to a success page
+    else:
+        form = BookingForm(initial={'service_type': service_provider.service_type})  # Prepopulate service_type
+
+    return render(request, 'user/booking_form.html', {'form': form, 'service_provider': service_provider})
+
+
+
+
+
+
+
+from django.shortcuts import render, get_object_or_404
+from .models import Booking
+
+def view_requests(request):
+    bookings = Booking.objects.filter(service_provider__user=request.user)
+    return render(request, 'view_requests.html', {'bookings': bookings})
+
+def get_booking_details(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    return render(request, 'booking_details.html', {'booking': booking})
+
+from django.shortcuts import render
+from .models import Booking
+
+def service_history(request):
+    if request.user.is_authenticated:
+        # Fetch all bookings related to the current user
+        bookings = Booking.objects.filter(user=request.user).select_related('service_provider', 'service_type')
+    else:
+        bookings = []
+
+    context = {
+        'bookings': bookings,
+    }
+    return render(request, 'user/service_history.html', context)
+
 
 
 ########################################################################################################
@@ -572,4 +697,40 @@ def update_profile(request):
         'form': form,
         'service_provider': service_provider,  # Ensure this is passed
     })
+
+from django.shortcuts import render
+from .models import Booking
+
+def view_requests(request):
+    # Get the service provider related to the logged-in user
+    service_provider = request.user.serviceprovider
+
+    # Fetch all bookings related to this service provider
+    bookings = Booking.objects.filter(service_provider=service_provider)
+
+    return render(request, 'service_provider/view_requests.html', {'bookings': bookings})
+
+def approve_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    
+    if booking.status == 'pending':
+        booking.status = 'accepted'
+        booking.save()  # Save changes to the database
+
+    return redirect('view_requests')  # Redirect back to the requests page
+
+from django.shortcuts import render
+from .models import Booking
+
+def service_history1(request):
+    if request.user.is_authenticated:
+        # Fetch all bookings related to the current user
+        bookings = Booking.objects.filter(user=request.user).select_related('service_provider', 'service_type')
+    else:
+        bookings = []
+
+    context = {
+        'bookings': bookings,
+    }
+    return render(request, 'service_provider/service_history1.html', context)
 

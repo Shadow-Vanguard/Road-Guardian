@@ -30,6 +30,7 @@
             font-size: 28px;
             margin: 0;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -95,6 +96,8 @@
 
         .bg-success {
             background-color: #4CAF50;
+            padding: 8px 10px;
+            font-size: 14px; 
             color: white;
         }
 
@@ -102,42 +105,66 @@
             background-color: #f44336;
             color: white;
         }
-        .logout {
-        padding: 9px;
-        margin-bottom: 10px;
-        margin-top: 15px;
-        font-size: 18px;
-        border-radius: 6px;
-        text-decoration: none;
-        color: #4CAF50;
-        font-weight: bold;
-        background-color: #fff;
-        border: 1px solid #0e40c7;
-        transition: background-color 0.3s;
-        text-align: center;
-    }
 
-    .logout:hover {
-        background-color: #ea0606;
-        color: #fff;
-    }
+        .logout {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #0e40c7;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background-color: #ea0606;
+            color: #fff;
+        }
+
+        button {
+            background-color: #4CAF50; /* Green background */
+            border: none; /* Remove border */
+            color: white; /* White text */
+            padding: 8px 10px; /* Padding inside the button */
+            text-align: center; /* Center the text */
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Display as inline element */
+            font-size: 14px; /* Set font size */
+            border-radius: 5px; /* Rounded corners */
+            transition: background-color 0.3s ease; /* Smooth hover effect */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
+
+        button:hover {
+            background-color: #45a049; /* Darker green on hover */
+        }
+
     </style>
 </head>
 <body>
     <header>
+       
         <h1>Tow Truck Service Providers</h1>
         <h1>Request Assistance</h1>
         <a href="{% url 'request_assistance' %}" class="logout">Go To Request Page</a>
     </header>
+    
     
     <table>
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Phone</th>
+                <th>Area Of Service</th>
                 <th>Location</th>
                 <th>Status</th>
                 <th>Book</th>
+                <!-- <th>Request Status</th> -->
             </tr>
         </thead>
         <tbody>
@@ -146,6 +173,7 @@
                 <td>{{ provider.user.name }}</td>
                 <td>{{ provider.user.phone }}</td>
                 <td>{{ provider.area_of_service }}</td>
+                <td>{{ provider.location }}</td>
                 <td>
                     {% if provider.availability_status %}
                         <span class="badge bg-success">Available</span>
@@ -153,7 +181,22 @@
                         <span class="badge bg-danger">Unavailable</span>
                     {% endif %}
                 </td>
-                <td><button>Click here to book</button></td>
+                <td>
+                    <a href="{% url 'book_service' provider.id %}">
+                        <button>Request Service</button>
+                    </a>
+                </td>  
+                <!-- <td>
+                    {% if provider.booking %}
+                        {{ provider.booking.get_status_display }}
+                    {% else %}
+                        No Request
+                    {% endif %}
+                </td> -->
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7">No service providers available.</td>
             </tr>
             {% endfor %}
         </tbody>

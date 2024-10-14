@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Type Details</title>
+    <link rel="stylesheet" href="{% static 'css/reg2.css' %}">
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const serviceType = "{{ service_type.name }}";  // Get service type from the context
+
+            // Switch content based on service type
+            if (serviceType === "Towing Service") {
+                document.getElementById('service-details').innerHTML = `
+                    <h2>Towing Service Details</h2>
+                    <p>Vehicle Capacity: Up to 5 tons</p>
+                    <p>Equipment: Tow bar, towing chain, winch</p>`;
+            } else if (serviceType === "Petrol Bunk") {
+                document.getElementById('service-details').innerHTML = `
+                    <h2>Petrol Bunk Details</h2>
+                    <p>Fuel Types: Diesel, Petrol, CNG</p>
+                    <p>Facilities: Air filling, Restrooms, Snacks Shop</p>`;
+            }
+            // Add more service types as needed
+        });
+    </script>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1>ROAD GUARDIAN</h1>
+        </div>
+        <div class="navbar-links">
+            <a href="{% url 'home' %}">Home</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'register' %}">Register</a>
+        </div>
+    </nav>
+
+    <div class="details-container">
+        <h2>Service Type: {{ service_type.name }}</h2>
+        <div id="service-details"></div>
+    </div>
+
+    <footer class="footer-reg">
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+        <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+    </footer>
+
+</body>
+</html>

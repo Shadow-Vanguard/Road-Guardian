@@ -175,8 +175,8 @@ class ServiceProviderForm(forms.ModelForm):
         widgets = {
             'service_type': forms.Select(attrs={'class': 'form-control'}),
             'certificate': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'area_of_service': forms.Select(attrs={'class': 'form-control'}),  # Use a dropdown for districts
-            'location': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your location here...'}),
+            'area_of_service': forms.TextInput(attrs={'class': 'form-control','placeholder': 'Describe your district here...'}),  # Use a dropdown for districts
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Describe your location here...'}),
             'availability_status': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
 
@@ -184,3 +184,39 @@ class ServiceProviderForm(forms.ModelForm):
         super(ServiceProviderForm, self).__init__(*args, **kwargs)
         # Ensure the queryset is correctly set when the form is initialized
         self.fields['service_type'].queryset = ServiceType.objects.all()
+
+from django import forms
+from .models import TowingService, PetrolBunkService, WorkshopService, AmbulanceService
+
+class TowingServiceForm(forms.ModelForm):
+    class Meta:
+        model = TowingService
+        fields = ['service_provider', 'vehicle_capacity', 'equipment']
+
+class PetrolBunkServiceForm(forms.ModelForm):
+    class Meta:
+        model = PetrolBunkService
+        fields = ['service_provider', 'fuel_types', 'facilities']
+
+class WorkshopServiceForm(forms.ModelForm):
+    class Meta:
+        model = WorkshopService
+        fields = ['service_provider', 'speciality', 'services_offered']
+
+class AmbulanceServiceForm(forms.ModelForm):
+    class Meta:
+        model = AmbulanceService
+        fields = ['service_provider', 'ambulance_type', 'ambulance_size']
+
+from django import forms
+from .models import Booking
+
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = ['service_type', 'location', 'description']  # Exclude service_provider from form fields
+        widgets = {
+            'service_type': forms.Select(attrs={'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter location'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your issue'}),
+        }
