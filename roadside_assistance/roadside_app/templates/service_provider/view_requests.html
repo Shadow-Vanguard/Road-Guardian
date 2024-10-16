@@ -204,26 +204,37 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for booking in bookings %}
-                        <tr>
-                            <td>{{ booking.user.name }}</td>
-                            <td>{{ booking.service_type.servicetype_name }}</td>
-                            <td>{{ booking.location }}</td>
-                            <td>{{ booking.description }}</td>
-                            <td>{{ booking.get_status_display }}</td>
-                            <td>
-                                {% if booking.status == 'pending' %}
-                                    <form action="{% url 'approve_booking' booking.id %}" method="post">
-                                        {% csrf_token %}
-                                        <button type="submit">Approve</button>
-                                    </form>
-                                {% else %}
-                                    Approved
-                                {% endif %}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
+    {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.user.name }}</td>
+            <td>{{ booking.service_type.servicetype_name }}</td>
+            <td>{{ booking.location }}</td>
+            <td>{{ booking.description }}</td>
+            <td>{{ booking.get_status_display }}</td>
+            <td>
+                {% if booking.status == 'pending' %}
+                    <form action="{% url 'approve_booking' booking.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Approve</button>
+                    </form>
+                {% elif booking.status == 'accepted' %}
+                    <form action="{% url 'set_status_ongoing' booking.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit"> Ongoing</button>
+                    </form>
+                {% elif booking.status == 'ongoing' %}
+                    <form action="{% url 'set_status_completed' booking.id %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit">Complete</button>
+                    </form>
+                {% else %}
+                    Completed
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+</tbody>
+
             </table>
         {% else %}
             <p>No booking requests found.</p>

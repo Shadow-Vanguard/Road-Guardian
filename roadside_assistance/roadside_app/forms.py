@@ -44,8 +44,8 @@ class RegistrationForm(forms.ModelForm):
         })
         
 class LoginForm(forms.Form):
-    username = forms.CharField(max_length=100, required=True)
-    password = forms.CharField(widget=forms.PasswordInput, required=True)
+    username = forms.CharField(max_length=150, widget=forms.TextInput(attrs={'id': 'username', 'placeholder': 'Enter Username'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'id': 'password', 'placeholder': 'Enter Password'}))
 
 #admin update profile
 from django import forms

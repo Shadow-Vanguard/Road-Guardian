@@ -719,6 +719,24 @@ def approve_booking(request, booking_id):
 
     return redirect('view_requests')  # Redirect back to the requests page
 
+def set_status_ongoing(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if booking.status == 'accepted':
+        booking.status = 'ongoing'
+        booking.save()
+
+    return redirect('view_requests')
+
+def set_status_completed(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if booking.status == 'ongoing':
+        booking.status = 'completed'
+        booking.save()
+
+    return redirect('view_requests')
+
 from django.shortcuts import render
 from .models import Booking
 

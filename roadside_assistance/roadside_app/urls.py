@@ -71,6 +71,10 @@ urlpatterns = [
     path('service-provider/view_requests/', views.view_requests, name='view_requests'),
     path('view-requests/', views.view_requests, name='view_requests'),
     path('approve-booking/<int:booking_id>/', views.approve_booking, name='approve_booking'),
+    path('approve_booking/<int:booking_id>/', views.approve_booking, name='approve_booking'),
+    path('set_status_ongoing/<int:booking_id>/', views.set_status_ongoing, name='set_status_ongoing'),
+    path('set_status_completed/<int:booking_id>/', views.set_status_completed, name='set_status_completed'),
+    
 
     path('service-history/', views.service_history1, name='service_history1'),
    
