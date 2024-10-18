@@ -8,7 +8,8 @@
     <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
     <style>
         body {
-            background-image: url("{% static 'images/home3.jpg' %}");
+            background-image: url("{% static 'images/home5.jpg' %}");
+            background-position: center -15%;
         }
         .content {
             width: 71%;
@@ -18,6 +19,32 @@
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-top:0%
+        }
+        .sidebar {
+            width: 20%;
+            height:100%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 45px;
+            font-size: 18px;
+            border-radius: 6px;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: .1px solid #4CAF50;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar button:hover {
+            background-color: #4CAF50;
+            color: #fff;
         }
         .content h2 {
             margin: 0;
@@ -113,6 +140,43 @@
             color: red;
             font-size: 14px;
         }
+        .tooltip {
+            display: none;
+            position: absolute;
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            z-index: 1000; /* Make sure the tooltip is on top */
+        }
+
+        /* Position the tooltip above the email label */
+        #emailLabel {
+            position: relative;
+        }
+        .scrollable-container {
+        max-height: 580px; /* Set the max height you want */
+        overflow-y: auto; /* Enable vertical scrolling */
+        margin-top: 20px; /* Optional: Space between the sidebar and the form */
+    }
+    .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #dff0d8;
+            color: #3c763d;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Class to hide the alert */
+        .hidden {
+            display: none;
+        }
+
     </style>
 </head>
 <body>
@@ -131,16 +195,34 @@
                 <button>View Users</button>
             </a>
             <button>Manage Service Types</button>
-            <button>View Orders</button>
-            <button>Manage Products</button>
+            <button>View Complaints</button>
             <button>View Service History</button>
             <button>View Feedback/Ratings</button>
         </div>
 
         <div class="content">
             <h2>Welcome Admin To Your Dashboard</h2>
+            {% if messages %}
+        {% for message in messages %}
+            <div class="alert">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- Inline JavaScript for auto-hide after 5 seconds -->
+    <script>
+        // Automatically hide alerts after 5 seconds
+        setTimeout(function() {
+            var alerts = document.getElementsByClassName('alert');
+            for (var i = 0; i < alerts.length; i++) {
+                alerts[i].classList.add('hidden');
+            }
+        }, 3000);  // 5000 milliseconds = 5 seconds
+    </script>
 
             <!-- Update Profile Form Section -->
+            <div class="scrollable-container">
             <div class="update-profile" id="updateProfileSection">
                 <h3>Update Profile</h3>
                 {% if messages %}
@@ -167,12 +249,14 @@
                     {{ form.phone }}
                     <span class="error-message" id="phoneError"></span>
 
-                    <label for="email">Email:</label>
-                    {{ form.email }}
-                    <span class="error-message" id="emailError"></span>
+                    <label for="email" id="emailLabel">Email:</label>
+                    <input type="email" name="email" value="{{ form.email.value }}" readonly>
+                    <span id="emailTooltip" class="tooltip">Can't change email due to security reasons</span>
+                    <span id="emailError" class="error-message"></span>
 
                     <button type="submit">Save Changes</button>
                 </form>
+            </div>
             </div>
 
             <!-- View Profile Section -->
@@ -197,7 +281,7 @@
                 <a href="#">Terms & Conditions</a>
             </div>
             <p>© 2024 Roadside Assistance. All rights reserved.</p>
-            <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+            <p>Contact us: road.guardian08@gmail.com | +1 234 567 890</p>
             <div class="social">
                 <h4>Social</h4>
                 <a href="#">Facebook</a>
@@ -209,6 +293,7 @@
     </footer>
 
     <script>
+        
         // Validation Functions
         function validateName(name) {
             const nameRegex = /^[A-Z][a-zA-Z\s]*$/;
@@ -290,6 +375,21 @@
             document.getElementById('viewProfileSection').style.display = 'none';
             document.getElementById('updateProfileSection').style.display = 'block';
         }
+         // JavaScript to handle hover functionality for the email label
+         const emailLabel = document.getElementById('emailLabel');
+        const emailTooltip = document.getElementById('emailTooltip');
+
+        // Show tooltip when mouse enters email label
+        emailLabel.addEventListener('mouseover', function () {
+            emailTooltip.style.display = 'block';
+            emailTooltip.style.left = emailLabel.getBoundingClientRect().left + 'px';
+            emailTooltip.style.top = (emailLabel.getBoundingClientRect().top - emailTooltip.offsetHeight - 5) + 'px'; // Position above the label
+        });
+
+        // Hide tooltip when mouse leaves email label
+        emailLabel.addEventListener('mouseout', function () {
+            emailTooltip.style.display = 'none';
+        });
     </script>
 </body>
 </html>

@@ -465,16 +465,12 @@ def book_service(request, provider_id):
             booking.user = request.user  # Assign the logged-in user to the booking
             booking.service_provider = service_provider  # Automatically assign the service provider
             booking.save()
-            messages.success(request, 'Your service request has been submitted successfully!')
+            messages.success(request, 'Your service request has been booked successfully!')
             return redirect('request_assistance')  # Redirect to a success page
     else:
         form = BookingForm(initial={'service_type': service_provider.service_type})  # Prepopulate service_type
 
     return render(request, 'user/booking_form.html', {'form': form, 'service_provider': service_provider})
-
-
-
-
 
 
 

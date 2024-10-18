@@ -66,32 +66,7 @@
         color: #fff;
     }
 
-    .sidebar {
-        width: 20%;
-        height:max-content;
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    }
-
-    .sidebar button {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
-        font-size: 18px;
-        border-radius: 6px;
-        color: #4CAF50;
-        font-weight: bold;
-        background-color: #fff;
-        border: 1px solid #4CAF50;
-        transition: background-color 0.3s;
-    }
-
-    .sidebar button:hover {
-        background-color: #4CAF50;
-        color: #fff;
-    }
+   
 
     
     
@@ -153,7 +128,7 @@
         text-decoration: underline;
     } */
 
-    .button-container a.button {
+    /* .button-container a.button {
         display: inline-block;
         padding: 10px 20px;
         margin: 10px;
@@ -166,7 +141,7 @@
 
     .button-container a.button:hover {
         background-color: #48f14d;
-    }
+    } */
 
     /* Update Profile Section */
     #updateProfileSection {

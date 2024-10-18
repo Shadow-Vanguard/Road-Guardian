@@ -8,7 +8,9 @@
     <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
     <style>
         body {
-            background-image: url("{% static 'images/home3.jpg' %}");
+            background-image: url("{% static 'images/home4.jpg' %}");
+            background-position: center -15%;
+           
         }
         .content {
             width: 71%;
@@ -19,10 +21,38 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
             margin-top:0%
         }
+        .sidebar {
+            width: 20%;
+            height:100%;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar button {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 45px;
+            font-size: 18px;
+            border-radius: 6px;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 0px solid #4CAF50;
+            transition: background-color 0.3s;
+        }
+
+        .sidebar button:hover {
+            background-color: #4CAF50;
+            color: #fff;
+        }
+
         .update-profile, .view-profile {
+            background-position: center 20%;
             display: none; 
             margin-top: 30px;
-            margin-bottom: 50px; 
+            margin-bottom: 80px; 
         }
         .alert {
             padding: 10px;
@@ -51,7 +81,7 @@
             margin-top: 25px;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 10%;
+            margin-bottom: 1%;
         }
         #viewProfileSection {
             background-color: #fafafac9;
@@ -69,6 +99,7 @@
                 position: absolute;
                 bottom: 0; /* Ensure it stays at the bottom */
                 width: 100%;
+                height:15%;
         }
 
         footer .footer-container {
@@ -101,7 +132,7 @@
             text-decoration: underline;
         }
         .scrollable-container {
-            max-height: 400px; /* Set the max height you want */
+            max-height:550px; /* Set the max height you want */
             overflow-y: auto; /* Enable vertical scrolling */
             margin-top: 25px; /* Optional: Space between the sidebar and the form */
         }
@@ -121,7 +152,27 @@
         /* Position the tooltip above the email label */
         #emailLabel {
             position: relative;
-    }
+        }
+        .logo {
+            width: 100px;
+            height: 70px; /* Adjust as needed */
+            margin-top: -10%;
+            margin-left: 87%;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #dff0d8;
+            color: #3c763d;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Class to hide the alert */
+        .hidden {
+            display: none;
+        }
 
 
     </style>
@@ -138,8 +189,7 @@
         <div class="sidebar">
             <button onclick="toggleViewProfile()">View Profile</button>
             <button onclick="toggleUpdateProfile()">Update Profile</button>
-            <button onclick="window.location.href='{% url 'view_requests' %}'">View Request</button>
-            <button>View Ordered Items</button>
+            <button onclick=window.location.href="{% url 'view_requests' %}">View Request</button>
             <button>View Service History</button>
             <button>View Payment History</button>
             <button>View Feedback</button>
@@ -148,6 +198,15 @@
 
         <div class="content">
             <h2>Welcome {{ user.name }} To Your Dashboard</h2>
+            {% if messages %}
+            {% for message in messages %}
+                <div class="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+           
+
             
             <!-- Update Profile Form Section -->
             <div class="scrollable-container">
@@ -222,7 +281,7 @@
                 <a href="#">Terms & Conditions</a>
             </div>
             <p>© 2024 Roadside Assistance. All rights reserved.</p>
-            <p>Contact us: info@roadsideassistance.com | +1 234 567 890</p>
+            <p>Contact us: road.guardian08@gmail.com | +1 234 567 890</p>
             <div class="social">
                 <h4>Social</h4>
                 <a href="#">Facebook</a>

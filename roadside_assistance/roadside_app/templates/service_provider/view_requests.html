@@ -178,7 +178,7 @@
             outline: none;             
             box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.5); /
         }
-
+            
 
     </style>
 </head>
@@ -186,6 +186,7 @@
     <header>
         <h1>View Requests</h1>
         <a href="{% url 'service_provider_dashboard' %}" class="logout">Go To Dashboard</a>
+       
     </header>
     
     <div class="content">
@@ -204,36 +205,43 @@
                     </tr>
                 </thead>
                 <tbody>
-    {% for booking in bookings %}
-        <tr>
-            <td>{{ booking.user.name }}</td>
-            <td>{{ booking.service_type.servicetype_name }}</td>
-            <td>{{ booking.location }}</td>
-            <td>{{ booking.description }}</td>
-            <td>{{ booking.get_status_display }}</td>
-            <td>
-                {% if booking.status == 'pending' %}
-                    <form action="{% url 'approve_booking' booking.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit">Approve</button>
-                    </form>
-                {% elif booking.status == 'accepted' %}
-                    <form action="{% url 'set_status_ongoing' booking.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit"> Ongoing</button>
-                    </form>
-                {% elif booking.status == 'ongoing' %}
-                    <form action="{% url 'set_status_completed' booking.id %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit">Complete</button>
-                    </form>
-                {% else %}
-                    Completed
-                {% endif %}
-            </td>
-        </tr>
-    {% endfor %}
-</tbody>
+                    {% for booking in bookings %}
+                        <tr>
+                            <td>{{ booking.user.name }}</td>
+                            <td>{{ booking.service_type.servicetype_name }}</td>
+                            <td>{{ booking.location }}</td>
+                            <td>{{ booking.description }}</td>
+                            <td>{{ booking.get_status_display }}</td>
+                            <td>
+                                {% if booking.status == 'pending' %}
+                                    <form action="{% url 'approve_booking' booking.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit">Approve</button>
+                                    </form>
+                                {% elif booking.status == 'accepted' %}
+                                    <form id="auto-ongoing-form" action="{% url 'set_status_ongoing' booking.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit">Ongoing</button>
+                                    </form>
+                                    <script>
+                                        // Automatically submit the form after 5 seconds
+                                        setTimeout(function() {
+                                            document.getElementById('auto-ongoing-form').submit();
+                                        }, 3000); // 3 seconds delay
+                                    </script>
+                                {% elif booking.status == 'ongoing' %}
+                                    <form action="{% url 'set_status_completed' booking.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit">Complete</button>
+                                    </form>
+                                {% else %}
+                                    Completed
+                                {% endif %}
+
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
 
             </table>
         {% else %}
