@@ -185,38 +185,16 @@ class ServiceProviderForm(forms.ModelForm):
         # Ensure the queryset is correctly set when the form is initialized
         self.fields['service_type'].queryset = ServiceType.objects.all()
 
-from django import forms
-from .models import TowingService, PetrolBunkService, WorkshopService, AmbulanceService
-
-class TowingServiceForm(forms.ModelForm):
-    class Meta:
-        model = TowingService
-        fields = ['service_provider', 'vehicle_capacity', 'equipment']
-
-class PetrolBunkServiceForm(forms.ModelForm):
-    class Meta:
-        model = PetrolBunkService
-        fields = ['service_provider', 'fuel_types', 'facilities']
-
-class WorkshopServiceForm(forms.ModelForm):
-    class Meta:
-        model = WorkshopService
-        fields = ['service_provider', 'speciality', 'services_offered']
-
-class AmbulanceServiceForm(forms.ModelForm):
-    class Meta:
-        model = AmbulanceService
-        fields = ['service_provider', 'ambulance_type', 'ambulance_size']
 
 from django import forms
-from .models import Booking
+from .models import ServiceType
 
-class BookingForm(forms.ModelForm):
+class ServiceTypeForm(forms.ModelForm):
     class Meta:
-        model = Booking
-        fields = ['service_type', 'location', 'description']  # Exclude service_provider from form fields
+        model = ServiceType
+        fields = ['servicetype_name', 'description', 'image']
         widgets = {
-            'service_type': forms.Select(attrs={'class': 'form-control'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter location'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe your issue'}),
+            'servicetype_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
         }

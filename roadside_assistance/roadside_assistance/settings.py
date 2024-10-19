@@ -87,7 +87,7 @@ WSGI_APPLICATION = 'roadside_assistance.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'roadside_assistance',  # Replace with your actual database name
+        'NAME': 'new_roadside_assistance',  # Replace with your actual database name
         'USER': 'root',  # Replace with your MySQL username (default is 'root')  
         'PASSWORD': '',  # Replace with your MySQL password (default is empty)
         'HOST': 'localhost',

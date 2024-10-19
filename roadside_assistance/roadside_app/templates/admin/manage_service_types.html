@@ -1,0 +1,357 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Service Types</title>
+    <link rel="stylesheet" href="{% static 'css/request_assistance.css' %}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        h3, h3 {
+            color: #2c3e50;
+            border-bottom: 2px solid #34a811;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+
+        form {
+            margin-bottom: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #2c5031;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .img-thumbnail {
+            max-width: 100px;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 2px;
+        }
+
+        .btn-edit, .btn-delete {
+            padding: 5px 10px;
+            margin: 2px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-edit {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .btn-delete {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .btn-edit:hover, .btn-delete:hover {
+            opacity: 0.8;
+        }
+
+        .edit-form {
+            display: none;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .service-type-name {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        header nav a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #3498db;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #ffffff;
+            color: rgb(0, 0, 0);
+            text-align: center;
+            padding: 20px 0;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            height: 3%;
+        }
+
+        footer .footer-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+    
+    
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 10px;
+            }
+
+            input[type="text"],
+            textarea,
+            input[type="file"] {
+                font-size: 14px;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            header nav {
+                margin-top: 10px;
+            }
+
+            header nav a {
+                margin: 0 10px;
+            }
+
+            footer .footer-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            footer .quick-links, footer .social {
+                text-align: center;
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+<body>  
+    <header>
+        <h1>ROAD GUARDIAN</h1>
+        <h1>Manage Service Types</h1>
+        <nav>
+            <a href="{% url 'home' %}" class="logout">Log Out</a>
+            <a href="{% url 'admin_dashboard' %}" class="logout">Go To Dashboard</a>
+        </nav>
+    </header>
+    <div class="container">
+        
+        
+        <h3>Add New Service Type</h3>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="id_servicetype_name">Service Type Name:</label>
+                <input type="text" name="servicetype_name" id="id_servicetype_name" required>
+            </div>
+            <div class="form-group">
+                <label for="id_description">Description:</label>
+                <textarea name="description" id="id_description"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="id_image">Image:</label>
+                <input type="file" name="image" id="id_image">
+            </div>
+            <button type="submit" class="btn">Add Service Type</button>
+        </form>
+
+        <h3>Existing Service Types</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>Service Type</th>
+                    <th>Description</th>
+                    <th>Image</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for service_type in service_types %}
+                <tr>
+                    <td>
+                        <span class="service-type-name">{{ service_type.servicetype_name }}</span>
+                    </td>
+                    <td>{{ service_type.description }}</td>
+                    <td>
+                        {% if service_type.image %}
+                            <img src="{{ service_type.image }}" alt="{{ service_type.servicetype_name }}" class="img-thumbnail">
+                        {% else %}
+                            No image
+                        {% endif %}
+                    </td>
+                    <td>
+                        <button onclick="showEditForm({{ service_type.servicetype_id }})" class="btn-edit">Edit</button>
+                        <form method="post" action="{% url 'delete_service_type' service_type.servicetype_id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this service type?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="4">
+                        <div id="edit-form-{{ service_type.servicetype_id }}" class="edit-form">
+                            <form method="post" action="{% url 'edit_service_type' service_type.servicetype_id %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="text" name="servicetype_name" value="{{ service_type.servicetype_name }}" required>
+                                <textarea name="description">{{ service_type.description }}</textarea>
+                                <input type="file" name="image">
+                                <button type="submit" class="btn">Save Changes</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <footer>
+        <div class="footer-container">
+            <div class="quick-links">
+                <!-- <h4>Quick Links</h4>
+                <a href="#">Contact Us</a>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms & Conditions</a> -->
+            </div>
+            <p>© 2024 Roadside Assistance. All rights reserved.</p>
+            <p>Contact us: road.guardian08@gmail.com | +1 234 567 890</p>
+            <!-- <div class="social">
+                <h4>Social</h4>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+                <a href="#">Instagram</a>
+                <a href="#">YouTube</a> -->
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function showEditForm(serviceTypeId) {
+            var editForm = document.getElementById('edit-form-' + serviceTypeId);
+            if (editForm.style.display === 'none' || editForm.style.display === '') {
+                editForm.style.display = 'block';
+            } else {
+                editForm.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
