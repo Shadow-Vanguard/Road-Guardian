@@ -155,3 +155,11 @@ EMAIL_HOST_PASSWORD = 'ebnr ihyf zflz trls'  # Fetch from environment variables
 
 
 LOGOUT_REDIRECT_URL = '/'
+
+
+import os
+
+# ... other settings ...
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

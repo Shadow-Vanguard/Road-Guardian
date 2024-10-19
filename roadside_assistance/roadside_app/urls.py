@@ -36,7 +36,9 @@ urlpatterns = [
     # User Dashboard URL
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'), 
     path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
+
     path('request-assistance/', views.request_assistance, name='request_assistance'),
+      path('service-providers/<int:service_type_id>/', views.service_providers_list, name='service_providers_list'),
 
 
     #serviceprovider Dashboard URL

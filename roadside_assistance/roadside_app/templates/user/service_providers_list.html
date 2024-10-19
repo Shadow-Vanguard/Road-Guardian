@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Providers for {{ service_type.servicetype_name }}</title>
+    <style>
+        /* html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden; 
+            overflow-y: hidden;  
+        } */
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            overflow-y: auto;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #14cbc25e;
+        }
+    
+        header {
+            background-color: #14da6aa3;
+            color: rgb(0, 0, 0);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        header nav a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #3498db;
+        }
+        header h1 {
+                flex-direction: column;
+                text-align: center;
+        }
+        header h2 {
+                flex-direction:row;
+                text-align: center;
+                margin-left: 10%;
+        }
+
+
+        footer {
+            background-color: #14da6aa3;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: 28%;
+        }
+        .footer p1{
+            margin-left: 40%;
+        }
+        .footer p2{
+            margin-left: 40%;
+        }
+
+        .logout {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background-color: #ff0000e9;
+            color: #fff;
+        }
+        .dashboard {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .dashboard:hover {
+            background-color: #138ebfc9;
+            color: #fff;
+        }
+   
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ROAD GUARDIAN</h1>
+        <h2>REQUEST ASSISTANCE</h2>
+        <nav>
+            <a href="{% url 'request_assistance' %}" class="dashboard">Go To Request Assistance</a>
+            <a href="{% url 'user_dashboard' %}" class="logout">Go To Dashboard</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h3>Service Providers for {{ service_type.servicetype_name }}</h3>
+        {% if service_providers %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Area of Service</th>
+                        <th>Location</th>
+                        <th>Availability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for provider in service_providers %}
+                    <tr>
+                        <td>{{ provider.user.name }}</td>
+                        <td>{{ provider.user.phone }}</td>
+                        <td>{{ provider.area_of_service }}</td>
+                        <td>{{ provider.location }}</td>
+                        <td>{% if provider.availability_status %}Available{% else %}Not Available{% endif %}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No service providers available for this service type.</p>
+        {% endif %}
+    </div>
+    <footer>
+        <div class="footer-container">
+        
+            <p1>© 2024 Roadside Assistance. All rights reserved.</p1>
+            <p2>Contact us: road.guardian08@gmail.com | +1 234 567 890</p2>
+            
+        </div>
+    </footer>
+</body>
+</html>

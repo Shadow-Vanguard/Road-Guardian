@@ -297,10 +297,24 @@ def request_assistance(request):
     return render(request, 'user/request_assistance.html', context)
 
 
+from django.shortcuts import render
+from .models import ServiceType
+
 def request_assistance(request):
     service_types = ServiceType.objects.all()
     return render(request, 'user/request_assistance.html', {'service_types': service_types})
 
+#showing service_providers_list
+from django.shortcuts import render, get_object_or_404
+from .models import ServiceType, ServiceProvider
+
+def service_providers_list(request, service_type_id):
+    service_type = get_object_or_404(ServiceType, servicetype_id=service_type_id)
+    service_providers = ServiceProvider.objects.filter(service_type=service_type)
+    return render(request, 'user/service_providers_list.html', {
+        'service_type': service_type,
+        'service_providers': service_providers
+    })
 
 ########################################################################################################
 

@@ -64,14 +64,16 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
 #tbl to add service type by admin
 
-class ServiceType(models.Model):
-       servicetype_id = models.AutoField(primary_key=True)
-       servicetype_name = models.CharField(max_length=100)
-       description = models.TextField(blank=True)
-       image = models.TextField(null=True, blank=True)  # Changed to TextField
+from django.db import models
 
-       def __str__(self):
-           return self.servicetype_name
+class ServiceType(models.Model):
+    servicetype_id = models.AutoField(primary_key=True)
+    servicetype_name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    image = models.ImageField(upload_to='service_types/', null=True, blank=True)
+
+    def __str__(self):
+        return self.servicetype_name
 
 # ServiceProvider model (For service providers registering in the system)
 from django.conf import settings

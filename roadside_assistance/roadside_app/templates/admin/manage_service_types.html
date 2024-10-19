@@ -242,6 +242,25 @@
                 margin-bottom: 20px;
             }
         }
+        .dashboard {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .dashboard:hover {
+            background-color: #138ebfc9;
+            color: #fff;
+        }
     </style>
 </head>
 <body>  
@@ -250,7 +269,7 @@
         <h1>Manage Service Types</h1>
         <nav>
             <a href="{% url 'home' %}" class="logout">Log Out</a>
-            <a href="{% url 'admin_dashboard' %}" class="logout">Go To Dashboard</a>
+            <a href="{% url 'admin_dashboard' %}" class="dashboard">Go To Dashboard</a>
         </nav>
     </header>
     <div class="container">
@@ -293,7 +312,7 @@
                     <td>{{ service_type.description }}</td>
                     <td>
                         {% if service_type.image %}
-                            <img src="{{ service_type.image }}" alt="{{ service_type.servicetype_name }}" class="img-thumbnail">
+                            <img src="{{ service_type.image.url }}" alt="{{ service_type.servicetype_name }}" class="img-thumbnail">
                         {% else %}
                             No image
                         {% endif %}
@@ -314,6 +333,9 @@
                                 <input type="text" name="servicetype_name" value="{{ service_type.servicetype_name }}" required>
                                 <textarea name="description">{{ service_type.description }}</textarea>
                                 <input type="file" name="image">
+                                {% if service_type.image %}
+                                    <p>Current image: {{ service_type.image.name }}</p>
+                                {% endif %}
                                 <button type="submit" class="btn">Save Changes</button>
                             </form>
                         </div>
