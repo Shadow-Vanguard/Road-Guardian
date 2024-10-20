@@ -198,3 +198,40 @@ class ServiceTypeForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
         }
+
+from django import forms
+from .models import ServiceTypeCategory
+
+
+class ServiceTypeCategoryForm(forms.ModelForm):
+    class Meta:
+        model = ServiceTypeCategory
+        fields = ['service_type', 'category_name', 'charge']
+        widgets = {
+            'service_type': forms.Select(attrs={'class': 'form-control'}),
+            'category_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'charge': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
+from django import forms
+from .models import Booking, ServiceTypeCategory
+
+class BookAssistanceForm(forms.ModelForm):
+    charge = forms.CharField(widget=forms.TextInput(attrs={'readonly': 'readonly'}), required=False)
+
+    class Meta:
+        model = Booking
+        fields = ['service_type_category', 'charge', 'location', 'description']
+        widgets = {
+            'service_type_category': forms.Select(attrs={'class': 'form-control'}),
+            'charge': forms.Select(attrs={'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your current location'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe the issue or service needed'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        service_provider = kwargs.pop('service_provider', None)
+        super(BookAssistanceForm, self).__init__(*args, **kwargs)
+        if service_provider:
+            self.fields['service_type_category'].queryset = ServiceTypeCategory.objects.filter(service_type=service_provider.service_type)

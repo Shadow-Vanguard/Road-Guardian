@@ -142,6 +142,31 @@
             background-color: #138ebfc9;
             color: #fff;
         }
+        .message-container {
+            position: fixed;
+            top: 95px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .message {
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            color: #fff;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .success { background-color: #28a745; }
+        .error { background-color: #dc3545; }
+        .warning { background-color: #ffc107; color: #333; }
+        .info { background-color: #17a2b8; }
+
+        .hide {
+            opacity: 0;
+        }
+
    
     </style>
 </head>
@@ -154,6 +179,22 @@
             <a href="{% url 'user_dashboard' %}" class="logout">Go To Dashboard</a>
         </nav>
     </header>
+    {% if messages %}
+        <div id="message-container" class="message-container">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <script>
+        // Automatically hide alerts after 5 seconds
+        setTimeout(function() {
+            var alerts = document.getElementsByClassName('alert');
+            for (var i = 0; i < alerts.length; i++) {
+                alerts[i].classList.add('hidden');
+            }
+        }, 5000);  // 5000 milliseconds = 5 seconds
+    </script>
     <div class="container">
         <h3>Service Providers for {{ service_type.servicetype_name }}</h3>
         {% if service_providers %}
@@ -165,6 +206,7 @@
                         <th>Area of Service</th>
                         <th>Location</th>
                         <th>Availability</th>
+                        <th>Request Assistance</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -175,6 +217,9 @@
                         <td>{{ provider.area_of_service }}</td>
                         <td>{{ provider.location }}</td>
                         <td>{% if provider.availability_status %}Available{% else %}Not Available{% endif %}</td>
+                        <td>
+                            <a href="{% url 'book_assistance' provider.id %}" class="dashboard">Book Assistance</a>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>

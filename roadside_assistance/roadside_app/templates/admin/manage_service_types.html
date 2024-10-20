@@ -82,6 +82,21 @@
         .btn:hover {
             background-color: #2980b9;
         }
+        .btn1 {
+            display: inline-block;
+            background-color: #3498db;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        .btn1:hover {
+            background-color: #2980b9;
+        }
 
         table {
             width: 100%;
@@ -261,6 +276,30 @@
             background-color: #138ebfc9;
             color: #fff;
         }
+        .message-container {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .message {
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            color: #fff;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .success { background-color: #28a745; }
+        .error { background-color: #dc3545; }
+        .warning { background-color: #ffc107; color: #333; }
+        .info { background-color: #17a2b8; }
+
+        .hide {
+            opacity: 0;
+        }
     </style>
 </head>
 <body>  
@@ -272,6 +311,13 @@
             <a href="{% url 'admin_dashboard' %}" class="dashboard">Go To Dashboard</a>
         </nav>
     </header>
+    {% if messages %}
+        <div id="message-container" class="message-container">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">{{ message }}</div>
+            {% endfor %}
+        </div>
+    {% endif %}
     <div class="container">
         
         
@@ -291,9 +337,13 @@
                 <input type="file" name="image" id="id_image">
             </div>
             <button type="submit" class="btn">Add Service Type</button>
+            
         </form>
 
+        <a href="{% url 'manage_service_categories' %}" class="btn">Manage Service Categories</a>
+        <br><br>
         <h3>Existing Service Types</h3>
+        
         <table>
             <thead>
                 <tr>
@@ -366,6 +416,25 @@
     </footer>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var messageContainer = document.getElementById('message-container');
+            if (messageContainer) {
+                var messages = messageContainer.getElementsByClassName('message');
+                
+                Array.from(messages).forEach(function(message) {
+                    setTimeout(function() {
+                        message.classList.add('hide');
+                        setTimeout(function() {
+                            message.remove();
+                            if (messageContainer.children.length === 0) {
+                                messageContainer.remove();
+                            }
+                        }, 500);
+                    }, 5000);
+                });
+            }
+        });
+        
         function showEditForm(serviceTypeId) {
             var editForm = document.getElementById('edit-form-' + serviceTypeId);
             if (editForm.style.display === 'none' || editForm.style.display === '') {
@@ -374,6 +443,19 @@
                 editForm.style.display = 'none';
             }
         }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var messages = document.querySelectorAll('.message');
+            messages.forEach(function(message) {
+                setTimeout(function() {
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                }, 3000); // 5000 milliseconds = 5 seconds
+            });
+        });
     </script>
 </body>
 </html>

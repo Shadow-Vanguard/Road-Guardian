@@ -206,7 +206,14 @@
         .hidden {
             display: none;
         }
+        .fade-out {
+            opacity: 0;
+            transition: opacity 1s ease-out;
+        }
 
+        .alert-success {
+            transition: opacity 1s ease-out;
+        }
     </style>
 </head>
 <body>
@@ -238,23 +245,32 @@
 
     <div class="content">
         <h2>Welcome {{ user.name }} To Your Dashboard</h2>  
-        {% if messages %}
-        {% for message in messages %}
-            <div class="alert">
-                {{ message }}
-            </div>
-        {% endfor %}
-        {% endif %}
+            {% if messages %}
+                    {% for message in messages %}
+                            <div class="alert alert-success">{{ message }}</div>
+                    {% endfor %}
+            {% endif %}
+
+                <script>
+                    document.addEventListener('DOMContentLoaded', function () {
+                        const successMessages = document.querySelectorAll('.alert-success');
+                        successMessages.forEach(function(message) {
+                            setTimeout(function () {
+                                message.classList.add('fade-out');
+                                setTimeout(function () {
+                                    message.style.display = 'none';
+                                }, 1000); // Remove from DOM after fade out
+                            }, 3000); // Start fading after 3 seconds
+                        });
+                    });
+                </script>
 
         <!-- Update Profile Form Section -->
         <div class="scrollable-container">
            <div class="update-profile" id="updateProfileSection">
                 <h3>Update Profile</h3>
-                {% if messages %}
-                {% for message in messages %}
-                    <div class="alert alert-success" id="successMessage">{{ message }}</div>
-                {% endfor %}
-                {% endif %}
+              
+               
                 <form method="post" action="{% url 'user_update_profile' %}" id="profileForm">
                     {% csrf_token %}
                     {{ form.non_field_errors }}
@@ -335,7 +351,7 @@
                 // Completely remove the message from the DOM after the fade-out
                 setTimeout(function () {
                     successMessage.style.display = 'none';
-                }, 3500); // Slightly longer to match the fade-out duration
+                }, 3100); // Slightly longer to match the fade-out duration
             }
         });
          // JavaScript to handle hover functionality for the email label

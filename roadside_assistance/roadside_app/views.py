@@ -316,6 +316,45 @@ def service_providers_list(request, service_type_id):
         'service_providers': service_providers
     })
 
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import ServiceProvider, ServiceTypeCategory
+from .forms import BookAssistanceForm
+from django.contrib import messages
+
+def book_assistance(request, provider_id):
+    service_provider = get_object_or_404(ServiceProvider, pk=provider_id)
+    
+    if request.method == 'POST':
+        form = BookAssistanceForm(request.POST, service_provider=service_provider)
+        if form.is_valid():
+            booking = form.save(commit=False)
+            booking.user = request.user
+            booking.service_provider = service_provider
+            booking.save()
+            messages.success(request, 'Assistance booked successfully!')
+            # Redirect to the service providers list for the same service type
+            return redirect('service_providers_list', service_type_id=service_provider.service_type.servicetype_id)
+    else:
+        form = BookAssistanceForm(service_provider=service_provider)
+    
+    context = {
+        'form': form,
+        'service_provider': service_provider,
+    }
+    return render(request, 'user/book_assistance.html', context)
+
+    
+from django.http import JsonResponse
+from .models import ServiceTypeCategory
+
+def get_category_charge(request):
+    category_id = request.GET.get('category_id')
+    try:
+        category = ServiceTypeCategory.objects.get(pk=category_id)
+        return JsonResponse({'charge': category.charge})
+    except ServiceTypeCategory.DoesNotExist:
+        return JsonResponse({'charge': ''}, status=404)
+
 ########################################################################################################
 
 #Admin
@@ -422,7 +461,7 @@ def service_provider_list(request):
         'users': users,
     })
 
-#add service type
+#add edit delete service type
 from django.shortcuts import render, redirect
 from .models import ServiceType
 from .forms import ServiceTypeForm
@@ -451,7 +490,11 @@ def edit_service_type(request, servicetype_id):
         form = ServiceTypeForm(request.POST, request.FILES, instance=service_type)
         if form.is_valid():
             form.save()
-    return redirect('manage_service_types')
+            messages.success(request, f"Service type '{service_type.servicetype_name}'updated successfully.")
+            return redirect('manage_service_types')
+    else:
+        form = ServiceTypeForm(instance=service_type)
+    return render(request, 'admin/manage_service_types.html', {'form': form, 'service_type': service_type})
 
 def delete_service_type(request, servicetype_id):
     service_type = get_object_or_404(ServiceType, servicetype_id=servicetype_id)
@@ -460,6 +503,49 @@ def delete_service_type(request, servicetype_id):
         return redirect('manage_service_types')
     return redirect('manage_service_types')
 
+
+ #add edit delete service category
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .forms import ServiceTypeCategoryForm
+from .models import ServiceTypeCategory, ServiceType
+
+def manage_service_categories(request):
+    if request.method == 'POST':
+        form = ServiceTypeCategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Service category added successfully.')
+            return redirect('add_service_category')
+    else:
+        form = ServiceTypeCategoryForm()
+    
+    categories = ServiceTypeCategory.objects.all()
+    service_types = ServiceType.objects.all()
+    
+    return render(request, 'admin/manage_service_category.html', {
+        'form': form,
+        'categories': categories,
+        'service_types': service_types
+    })
+
+def edit_service_category(request, category_id):
+    category = get_object_or_404(ServiceTypeCategory, category_id=category_id)
+    if request.method == 'POST':
+        form = ServiceTypeCategoryForm(request.POST, instance=category)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Service category updated successfully.')
+            return redirect('manage_service_categories')
+    return redirect('add_service_category')
+
+def delete_service_category(request, category_id):
+    category = get_object_or_404(ServiceTypeCategory, category_id=category_id)
+    if request.method == 'POST':
+        category.delete()
+        messages.success(request, 'Service category deleted successfully.')
+    return redirect('add_service_category')
 
 
 

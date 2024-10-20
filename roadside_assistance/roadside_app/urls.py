@@ -38,7 +38,9 @@ urlpatterns = [
     path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
 
     path('request-assistance/', views.request_assistance, name='request_assistance'),
-      path('service-providers/<int:service_type_id>/', views.service_providers_list, name='service_providers_list'),
+    path('service-providers/<int:service_type_id>/', views.service_providers_list, name='service_providers_list'),
+    path('book-assistance/<int:provider_id>/', views.book_assistance, name='book_assistance'),
+    path('get-category-charge/', views.get_category_charge, name='get_category_charge'),
 
 
     #serviceprovider Dashboard URL
@@ -60,9 +62,15 @@ urlpatterns = [
     path('admin-profile-update/', views.admin_profile_update,name='admin_profile_update'),#admin profile update
     path('service-providers/', views.service_provider_list, name='service_provider_list'),#service provider list
 
-    path('manage-service-types/', views.manage_service_types, name='manage_service_types'),#add service type
+    #add edit delete service type
+    path('manage-service-types/', views.manage_service_types, name='manage_service_types'),
     path('edit-service-type/<int:servicetype_id>/', views.edit_service_type, name='edit_service_type'),
     path('delete-service-type/<int:servicetype_id>/', views.delete_service_type, name='delete_service_type'),
+
+    #add edit delete service category
+    path('manage-service-categories/', views.manage_service_categories, name='manage_service_categories'),
+    path('edit-service-category/<int:category_id>/', views.edit_service_category, name='edit_service_category'),
+    path('delete-service-category/<int:category_id>/', views.delete_service_category, name='delete_service_category'),
 
   
 

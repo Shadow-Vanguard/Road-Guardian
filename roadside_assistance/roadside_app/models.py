@@ -90,3 +90,32 @@ class ServiceProvider(models.Model):
     def __str__(self):
         # Checks if the service type is available before displaying it
         return f'{self.user.name} - {self.service_type.servicetype_name if self.service_type else "No service type"}'
+
+
+from django.db import models
+
+
+class ServiceTypeCategory(models.Model):
+    category_id = models.AutoField(primary_key=True)
+    service_type = models.ForeignKey(ServiceType, on_delete=models.CASCADE, related_name='categories')
+    category_name = models.CharField(max_length=100)
+    charge = models.CharField(max_length=50, blank=True, null=True)
+
+
+    def __str__(self):
+        return f"{self.service_type.servicetype_name} - {self.category_name}"
+
+    class Meta:
+        verbose_name_plural = "Service Type Categories"
+
+
+class Booking(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    service_provider = models.ForeignKey(ServiceProvider, on_delete=models.CASCADE)
+    service_type_category = models.ForeignKey(ServiceTypeCategory, on_delete=models.CASCADE)
+    location = models.CharField(max_length=255)
+    description = models.TextField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Booking for {self.user.name} with {self.service_provider.user.name} at {self.location}"
