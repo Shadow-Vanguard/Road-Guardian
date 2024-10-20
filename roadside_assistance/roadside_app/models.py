@@ -109,13 +109,40 @@ class ServiceTypeCategory(models.Model):
         verbose_name_plural = "Service Type Categories"
 
 
+from django.db import models
+from django.conf import settings
+
 class Booking(models.Model):
+    STATUS_CHOICES = (
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('ongoing', 'Ongoing'),
+        ('completed', 'Completed'),
+        ('cancelled', 'Cancelled')
+    )
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     service_provider = models.ForeignKey(ServiceProvider, on_delete=models.CASCADE)
     service_type_category = models.ForeignKey(ServiceTypeCategory, on_delete=models.CASCADE)
     location = models.CharField(max_length=255)
     description = models.TextField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
         return f"Booking for {self.user.name} with {self.service_provider.user.name} at {self.location}"
+
+
+from django.db import models
+from django.core.validators import MinValueValidator, MaxValueValidator
+
+class Feedback(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='feedbacks_given')
+    service_provider = models.ForeignKey(ServiceProvider, on_delete=models.CASCADE, related_name='feedbacks_received')
+    booking = models.ForeignKey(Booking, on_delete=models.CASCADE, related_name='feedback')
+    feedback_text = models.TextField()
+    rating = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Feedback from {self.user.name} for {self.service_provider.user.name}"

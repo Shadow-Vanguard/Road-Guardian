@@ -301,6 +301,16 @@
             background-color: #138ebfc9;
             color: #fff;
         }
+        
+        .fade-out {
+            opacity: 0;
+            transition: opacity 1s ease-out;
+        }
+
+        .alert-success {
+            transition: opacity 1s ease-out;
+        }
+
     </style>
 </head>
 <body>
@@ -313,12 +323,24 @@
     </header>
 
     {% if messages %}
-        <div id="message-container" class="message-container">
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
     {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessages = document.querySelectorAll('.alert-success');
+            successMessages.forEach(function(message) {
+                setTimeout(function () {
+                    message.classList.add('fade-out');
+                    setTimeout(function () {
+                        message.style.display = 'none';
+                    }, 1000); // Remove from DOM after fade out
+                }, 3000); // Start fading after 3 seconds
+            });
+        });
+    </script>
 
     <div class="container">
         <h2>Add New Service Category</h2>
@@ -384,24 +406,6 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var messageContainer = document.getElementById('message-container');
-            if (messageContainer) {
-                var messages = messageContainer.getElementsByClassName('message');
-                
-                Array.from(messages).forEach(function(message) {
-                    setTimeout(function() {
-                        message.classList.add('hide');
-                        setTimeout(function() {
-                            message.remove();
-                            if (messageContainer.children.length === 0) {
-                                messageContainer.remove();
-                            }
-                        }, 500);
-                    }, 3000);
-                });
-            }
-        });
 
         function showEditForm(categoryId) {
             var editForm = document.getElementById('edit-form-' + categoryId);

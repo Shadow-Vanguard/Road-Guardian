@@ -1,0 +1,164 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Feedback - Road Guardian</title>
+    <style>
+                body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .feedback-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .star-rating {
+            font-size: 24px;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .star {
+            color: #ddd;
+            transition: color 0.2s;
+        }
+        .star.active {
+            color: #ffd700;
+        }
+        button[type="submit"] {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="feedback-container">
+        <h2>Submit Feedback</h2>
+        <form method="post" id="feedbackForm">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            
+            <div class="form-group">
+                <label for="{{ form.service_provider.id_for_label }}">Service Provider:</label>
+                {{ form.service_provider }}
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.booking.id_for_label }}">Which Service:</label>
+                {{ form.booking }}
+            </div>
+            
+            <div class="form-group">
+                <label for="{{ form.feedback_text.id_for_label }}">Your Feedback:</label>
+                {{ form.feedback_text }}
+            </div>
+            
+            <div class="form-group">
+                <label>Rating:</label>
+                <div class="star-rating">
+                    <span class="star" data-rating="1">&#9733;</span>
+                    <span class="star" data-rating="2">&#9733;</span>
+                    <span class="star" data-rating="3">&#9733;</span>
+                    <span class="star" data-rating="4">&#9733;</span>
+                    <span class="star" data-rating="5">&#9733;</span>
+                </div>
+                {{ form.rating }}
+            </div>
+            
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+    $(document).ready(function() {
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('id_rating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = this.getAttribute('data-rating');
+                ratingInput.value = rating;
+                updateStars(rating);
+            });
+
+            star.addEventListener('mouseover', function() {
+                const rating = this.getAttribute('data-rating');
+                updateStars(rating);
+            });
+        });
+
+        document.querySelector('.star-rating').addEventListener('mouseout', function() {
+            updateStars(ratingInput.value);
+        });
+
+        function updateStars(rating) {
+            stars.forEach(star => {
+                star.classList.toggle('active', star.getAttribute('data-rating') <= rating);
+            });
+        }
+
+        $('#id_service_provider').change(function() {
+            var serviceProviderId = $(this).val();
+            if (serviceProviderId) {
+                $.ajax({
+                    url: '{% url "get_bookings" %}',
+                    data: {
+                        'service_provider_id': serviceProviderId
+                    },
+                    success: function(data) {
+                        var bookingSelect = $('#id_booking');
+                        bookingSelect.empty();
+                        bookingSelect.append($('<option></option>').attr('value', '').text('Select a Service'));
+                        $.each(data, function(index, item) {
+                            bookingSelect.append(
+                                $('<option></option>').attr('value', item.id).text(item.service_type_category__category_name + ' - ' + item.created_at)
+                            );
+                        });
+                    }
+                });
+            } else {
+                $('#id_booking').empty();
+            }
+        });
+    });
+    </script>
+</body>
+</html>

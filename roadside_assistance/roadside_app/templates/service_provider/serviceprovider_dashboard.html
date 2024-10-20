@@ -39,7 +39,7 @@
             color: #4CAF50;
             font-weight: bold;
             background-color: #fff;
-            border: 0px solid #4CAF50;
+            border: 1px solid #4CAF50;
             transition: background-color 0.3s;
         }
 
@@ -189,10 +189,10 @@
         <div class="sidebar">
             <button onclick="toggleViewProfile()">View Profile</button>
             <button onclick="toggleUpdateProfile()">Update Profile</button>
-            <button onclick=window.location.href="{% url 'view_requests' %}">View Request</button>
-            <button>View Service History</button>
+            <button onclick=window.location.href='{% url 'view_requests' %}'>View Request</button>
+            <button onclick=window.location.href='{% url 'view_service_history' %}'>View Service History</button>
             <button>View Payment History</button>
-            <button>View Feedback</button>
+            <button onclick=window.location.href="{% url 'view_feedback' %}">View Feedback</button>
             <button>Message From User</button>
         </div>
 

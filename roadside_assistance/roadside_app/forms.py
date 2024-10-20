@@ -235,3 +235,27 @@ class BookAssistanceForm(forms.ModelForm):
         super(BookAssistanceForm, self).__init__(*args, **kwargs)
         if service_provider:
             self.fields['service_type_category'].queryset = ServiceTypeCategory.objects.filter(service_type=service_provider.service_type)
+
+
+
+from django import forms
+from .models import Feedback, ServiceProvider, Booking
+
+class FeedbackForm(forms.ModelForm):
+    service_provider = forms.ModelChoiceField(queryset=ServiceProvider.objects.all(), empty_label="Select a Service Provider")
+    booking = forms.ModelChoiceField(queryset=Booking.objects.none(), empty_label="Select a Service")
+
+    class Meta:
+        model = Feedback
+        fields = ['service_provider', 'booking', 'feedback_text', 'rating']
+        widgets = {
+            'rating': forms.HiddenInput(),
+            'feedback_text': forms.Textarea(attrs={'rows': 4, 'cols': 50}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super(FeedbackForm, self).__init__(*args, **kwargs)
+        if user:
+            self.fields['service_provider'].queryset = ServiceProvider.objects.filter(booking__user=user, booking__status='completed').distinct()
+            self.fields['booking'].queryset = Booking.objects.filter(user=user, status='completed')

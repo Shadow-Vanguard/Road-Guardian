@@ -354,6 +354,39 @@ def get_category_charge(request):
         return JsonResponse({'charge': category.charge})
     except ServiceTypeCategory.DoesNotExist:
         return JsonResponse({'charge': ''}, status=404)
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from .models import Feedback, ServiceProvider, Booking
+from .forms import FeedbackForm
+
+@login_required
+def submit_feedback(request):
+    if request.method == 'POST':
+        form = FeedbackForm(request.POST, user=request.user)
+        if form.is_valid():
+            feedback = form.save(commit=False)
+            feedback.user = request.user
+            feedback.save()
+            messages.success(request, "Thank you! Your feedback has been submitted successfully.")
+            return redirect('user_dashboard')
+        else:
+            messages.error(request, "There was an error with your submission. Please check the form and try again.")
+    else:
+        form = FeedbackForm(user=request.user)
+    
+    return render(request, 'user/feedback.html', {'form': form})
+
+@login_required
+def get_bookings(request):
+    service_provider_id = request.GET.get('service_provider_id')
+    bookings = Booking.objects.filter(
+        user=request.user,
+        service_provider_id=service_provider_id,
+        status='completed'
+    ).values('id', 'created_at', 'service_type_category__category_name')
+    return JsonResponse(list(bookings), safe=False)
+
 
 ########################################################################################################
 
@@ -634,3 +667,84 @@ def update_profile(request):
         'form': form,
         'service_provider': service_provider,  # Ensure this is passed
     })
+
+# view requests from user
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Booking
+
+@login_required
+def view_requests(request):
+    # Get all bookings for the current service provider
+    bookings = Booking.objects.filter(service_provider__user=request.user).order_by('-created_at')
+    
+    context = {
+        'bookings': bookings
+    }
+    return render(request, 'service_provider/view_requests.html', context)
+
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+
+@login_required
+def accept_booking(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
+    if booking.status == 'pending':
+        booking.status = 'accepted'
+        booking.save()
+        messages.success(request, 'Booking accepted successfully.')
+    return redirect('view_requests')
+
+@login_required
+def start_service(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
+    if booking.status == 'accepted':
+        booking.status = 'ongoing'
+        booking.save()
+        messages.success(request, 'Service started successfully.')
+    return redirect('view_requests')
+
+@login_required
+def complete_service(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
+    if booking.status == 'ongoing':
+        booking.status = 'completed'
+        booking.save()
+        messages.success(request, 'Service completed successfully.')
+    return redirect('view_requests')
+
+#view service history
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Booking
+
+@login_required
+def view_service_history(request):
+    # Get all completed bookings for the current service provider
+    service_history = Booking.objects.filter(
+        service_provider__user=request.user,
+        status='completed'
+    ).order_by('-created_at')
+    
+    context = {
+        'service_history': service_history
+    }
+    return render(request, 'service_provider/service_history.html', context)
+
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Feedback, ServiceProvider
+
+@login_required
+def view_feedback(request):
+    try:
+        service_provider = ServiceProvider.objects.get(user=request.user)
+        feedbacks = Feedback.objects.filter(service_provider=service_provider).order_by('-timestamp')
+        context = {
+            'feedbacks': feedbacks
+        }
+        return render(request, 'service_provider/view_feedback.html', context)
+    except ServiceProvider.DoesNotExist:
+        messages.error(request, "You are not registered as a service provider.")
+        return redirect('serviceprovider_dashboard')

@@ -37,18 +37,26 @@ urlpatterns = [
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'), 
     path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
 
-    path('request-assistance/', views.request_assistance, name='request_assistance'),
-    path('service-providers/<int:service_type_id>/', views.service_providers_list, name='service_providers_list'),
-    path('book-assistance/<int:provider_id>/', views.book_assistance, name='book_assistance'),
-    path('get-category-charge/', views.get_category_charge, name='get_category_charge'),
+    path('request-assistance/', views.request_assistance, name='request_assistance'),#request assistance
+    path('service-providers/<int:service_type_id>/', views.service_providers_list, name='service_providers_list'),#service providers list
+    path('book-assistance/<int:provider_id>/', views.book_assistance, name='book_assistance'),#book assistance
+    path('get-category-charge/', views.get_category_charge, name='get_category_charge'),#get category charge
 
 
     #serviceprovider Dashboard URL
     path('serviceprovider_dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
     path('update-profile/', views.update_profile, name='update_profile_service_provider'),
 
+    path('service-provider/view-requests/', views.view_requests, name='view_requests'),#view requests from user
+    path('service-provider/accept-booking/<int:booking_id>/', views.accept_booking, name='accept_booking'),#accept booking  
+    path('service-provider/start-service/<int:booking_id>/', views.start_service, name='start_service'),#start service
+    path('service-provider/complete-service/<int:booking_id>/', views.complete_service, name='complete_service'),#complete service
     
-
+    path('service-provider/service-history/', views.view_service_history, name='view_service_history'),#view service history
+    path('submit-feedback/', views.submit_feedback, name='submit_feedback'),#submit feedback
+    path('get-bookings/', views.get_bookings, name='get_bookings'),#get bookings
+    path('service-provider/view-feedback/', views.view_feedback, name='view_feedback'),#view feedback
+    
     #Password
     path('password-reset/', CustomPasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),

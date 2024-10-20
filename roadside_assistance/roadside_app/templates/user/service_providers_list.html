@@ -142,6 +142,25 @@
             background-color: #138ebfc9;
             color: #fff;
         }
+        .dashboard1 {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .dashboard1:hover {
+            background-color: #ff6a00c9;
+            color: #fff;
+        }
         .message-container {
             position: fixed;
             top: 95px;
@@ -218,7 +237,7 @@
                         <td>{{ provider.location }}</td>
                         <td>{% if provider.availability_status %}Available{% else %}Not Available{% endif %}</td>
                         <td>
-                            <a href="{% url 'book_assistance' provider.id %}" class="dashboard">Book Assistance</a>
+                            <a href="{% url 'book_assistance' provider.id %}" class="dashboard1">Book Assistance</a>
                         </td>
                     </tr>
                     {% endfor %}

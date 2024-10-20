@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Feedback</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+            overflow-y: hidden;
+            overflow-y: hidden;
+        }
+        .container {
+            width: 80%;
+            margin: 20px auto;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        .feedback-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: white;
+        }
+        .feedback-table th, .feedback-table td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+        .feedback-table th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: bold;
+        }
+        .feedback-table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        .feedback-table tr:hover {
+            background-color: #14cbc25e;
+        }
+        .star {
+            color: #ddd;
+            font-size: 20px;
+        }
+        .star.filled {
+            color: #FFD700;
+        }
+        .no-feedback {
+            text-align: center;
+            font-style: italic;
+            color: #666;
+        }
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 95%;
+            }
+            .feedback-table {
+                font-size: 14px;
+            }
+        }
+        header {
+            background-color: #14da6aa3;
+            color: rgb(0, 0, 0);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 28px;
+            margin: 0;
+        }
+
+        header nav a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 18px;
+            transition: color 0.3s ease;
+        }
+
+        header nav a:hover {
+            color: #3498db;
+        }
+
+
+        header h1 {
+                flex-direction: column;
+                text-align: center;
+        }
+        header h2 {
+                flex-direction:row;
+                text-align: center;
+                margin-left: 30%;
+        }
+
+
+        header nav {
+                margin-top: 10px;
+        }
+
+        header nav a {
+            margin: 0 10px;
+        }
+
+        nav {
+            display: flex;
+            margin-left: 530px;
+            flex-grow: 1;
+            justify-content: center;
+        }
+        footer {
+            background-color: #14da6aa3;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+            margin-top: 26.1%;
+        }
+        .footer p1{
+            margin-left: 40%;
+        }
+        .footer p2{
+            margin-left: 40%;
+        }
+        .logout {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .logout:hover {
+            background-color: #ea0606;
+            color: #fff;
+        }
+        .dashboard {
+            padding: 9px;
+            margin-bottom: 10px;
+            margin-top: 15px;
+            font-size: 18px;
+            margin-left: 72%;
+            border-radius: 6px;
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+            background-color: #fff;
+            border: 1px solid #4CAF50;
+            transition: background-color 0.3s;
+            text-align: center;
+        }
+
+        .dashboard:hover {
+            background-color: #138ebfc9;
+            color: #fff;
+        }
+        
+        .scrollable-container {
+                max-height: 700px; /* Set the max height you want */
+                overflow-y: auto; /* Enable vertical scrolling */
+                margin-top: 25px; /* Optional: Space between the sidebar and the form */
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ROAD GUARDIAN</h1>
+        <nav>
+            <a href="{% url 'service_provider_dashboard' %}" class="dashboard">Go To Dashboard</a>
+            <a href="{% url 'home' %}" class="logout">Log Out</a>
+        </nav>
+    </header>
+    <div class="scrollable-container">
+        <div class="container">
+            <h1>Feedback from Users</h1>
+            {% if feedbacks %}
+                <table class="feedback-table">
+                    <thead>
+                        <tr>
+                            <th>User</th>
+                            <th>Service</th>
+                            <th>Rating</th>
+                            <th>Feedback</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for feedback in feedbacks %}
+                            <tr>
+                                <td>{{ feedback.user.name }}</td>
+                                <td>{{ feedback.booking.service_type_category.category_name }}</td>
+                                <td>
+                                    {% for i in "12345"|make_list %}
+                                        {% if forloop.counter <= feedback.rating %}
+                                            <span class="star filled">&#9733;</span>
+                                        {% else %}
+                                            <span class="star">&#9733;</span>
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                                <td>{{ feedback.feedback_text }}</td>
+                                <td>{{ feedback.timestamp|date:"M d, Y" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="no-feedback">No feedback received yet.</p>
+            {% endif %}
+        </div>
+    </div>
+    <footer>
+        <div class="footer-container">
+        
+            <p1>© 2024 Roadside Assistance. All rights reserved.</p1>
+            <p2>Contact us: road.guardian08@gmail.com | +1 234 567 890</p2>
+            
+        </div>
+    </footer>
+</body>
+</html>

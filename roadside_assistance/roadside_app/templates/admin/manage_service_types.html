@@ -300,6 +300,17 @@
         .hide {
             opacity: 0;
         }
+        
+        .fade-out {
+                    opacity: 0;
+                    transition: opacity 1s ease-out;
+        }
+
+        .alert-success {
+                    transition: opacity 1s ease-out;
+        }
+
+
     </style>
 </head>
 <body>  
@@ -311,13 +322,11 @@
             <a href="{% url 'admin_dashboard' %}" class="dashboard">Go To Dashboard</a>
         </nav>
     </header>
-    {% if messages %}
-        <div id="message-container" class="message-container">
-            {% for message in messages %}
-                <div class="message {{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-success">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
     <div class="container">
         
         
@@ -416,25 +425,6 @@
     </footer>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var messageContainer = document.getElementById('message-container');
-            if (messageContainer) {
-                var messages = messageContainer.getElementsByClassName('message');
-                
-                Array.from(messages).forEach(function(message) {
-                    setTimeout(function() {
-                        message.classList.add('hide');
-                        setTimeout(function() {
-                            message.remove();
-                            if (messageContainer.children.length === 0) {
-                                messageContainer.remove();
-                            }
-                        }, 500);
-                    }, 5000);
-                });
-            }
-        });
-        
         function showEditForm(serviceTypeId) {
             var editForm = document.getElementById('edit-form-' + serviceTypeId);
             if (editForm.style.display === 'none' || editForm.style.display === '') {
@@ -444,16 +434,16 @@
             }
         }
     </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var messages = document.querySelectorAll('.message');
-            messages.forEach(function(message) {
-                setTimeout(function() {
-                    message.style.opacity = '0';
-                    setTimeout(function() {
-                        message.remove();
-                    }, 500);
-                }, 3000); // 5000 milliseconds = 5 seconds
+     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessages = document.querySelectorAll('.alert-success');
+            successMessages.forEach(function(message) {
+                setTimeout(function () {
+                    message.classList.add('fade-out');
+                    setTimeout(function () {
+                        message.style.display = 'none';
+                    }, 1000); // Remove from DOM after fade out
+                }, 3000); // Start fading after 3 seconds
             });
         });
     </script>
