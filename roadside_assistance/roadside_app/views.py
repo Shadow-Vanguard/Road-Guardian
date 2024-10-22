@@ -158,7 +158,8 @@ from django.contrib.auth import logout
 from django.contrib import messages
 
 def logout_view(request):
-    logout(request)  # This deletes the session
+    logout(request)
+    request.session.flush()  # This deletes the session
     messages.success(request, "You have successfully logged out.")
     return redirect('home')  # Redirect to login page after logout
 
@@ -216,6 +217,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from .forms import CustomUserUpdateForm
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
 
 from django.contrib.auth.decorators import login_required
@@ -225,25 +227,28 @@ def user_dashboard(request):
     return render(request, 'user_dashboard.html')
 
 # View Profile
-@login_required
+@never_cache
 def user_dashboard(request):
-    user = request.user  # Get the current logged-in user
+    if 'user_id' in request.session:
+        user = request.user  # Get the current logged-in user
 
-    if request.method == 'POST':
-        form = CustomUserUpdateForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()  # Save the updated user information
-            messages.success(request, 'Your changes have been saved.')
-            # return redirect('user_dashboard') # Redirect to display the success message
+        if request.method == 'POST':
+            form = CustomUserUpdateForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()  # Save the updated user information
+                messages.success(request, 'Your changes have been saved.')
+                # return redirect('user_dashboard') # Redirect to display the success message
+            else:
+                messages.error(request, 'Please correct the errors below.')
         else:
-            messages.error(request, 'Please correct the errors below.')
-    else:
-        form = CustomUserUpdateForm(instance=user)  # Load the current user data into the form
+            form = CustomUserUpdateForm(instance=user)  # Load the current user data into the form
 
-    context = {
-        'form': form,
-    }
-    return render(request, 'user/user_dashboard.html', context)
+        context = {
+            'form': form,
+        }
+        return render(request, 'user/user_dashboard.html', context)
+    else:
+        return redirect('login')
 
 
 def update_profile(request):

@@ -50,6 +50,11 @@
             opacity: 0;                   /* Reduce opacity to 0 for fade-out effect */
             transition: opacity 0.5s ease-in-out; /* Smooth transition */
         }
+        .google-icon {
+            width: 20px;
+            height: 20px;
+        }
+
 
     </style>
 </head>
@@ -69,13 +74,13 @@
         <h2>LOGIN</h2>
         
         <!-- Display any form-wide error messages -->
-        {% if messages %}
+        <!-- {% if messages %}
             <ul class="messages">
                 {% for message in messages %}
                     <li class="{{ message.tags }}">{{ message }}</li>
                 {% endfor %}
             </ul>
-        {% endif %}
+        {% endif %} -->
     
         <form method="post" id="loginForm">
             {% csrf_token %}
@@ -108,6 +113,13 @@
                 <button id="login" type="submit">Login</button>
             </div>
         </form>
+        <div>
+            <a href="{% url 'social:begin' 'google-oauth2' %}">
+                <img src="{% static 'images/google (1).png' %}" alt="Google Icon" class="google-icon">
+                Sign in with Google
+            </a>
+        </div>
+
     
         <label for="name">Not Registered Yet?</label>
         <a href="{% url 'register' %}" class="button">Create An Account</a>

@@ -56,7 +56,13 @@
             <a href="{% url 'register' %}" class="button">REGISTER</a>
         </div>
     </div>
-
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     <!-- Services Section -->
     <div id="services" class="services-container">
         <h1>Our Services</h1>

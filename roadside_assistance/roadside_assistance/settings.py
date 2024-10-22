@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
-    'roadside_app',     
+    'roadside_app',   
+    'social_django',  
   
 ]
 
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     # 'roadside_app.cache_control.CacheControlMiddleware',
-    
+    'social_django.middleware.SocialAuthExceptionMiddleware',
 ]
 
 ROOT_URLCONF = 'roadside_assistance.urls'
@@ -154,7 +155,7 @@ EMAIL_HOST_USER = 'road.guardian08@gmail.com'
 EMAIL_HOST_PASSWORD = 'ebnr ihyf zflz trls'  # Fetch from environment variables
 
 
-LOGOUT_REDIRECT_URL = '/'
+# LOGOUT_REDIRECT_URL = '/'
 
 
 import os
@@ -163,3 +164,33 @@ import os
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_PIPELINE = (
+    'social_core.pipeline.social_auth.social_details',  
+    'social_core.pipeline.social_auth.social_uid',      
+    'social_core.pipeline.social_auth.auth_allowed',    
+    'social_core.pipeline.social_auth.social_user',     
+    'social_core.pipeline.user.get_username',          
+    'social_core.pipeline.user.create_user',                               
+    'social_core.pipeline.social_auth.associate_user',  
+    'social_core.pipeline.social_auth.load_extra_data', 
+    'social_core.pipeline.user.user_details',          
+)
+
+LOGIN_REDIRECT_URL = 'user_dashboard'
+LOGOUT_REDIRECT_URL = 'home'
+
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+SOCIALACCOUNT_QUERY_EMAIL = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1027267612516-lf0dtag0ccaa0e6773q6ufrq9aqiro15.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'

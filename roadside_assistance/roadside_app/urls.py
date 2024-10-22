@@ -6,7 +6,7 @@ from . import views  # Import your views here
 from .views import reg_view, reg2_view
 from .views import service_provider_list
 from django.contrib.auth import views as auth_views
-from django.urls import path
+from django.urls import path, include
 from django.urls import path
 from django.urls import path
 
@@ -26,8 +26,10 @@ urlpatterns = [
     
     path('', views.home_view, name='home'),
     path('login/', views.login_view, name='login'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+    path('logout/', views.logout_view, name='logout'),
     path('register/', views.reg_view, name='register'),
+
+    path('oauth/', include('social_django.urls', namespace='social')),
 
     path('register/', reg_view, name='register'),
     path('register/service/<int:user_id>/', views.reg2_view, name='reg2'),
