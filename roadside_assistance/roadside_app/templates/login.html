@@ -4,174 +4,414 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>Road Guardian - Login</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            background-image: url("{% static 'images/home4.jpg' %}");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        .background-slider {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar-brand h1 {
+            font-size: 2rem;
+            color: #4CAF50;
+            text-transform: uppercase;
+        }
+        .navbar-links a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .navbar-links a:hover {
+            color: #4CAF50;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 80px 5% 120px;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 600px;
+            text-align: center;
+        }
+        .login-container h2 {
+            margin-bottom: 2rem;
+            color: #4CAF50;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .input-container {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+        .input-container input {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-container input:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            outline: none;
         }
         .error-message {
-            color: red;
-            margin-top: 10px;
+            color: #ff4d4d;
+            background-color: #ffe6e6;
+            padding: 10px;
+            border: 1px solid #ff0000;
+            border-radius: 5px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            opacity: 1;
+            transition: opacity 0.5s ease-in-out;
         }
-        /* Error message styling */
-        .error-message {
-            color: #ff4d4d;              /* Error text in a bright red color */
-            background-color: #ffe6e6;    /* Light red background for visibility */
-            padding: 10px;                /* Padding around the error message */
-            border: 1px solid #ff0000;    /* Solid red border to highlight the error */
-            border-radius: 5px;           /* Slight rounding of the corners */
-            font-weight: bold;            /* Bold font to emphasize the error */
-            margin-bottom: 10px;          /* Margin at the bottom to separate it from other elements */
-            opacity: 1;                   /* Set initial opacity for visibility */
-            transition: opacity 0.5s ease-in-out; /* Smooth fade effect on hiding */
+        .button-container {
+            margin-top: 2rem;
         }
-
-        /* Messages block for Django messaging framework */
-        .messages {
-            list-style-type: none;        /* Remove bullet points from the list */
-            padding: 0;                   /* Remove padding from the list */
+        .button-container button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            width: 100%;
         }
-
-        .messages li {
-            color: #ff4d4d;               /* Red text for the error message */
-            background-color: #ffe6e6;     /* Light red background */
-            padding: 10px;                /* Add padding inside the list item */
-            border: 1px solid #ff0000;     /* Red border for each list item */
-            border-radius: 5px;           /* Rounded corners */
-            font-weight: bold;            /* Bold font for emphasis */
-            margin-bottom: 10px;          /* Space between messages */
-            opacity: 1;                   /* Set initial opacity */
-            transition: opacity 0.5s ease-in-out; /* Smooth fade effect on hiding */
+        .button-container button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
-
-        /* Class to hide the error message */
-        .hidden {
-            opacity: 0;                   /* Reduce opacity to 0 for fade-out effect */
-            transition: opacity 0.5s ease-in-out; /* Smooth transition */
+        .forgot-password {
+            margin-top: 1rem;
+            text-align: right;
         }
-        .google-icon {
-            width: 20px;
-            height: 20px;
+        .forgot-password a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .forgot-password a:hover {
+            color: #45a049;
+            text-decoration: underline;
         }
         .google-button {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 10px 105px;
-            background-color: #4285F4; /* Google blue */
+            width: 100%;
+            padding: 1rem;
+            background-color: #4285F4;
             color: #ffffff;
             font-weight: bold;
             border: none;
             border-radius: 5px;
             text-decoration: none;
-            font-size: 16px;
+            font-size: 1rem;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
             transition: background-color 0.3s;
+            margin-top: 1rem;
         }
-
         .google-button:hover {
-            background-color: #357ae8; /* Slightly darker shade of Google blue */
+            background-color: #357ae8;
         }
-
         .google-icon {
             width: 20px;
             height: 20px;
-            margin-right: 8px;
+            margin-right: 10px;
+        }
+        .register-link {
+            margin-top: 2rem;
+            font-size: 1rem;
+        }
+        .register-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .register-link a:hover {
+            color: #45a049;
+            text-decoration: underline;
+        }
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 3rem 5%;
+            position: relative;
+            overflow: hidden;
+            margin-top: -5%;
         }
 
+        footer::before {
+            content: '';
+            position: absolute;
+            top: -2x;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;           background-color: #4CAF50;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
 
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
 
+        .footer-logo h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #4CAF50;
+        }
+
+        .footer-social a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            color: #4CAF50;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-logo,
+            .footer-links,
+            .footer-social {
+                margin-bottom: 2rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <nav class="navbar-login">
-        <div class="navbar-brand-login">
-            <h1>ROAD GUARDIAN</h1>
+    <div class="background-slider">
+        <div class="slide active" style="background-image: url({% static 'images/home1.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home2.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home3.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home4.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home5.jpg' %})"></div>
+    </div>
+    <div class="overlay"></div>
+    <nav class="navbar">
+        <div class="navbar-brand">
+            <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
         </div>
-        <div class="navbar-links-login">
+        <div class="navbar-links">
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'login' %}">Login</a>
             <a href="{% url 'register' %}">Register</a>
         </div>
     </nav>
 
-    <div class="login-container">
-        <h2>LOGIN</h2>
-        
-        <!-- Display any form-wide error messages -->
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="{{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    
-        <form method="post" id="loginForm">
-            {% csrf_token %}
-            <div class="input-container">
-                <label for="id_username">Username:</label>
-                {{ form.username }}
-                {% if form.username.errors %}
-                    <div class="error-message">{{ form.username.errors }}</div>
-                {% endif %}
-            </div>
-            
-            <div class="input-container">
-                <label for="id_password">Password:</label>
-                {{ form.password }}
-                {% if form.password.errors %}
-                    <div class="error-message">{{ form.password.errors }}</div>
-                {% endif %}
-            </div>
-    
-            <!-- Handle non-field errors such as account deactivation -->
-            {% if form.non_field_errors %}
-                <div class="error-message">{{ form.non_field_errors }}</div>
+    <div class="container">
+        <div class="login-container">
+            <h2 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Login</h2>
+                        {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }} error-message">{{ message }}</li>
+                    {% endfor %}
+                </ul>
             {% endif %}
+        
+            <form method="post" id="loginForm">
+                {% csrf_token %}
+                <div class="input-container">
+                    <label for="id_username"><i class="fas fa-user-circle"></i> Username:</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                        <div class="error-message">{{ form.username.errors }}</div>
+                    {% endif %}
+                </div>
+                
+                <div class="input-container">
+                    <label for="id_password"><i class="fas fa-lock"></i> Password:</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                        <div class="error-message">{{ form.password.errors }}</div>
+                    {% endif %}
+                </div>
+        
+                {% if form.non_field_errors %}
+                    <div class="error-message">{{ form.non_field_errors }}</div>
+                {% endif %}
+                
+                <div class="forgot-password">
+                    <a href="{% url 'password_reset' %}">Forgot Password?</a>
+                </div>
+                
+                <div class="button-container">
+                    <button id="login" type="submit">Login</button>
+                </div>
+            </form>
             
-            <div class="forgot-password">
-                <a href="{% url 'password_reset' %}">Forgot Password?</a>
-            </div>
-            
-            <div class="button-container">
-                <button id="login" type="submit">Login</button>
-            </div>
-        </form><br>
-        <div>
             <a href="{% url 'social:begin' 'google-oauth2' %}" class="google-button">
                 <img src="{% static 'images/google (1).png' %}" alt="Google Icon" class="google-icon">
                 Sign in with Google
             </a>
+            
+            <div class="register-link">
+                <p>Not Registered Yet? <a href="{% url 'register' %}">Create An Account</a></p>
+            </div>
         </div>
-        
-
-    
-        <label for="name">Not Registered Yet?</label>
-        <a href="{% url 'register' %}" class="button">Create An Account</a>
     </div>
-    
-    <!-- Add the JavaScript to hide the error messages after 3 seconds -->
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Road Guardian</h2>
+                <p>Your reliable roadside assistance partner</p>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Road Guardian. All rights reserved. | Providing reliable roadside assistance since 2020</p>
+        </div>
+    </footer>
     <script>
-        // Wait for the DOM to fully load
         document.addEventListener('DOMContentLoaded', function() {
-            // Get all messages
             const messages = document.querySelectorAll('.messages, .error-message');
             
-            // Set a timeout to hide the messages after 3 seconds
             setTimeout(function() {
                 messages.forEach(function(message) {
-                    message.style.display = 'none';  // Hide the message
+                    message.style.display = 'none';
                 });
-            }, 3000);  // 3000 milliseconds = 3 seconds
+            }, 3000);
         });
+
+        // Image slider
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        setInterval(nextSlide, 3000); // Change slide every 3 seconds
     </script>
-    
-    
-    <footer class="footer-login">
-        <p>© 2024 Roadside Assistance. All rights reserved.</p>
-        <p>Contact us: road.guardian08@gmail.com | +1 234 567 890</p>
-    </footer>
 </body>
 </html>

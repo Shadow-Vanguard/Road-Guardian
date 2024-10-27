@@ -1,107 +1,575 @@
-<!-- roadside_app/templates/roadside_app/home.html -->
 {% load static %}
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home Page</title>
-    <link rel="stylesheet" href="{% static 'css/home.css' %}">
+    <title>Road Guardian - Your Roadside Assistance Partner</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            overflow-x: hidden;
+        }
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        .navbar-brand h1 {
+            font-size: 2rem;
+            color: #4CAF50;
+        }
+        .navbar-links a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .navbar-links a:hover {
+            color: #4CAF50;
+        }
+        .hero {
+            height: 100vh;
+            /* background: url('{% static "images/road_background.jpg" %}') no-repeat center center/cover; */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #fff;
+            position: relative;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+        }
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background-color: #4CAF50;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+        .btn:hover {
+            background-color: #00b3ea76;
+        }
+        .services {
+            padding: 6rem 10%;
+            background-color: #f9f9f9;
+        }
+        .services h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #333;
+        }
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .service-card {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        .service-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 8px 20px cadetblue;
+        }
+        .service-card i {
+            font-size: 3rem;
+            color: #4CAF50;
+            margin-bottom: 1rem;
+        }   
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        /* Contact Section */
+        .contact {
+            padding: 8rem 5%;
+            background-color: #f9f9f9;
+            position: relative;
+            overflow: hidden;
+        }
 
-<style>
-    .home-container {
-    display: flex;
-    flex-direction: column;
-    justify-content: right;
-    align-items: center;
-    min-height: calc(100vh - 60px); /* Adjust for navbar height */
-    margin-top: 80px; /* Space for navbar */
-    text-align: center;
-    color: #000000c4;
-}
+        .contact::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            left: -50px;
+            width: 100px;
+            height: 100px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 50%;
+        }
 
-.button-container a.button {
-    display: inline-block;
-    padding: 10px 20px;
-    margin: 10px;
-    background-color: #4CAF50;
-    color: white;
-    text-decoration: bold !important;
-   font-size: 20px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-}
-</style>
+        .contact::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background-color: rgba(76, 175, 80, 0.1);
+            border-radius: 50%;
+        }
+
+        .contact h2 {
+            text-align: center;
+            font-size: 3rem;
+            margin-bottom: 2rem;
+            color: #333;
+            position: relative;
+        }
+
+        .contact h2::after {
+            content: '';
+            display: block;
+            width: 50px;
+            height: 3px;
+            background-color: #4CAF50;
+            margin: 1rem auto 0;
+        }
+
+        .contact p {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #666;
+            max-width: 800px;
+            margin: 0 auto 3rem;
+        }
+
+        .contact-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 4rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .contact-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px cadetblue;
+        }
+
+        .contact-item i {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            margin-right: 1.5rem;
+        }
+
+        .contact-item a,
+        .contact-item span {
+            font-size: 1.2rem;
+            color: #333;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item a:hover {
+            color: #4CAF50;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 3rem 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* footer::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: #4CAF50;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        } */
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #4CAF50;
+        }
+
+        .footer-social a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            color: #4CAF50;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-logo,
+            .footer-links,
+            .footer-social {
+                margin-bottom: 2rem;
+            }
+
+        }
+        .messages {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            z-index: 1001;
+            list-style-type: none;
+        }
+        .messages li {
+            padding: 10px 20px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            color: #fff;
+            font-weight: bold;
+        }
+        .messages .success {
+            background-color: #4CAF50;
+        }
+        .messages .error {
+            background-color: #f44336;
+        }
+        .hero {
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-slider {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            color: #fff;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="navbar-brand">
-            <h1>ROAD GUARDIAN</h1>
+            <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
         </div>
         <div class="navbar-links">
-            <a href="{% url 'home' %}" class="active">Home</a>
-            <a href="{% url 'home' %}#services">Services</a>
-            <a href="{% url 'home' %}#contact-us">Contact Us</a>
+            <a href="#home">Home</a>
+            <a href="#services">Services</a>
+            <a href="#contact">Contact</a>
+            <a href="{% url 'login' %}" class="btn">Login</a>
         </div>
     </nav>
+    {% if messages %}
+    <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    <section id="home" class="hero">
+        {% load static %}
 
-    <!-- Main Content -->
-    <div class="home-container">
-        <h1>Welcome To Road Guardian</h1>
-        <p style="margin-top:-1%;">A Complete Solution for Problems In Road</p>
-        <div class="button-container">
-            <a href="{% url 'login' %}" class="button">LOGIN</a>
-            <a href="{% url 'register' %}" class="button">REGISTER</a>
+        <div class="hero-slider">
+            <div class="slide active" data-bg="{% static 'images/home1.jpg' %}"></div>
+            <div class="slide" data-bg="{% static 'images/home2.jpg' %}"></div>
+            <div class="slide" data-bg="{% static 'images/home3.jpg' %}"></div>
+            <div class="slide" data-bg="{% static 'images/home4.jpg' %}"></div>
+            <div class="slide" data-bg="{% static 'images/home5.jpg' %}"></div>
         </div>
-    </div>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                    <li class="{{ message.tags }}">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-    <!-- Services Section -->
-    <div id="services" class="services-container">
-        <h1>Our Services</h1>
-        <section class="services-list">
-            <div class="service">
-                <h2>Towing</h2>
-                <p>We provide 24/7 towing services to help you get your vehicle to a safe location.</p>
+        
+        <style>
+            .slide[data-bg="{% static 'images/home1.jpg' %}"] { background-image: url('{% static "images/home1.jpg" %}'); }
+            .slide[data-bg="{% static 'images/home2.jpg' %}"] { background-image: url('{% static "images/home2.jpg" %}'); }
+            .slide[data-bg="{% static 'images/home3.jpg' %}"] { background-image: url('{% static "images/home3.jpg" %}'); }
+            .slide[data-bg="{% static 'images/home4.jpg' %}"] { background-image: url('{% static "images/home4.jpg" %}'); }
+            .slide[data-bg="{% static 'images/home5.jpg' %}"] { background-image: url('{% static "images/home5.jpg" %}'); }
+        </style>
+        <div class="hero-content">
+            <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Welcome to Road Guardian</h1>
+            <p style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Your reliable partner for roadside assistance, available 24/7 to keep you moving.</p>
+            <a href="{% url 'register' %}" class="btn">Get Started</a>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <h2>Our Services</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <i class="fas fa-truck-pickup"></i>
+                <h3>Towing</h3>
+                <p>24/7 towing services to help you get your vehicle to a safe location.</p>
             </div>
-            <div class="service">
-                <h2>Jump Start</h2>
+            <div class="service-card">
+                <i class="fas fa-car-battery"></i>
+                <h3>Jump Start</h3>
                 <p>Our experts can jump start your vehicle if you run into battery issues.</p>
             </div>
-            <div class="service">
-                <h2>Tire Change</h2>
+            <div class="service-card">
+                <i class="fas fa-wrench"></i>
+                <h3>Tire Change</h3>
                 <p>We offer tire change services to get you back on the road quickly.</p>
             </div>
-            <div class="service">
-                <h2>Ambulance Services</h2>
+            <div class="service-card">
+                <i class="fas fa-ambulance"></i>
+                <h3>Ambulance Services</h3>
                 <p>We offer ambulance services to get you to the hospital quickly.</p>
             </div>
-            <div class="service">
-                <h2>Petrol Delivering</h2>
-                <p>We offer petrol delivering services to get you to the reach your destination quickly.</p>
+            <div class="service-card">
+                <i class="fas fa-gas-pump"></i>
+                <h3>Fuel Delivery</h3>
+                <p>We offer fuel delivery services to help you reach your destination.</p>
             </div>
-        </section>
-    </div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-    <!-- Contact Section -->
-    <div id="contact-us" class="contact-us">
+            <div class="service-card">
+                <i class="fas fa-key"></i>
+                <h3>Lockout Service</h3>
+                <p>Locked out of your vehicle? Our experts can help you regain access quickly and safely.</p>
+            </div>
+            
+            <div class="service-card">
+                <i class="fas fa-tools"></i>
+                <h3>On-Site Repairs</h3>
+                <p>For minor issues, our technicians can perform on-site repairs to get you back on the road.</p>
+            </div>
+            
+            <div class="service-card">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>GPS Tracking</h3>
+                <p>Track our service vehicles in real-time to know exactly when help will arrive.</p>
+            </div>
+            <div class="service-card">
+                <i class="fas fa-snowplow"></i>
+                <h3>Winter Assistance</h3>
+                <p>Stuck in snow or ice? Our winter assistance service helps you navigate through harsh weather conditions safely.</p>
+            </div>
+            
+            <div class="service-card">
+                <i class="fas fa-car-crash"></i>
+                <h3>Accident Recovery</h3>
+                <p>In case of an accident, we provide swift recovery services to ensure your safety and manage the situation professionally.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
         <h2>Contact Us</h2>
-        <p>If you have any questions or need assistance, please reach out to us:</p>
-        <p>Email: <a href="mailto:road.guardian08@gmail.com" target="_blank">road.guardian08@gmail.com</a></p>
-        <p>Phone: +1 234 567 890</p>
-    </div>    
-    <br><br><br><br><br><br><br><br><br><br><br>
-    <!-- Footer -->
-    <footer class="footer">
-        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+        <p>Have questions or need immediate assistance? Our team is here to help you 24/7. Reach out to us through any of the following methods:</p>
+        <div class="contact-info">
+            <div class="contact-item">
+                <i class="fas fa-envelope"></i>
+                <a href="mailto:road.guardian08@gmail.com">road.guardian08@gmail.com</a>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-phone"></i>
+                <span>+1 234 567 890</span>
+            </div>
+            <div class="contact-item">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>123 Road Guardian St, City, Country</span>
+            </div>
+        </div>
+    </section>
+    
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Road Guardian</h2>
+                <p>Your reliable roadside assistance partner</p>
+            </div>
+            <div class="footer-links">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="{% url 'login' %}">Login</a></li>
+                </ul>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Road Guardian. All rights reserved. | Providing reliable roadside assistance since 2020</p>
+        </div>
     </footer>
+
+
+    <script>
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Fade out messages after 5 seconds
+        setTimeout(function() {
+            var messages = document.querySelector('.messages');
+            if (messages) {
+                messages.style.opacity = '0';
+                setTimeout(function() {
+                    messages.style.display = 'none';
+                }, 500);
+            }
+        }, 5000);
+    </script>
+    <script>
+        // ... (previous script content) ...
+    
+        // Image slider
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+    
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+    
+        setInterval(nextSlide, 3000); // Change slide every 3 seconds
+    
+        // ... (rest of the script content) ...
+    </script>
 </body>
 </html>
- 

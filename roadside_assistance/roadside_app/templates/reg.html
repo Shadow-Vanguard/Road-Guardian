@@ -4,102 +4,347 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registration</title>
-    <link rel="stylesheet" href="{% static 'css/reg.css' %}">
+    <title>Road Guardian - Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            background-image: url("{% static 'images/home3.jpg' %}");
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            height: 100%;
+            overflow-x: hidden;
+        }
+        .background-slider {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .slide.active {
+            opacity: 1;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        .navbar-brand h1 {
+            font-size: 2rem;
+            color: #4CAF50;
+            text-transform: uppercase;
+        }
+        .navbar-links a {
+            color: #333;
+            text-decoration: none;
+            margin-left: 1.5rem;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+        .navbar-links a:hover {
+            color: #4CAF50;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            margin-top: 1%;
+            align-items: center;
+            min-height: 100vh;
+            padding: 80px 5% 120px;
         }
         .reg-container {
-            background-color: #fff;
-            padding: 20px;  /* Reduced padding */
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(182, 25, 25, 0.1);
-            width: 500px;  /* Reduced width */
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 500px;
             text-align: center;
-            margin: 65px 10px 50px auto;
-            box-sizing: border-box;
-            margin-top: 70px;
-            height: 49rem;  /* Reduced height */
         }
-
         .reg-container h2 {
-            margin-bottom: 2px;
-            color: #333;
+            margin-bottom: 2rem;
+            color: #4CAF50;
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .input-container {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        .input-container label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #555;
+        }
+        .input-container input, .input-container select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        .input-container input:focus, .input-container select:focus {
+            border-color: #4CAF50;
+            box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+            outline: none;
         }
         .error {
-            color: red;
-            font-size: 12px;
+            color: #f44336;
+            font-size: 0.85rem;
+            margin-top: 0.25rem;
         }
+        .button-container {
+            margin-top: 2rem;
+        }
+        .button-container button {
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .button-container button:hover {
+            background-color: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .login-link {
+            margin-top: 2rem;
+            font-size: 1rem;
+        }
+        .login-link a {
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .login-link a:hover {
+            color: #45a049;
+            text-decoration: underline;
+        }
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: #fff;
+            padding: 3rem 5%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: -2x;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;           background-color: #4CAF50;
+            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .footer-logo h2 {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #4CAF50;
+        }
+
+        .footer-social a {
+            color: #fff;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-social a:hover {
+            color: #4CAF50;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer-bottom p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-logo,
+            .footer-links,
+            .footer-social {
+                margin-bottom: 2rem;
+            }
+        }
+        
     </style>
 </head>
 <body>
-
+    <div class="background-slider">
+        <div class="slide active" style="background-image: url({% static 'images/home1.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home2.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home3.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home4.jpg' %})"></div>
+        <div class="slide" style="background-image: url({% static 'images/home5.jpg' %})"></div>
+    </div>
+    <div class="overlay"></div>
     <nav class="navbar">
         <div class="navbar-brand">
-            <h1>ROAD GUARDIAN</h1>
+            <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
         </div>
         <div class="navbar-links">
             <a href="{% url 'home' %}">Home</a>
             <a href="{% url 'login' %}">Login</a>
-            <a href="{% url 'register' %}" class="active">Register</a>
+            <a href="{% url 'register' %}">Register</a>
         </div>
     </nav>
 
-    <div class="reg-container">
-        <h2>REGISTER</h2>
-        <form method="post" id="registrationForm">
-            {% csrf_token %}
-            <div class="input-container">
-                <label for="name">Name:</label>
-                {{ form.name }}
-                <div class="error" id="nameError"></div>
+    <div class="container">
+        <div class="reg-container">
+            <h2 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Join Road Guardian</h2>
+            <form method="post" id="registrationForm">
+                {% csrf_token %}
+                <div class="input-container">
+                    <label for="name"><i class="fas fa-user"></i> Name:</label>
+                    {{ form.name }}
+                    <div class="error" id="nameError"></div>
+                </div>
+                <div class="input-container">
+                    <label for="phone"><i class="fas fa-phone"></i> Phone:</label>
+                    {{ form.phone }}
+                    <div class="error" id="phoneError"></div>
+                </div>
+                <div class="input-container">
+                    <label for="address"><i class="fas fa-home"></i> Address:</label>
+                    {{ form.address }}
+                    <div class="error" id="addressError"></div>
+                </div>
+                <div class="input-container">
+                    <label for="email"><i class="fas fa-envelope"></i> Email:</label>
+                    {{ form.email }}
+                    <div class="error" id="emailError"></div>
+                </div>
+                <div class="input-container">
+                    <label for="role"><i class="fas fa-user-tag"></i> Role:</label>
+                    {{ form.role }}
+                </div>
+                <div class="input-container">
+                    <label for="username"><i class="fas fa-user-circle"></i> Username:</label>
+                    {{ form.username }}
+                    <div class="error" id="usernameError"></div>
+                </div>
+                <div class="input-container">
+                    <label for="password"><i class="fas fa-lock"></i> Password:</label>
+                    {{ form.password }}
+                    <div class="error" id="passwordError"></div>
+                </div>
+                <div class="button-container">
+                    <button type="submit">Register</button>
+                </div>
+            </form>
+            <div class="login-link">
+                <p>Already have an account? <a href="{% url 'login' %}">Log In</a></p>
             </div>
-            <div class="input-container">
-                <label for="phone">Phone:</label>
-                {{ form.phone }}
-                <div class="error" id="phoneError"></div>
-            </div>
-            <div class="input-container">
-                <label for="address">Address:</label>
-                {{ form.address }}
-                <div class="error" id="addressError"></div>
-            </div>
-            <div class="input-container">
-                <label for="email">Email:</label>
-                {{ form.email }}
-                <div class="error" id="emailError"></div>
-            </div>
-            <div class="input-container">
-                <label for="role">Role:</label>
-                {{ form.role }}
-            </div>
-            <div class="input-container">
-                <label for="username">Username:</label>
-                {{ form.username }}
-                <div class="error" id="usernameError"></div>
-            </div>
-            <div class="input-container">
-                <label for="password">Password:</label>
-                {{ form.password }}
-                <div class="error" id="passwordError"></div>
-            </div>
-            <div class="button-container">
-                <button type="submit">Register</button>
-            </div>
-        </form>
-        <div class="login-link">
-            <p>Already have an account? <a href="{% url 'login' %}" class="button">Log In</a></p>
         </div>
     </div>
 
-    <footer class="footer-reg">
-        <p>© 2024 Roadside Assistance. All rights reserved.</p>
-        <p>Contact us: road.guardian08@gmail.com | +1 234 567 890</p>
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">
+                <h2>Road Guardian</h2>
+                <p>Your reliable roadside assistance partner</p>
+            </div>
+            <div class="footer-social">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Road Guardian. All rights reserved. | Providing reliable roadside assistance since 2020</p>
+        </div>
     </footer>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Form elements
             const form = document.getElementById('registrationForm');
             const nameField = document.getElementById('id_name');
             const phoneField = document.getElementById('id_phone');
@@ -107,18 +352,15 @@
             const emailField = document.getElementById('id_email');
             const usernameField = document.getElementById('id_username');
             const passwordField = document.getElementById('id_password');
-
-            // Function to display error message and hide it after a few seconds
+    
+            // Validation functions
             function showError(element, message) {
                 element.textContent = message;
                 if (message !== "") {
-                    setTimeout(function() {
-                        element.textContent = "";  // Clear the error message after 4 seconds
-                    }, 4000);  // 4000 milliseconds = 4 seconds
+                    setTimeout(() => element.textContent = "", 4000);
                 }
             }
-
-            // Validation Functions
+    
             function validateName() {
                 const name = nameField.value.trim();
                 const nameError = document.getElementById('nameError');
@@ -126,30 +368,28 @@
                 if (!nameRegex.test(name)) {
                     showError(nameError, "Name must start with a capital letter and only contain alphabets.");
                     return false;
-                } else {
-                    nameError.textContent = "";
-                    return true;
                 }
+                nameError.textContent = "";
+                return true;
             }
-
+    
             function validatePhone() {
                 const phone = phoneField.value.trim();
                 const phoneError = document.getElementById('phoneError');
                 const phoneRegex = /^\d{10}$/;
                 const repeatedNumbersRegex = /^(\d)\1{9}$/;
-
+    
                 if (!phoneRegex.test(phone)) {
                     showError(phoneError, "Phone number must be exactly 10 digits.");
                     return false;
                 } else if (repeatedNumbersRegex.test(phone)) {
                     showError(phoneError, "Invalid phone number format (e.g., 1111111111 or 0000000000 not allowed).");
                     return false;
-                } else {
-                    phoneError.textContent = "";
-                    return true;
                 }
+                phoneError.textContent = "";
+                return true;
             }
-
+    
             function validateAddress() {
                 const address = addressField.value.trim();
                 const addressError = document.getElementById('addressError');
@@ -157,12 +397,11 @@
                 if (!addressRegex.test(address)) {
                     showError(addressError, "Address must only contain alphabets.");
                     return false;
-                } else {
-                    addressError.textContent = "";
-                    return true;
                 }
+                addressError.textContent = "";
+                return true;
             }
-
+    
             function validateEmail() {
                 const email = emailField.value.trim();
                 const emailError = document.getElementById('emailError');
@@ -170,24 +409,22 @@
                 if (!emailRegex.test(email)) {
                     showError(emailError, "Email must be a valid @gmail.com address.");
                     return false;
-                } else {
-                    emailError.textContent = "";
-                    return true;
                 }
+                emailError.textContent = "";
+                return true;
             }
-
+    
             function validateUsername() {
                 const username = usernameField.value.trim();
                 const usernameError = document.getElementById('usernameError');
-                if (username.length < 3) { // Example condition
+                if (username.length < 3) {
                     showError(usernameError, "Username must be at least 3 characters long.");
                     return false;
-                } else {
-                    usernameError.textContent = "";
-                    return true;
                 }
+                usernameError.textContent = "";
+                return true;
             }
-
+    
             function validatePassword() {
                 const password = passwordField.value;
                 const passwordError = document.getElementById('passwordError');
@@ -195,39 +432,49 @@
                 if (!passwordRegex.test(password)) {
                     showError(passwordError, "Password must contain a capital letter, a special character, and be at least 6 characters long.");
                     return false;
-                } else {
-                    passwordError.textContent = "";
-                    return true;
                 }
+                passwordError.textContent = "";
+                return true;
             }
-
-            // Event Listeners for Real-Time Validation
+    
+            // Event listeners for real-time validation
             nameField.addEventListener('input', validateName);
             phoneField.addEventListener('input', validatePhone);
             addressField.addEventListener('input', validateAddress);
             emailField.addEventListener('input', validateEmail);
             usernameField.addEventListener('input', validateUsername);
             passwordField.addEventListener('input', validatePassword);
-
-            // Final form validation before submission
+    
+            // Form submission validation
             form.addEventListener('submit', function (event) {
-                // Run all validation functions
-                const isNameValid = validateName();
-                const isPhoneValid = validatePhone();
-                const isAddressValid = validateAddress();
-                const isEmailValid = validateEmail();
-                const isUsernameValid = validateUsername();
-                const isPasswordValid = validatePassword();
-
-                // If any validation fails, prevent form submission
-                if (!isNameValid || !isPhoneValid || !isAddressValid || !isEmailValid || !isUsernameValid || !isPasswordValid) {
+                const isValid = [
+                    validateName(),
+                    validatePhone(),
+                    validateAddress(),
+                    validateEmail(),
+                    validateUsername(),
+                    validatePassword()
+                ].every(Boolean);
+    
+                if (!isValid) {
                     event.preventDefault();
                     alert("Please fix the errors before submitting.");
                 }
             });
         });
-    </script>
     
-
+        // Image slider
+        const slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+    
+        function nextSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+    
+        setInterval(nextSlide, 3000);
+    </script>
+   
 </body>
 </html>
