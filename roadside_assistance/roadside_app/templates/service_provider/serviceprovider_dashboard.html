@@ -4,413 +4,625 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Providers Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
+    <title>Service Provider Dashboard - Road Guardian</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        body {
-            background-image: url("{% static 'images/home4.jpg' %}");
-            background-position: center -15%;
-           
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --shadow-color: rgba(0,0,0,0.1);
+            --error-color: #e74c3c;
+            --success-color: #2ecc71;
         }
-        .content {
-            width: 71%;
-            margin-left:3%;
-            background-color: #ffffff73;
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-top:0%
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body, html {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            height: 100%;
+            overflow-x: hidden;
+            background-color: var(--background-color);
+        }
+        header {
+            background-color: #ffffff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+        header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-name {
+            margin-right: 1rem;
+            color: var(--text-color);
+        }
+        .user-menu {
+            position: relative;
+        }
+        .user-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-radius: 5px;
+            display: none;
+            z-index: 1001;
+            width: 200px;
+        }
+        .user-dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .user-dropdown a:hover {
+            background-color: #f0f0f0;
+        }
+        .dashboard-container {
+            display: flex;
+            margin-top: 80px;
+            min-height: calc(100vh - 80px);
         }
         .sidebar {
-            width: 20%;
-            height:100%;
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            background-color: #ffffff;
+            padding: 2rem;
+            box-shadow: 2px 0 10px var(--shadow-color);
         }
-
         .sidebar button {
             width: 100%;
             padding: 12px;
-            margin-bottom: 45px;
-            font-size: 18px;
-            border-radius: 6px;
-            color: #4CAF50;
-            font-weight: bold;
-            background-color: #fff;
-            border: 1px solid #4CAF50;
-            transition: background-color 0.3s;
-        }
-
-        .sidebar button:hover {
-            background-color: #4CAF50;
-            color: #fff;
-        }
-
-        .update-profile, .view-profile {
-            background-position: center 20%;
-            display: none; 
-            margin-top: 30px;
-            margin-bottom: 80px; 
-        }
-        .alert {
-            padding: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            border: none;
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
             border-radius: 5px;
-        }
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-        }
-        .error-message {
-            color: red;
-            font-size: 12px;
-        }
-        .content h2 {
-            margin: 0;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #4CAF50;
-            font-size: 24px;
-            color: #4CAF50;
-        }
-        #updateProfileSection {
-            background-color: #f7f7f7;
-            padding: 20px;
-            margin-top: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: 1%;
-        }
-        #viewProfileSection {
-            background-color: #fafafac9;
-            padding: 10px;
-            margin-top: 25px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-bottom: -1%;
-        }
-        footer {
-                background-color: #ffffff84;
-                color: rgb(0, 0, 0);
-                text-align: center;
-                padding: 10px 0;
-                position: absolute;
-                bottom: 0; /* Ensure it stays at the bottom */
-                width: 100%;
-                height:15%;
-        }
-
-        footer .footer-container {
-            display: flex;
-            justify-content: space-around;
-            padding-bottom: 80px;
-            margin-top: px; /* Adjust margin as needed */
-        }
-
-        footer .quick-links, footer .social {
             text-align: left;
         }
-
-        footer .quick-links h4, footer .social h4 {
-            margin-bottom: 15px;
-            color: rgb(0, 0, 0);
-        }
-
-        footer .quick-links a, footer .social a {
-            color: rgb(0,0,0);
-            display: block;
-            text-decoration: none;
-            margin-bottom: 2px;
-            font-size: 16px;
-            transition: color 0.3s ease;
-        }
-
-        footer .quick-links a:hover, footer .social a:hover {
+        .sidebar button:hover {
+            background-color: var(--primary-color);
             color: #ffffff;
-            text-decoration: underline;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
         }
-        .scrollable-container {
-            max-height:550px; /* Set the max height you want */
-            overflow-y: auto; /* Enable vertical scrolling */
-            margin-top: 25px; /* Optional: Space between the sidebar and the form */
+        .content {
+            flex-grow: 1;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px var(--shadow-color);
+            padding: 2rem;
+            margin: 1rem;
+        }
+        .content h2 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+        }
+        .update-profile, .view-profile {
+            background-color: #f9f9f9;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px var(--shadow-color);
+            display: none;
+            margin-top: 1.5rem;
+        }
+        .update-profile h3, .view-profile h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        .form-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+            font-weight: 500;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            background-color: #ffffff;
+            color: var(--text-color);
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+        }
+        .form-group input.error {
+            border-color: var(--error-color);
+        }
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            display: block;
+            height: 20px;
+        }
+        .error-message.visible {
+            opacity: 1;
+        }
+        .alert {
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 5px;
+            opacity: 1;
+            transition: opacity 0.3s ease-in-out;
+            text-align: center;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
         }
         .tooltip {
-            display: none;
             position: absolute;
-            background-color: #f44336;
+            background-color: #333;
             color: white;
             padding: 5px 10px;
             border-radius: 4px;
-            font-size: 12px;
-            white-space: nowrap;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            z-index: 1000; /* Make sure the tooltip is on top */
+            font-size: 0.8rem;
+            display: none;
+            z-index: 1000;
+        }
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px;
+            border-style: solid;
+            border-color: #333 transparent transparent transparent;
+        }
+        footer {
+            background-color: #34495e;
+            color: #ecf0f1;
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: auto;
+        }
+        .footer-content {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        .footer-section {
+            text-align: left;
+        }
+        .footer-section h4 {
+            color: #3498db;
+            margin-bottom: 1rem;
+        }
+        .footer-section a {
+            color: #ecf0f1;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+        .footer-section a:hover {
+            color: #3498db;
+        }
+        @media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                margin-bottom: 1rem;
+            }
+            .content {
+                margin: 0;
+            }
+            .footer-content {
+                flex-direction: column;
+            }
+            .footer-section {
+                margin-bottom: 1.5rem;
+            }
+        }
+        form button[type="submit"] {
+            background-color: var(--primary-color);
+            color: #ffffff;
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            width: auto;
+            margin-top: 1rem;
         }
 
-        /* Position the tooltip above the email label */
-        #emailLabel {
+        form button[type="submit"]:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(52, 152, 219, 0.2);
+        }
+        .error-message {
+            color: var(--error-color);
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            display: block;
+            min-height: 20px;
+        }
+
+        .error-message.visible {
+            opacity: 1;
+        }
+
+        input.error {
+            border-color: var(--error-color) !important;
+            background-color: #fff6f6;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
             position: relative;
         }
-        .logo {
-            width: 100px;
-            height: 70px; /* Adjust as needed */
-            margin-top: -10%;
-            margin-left: 87%;
-        }
-        .alert {
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            background-color: #dff0d8;
-            color: #3c763d;
-            text-align: center;
-            font-size: 14px;
-        }
-
-        /* Class to hide the alert */
-        .hidden {
-            display: none;
-        }
-
-
     </style>
 </head>
 <body>
     <header>
-        <h1>24*7 Roadside Assistance</h1>
-        <nav>
-            <a href="{% url 'logout' %}" class="logout">Log Out</a>
-        </nav>
+        <h1>ROAD GUARDIAN</h1>
+        <div class="user-info">
+            <span class="user-name">{{ user.name }}</span>
+            <div class="user-menu">
+                <button class="user-menu-btn"><i class="fas fa-user"></i></button>
+                <div class="user-dropdown">
+                    <a href="#" onclick="toggleViewProfile()"><i class="fas fa-user"></i> View Profile</a>
+                    <a href="#" onclick="toggleUpdateProfile()"><i class="fas fa-edit"></i> Update Profile</a>
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <a href="#" onclick="this.parentNode.submit()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                    </form>
+                </div>
+            </div>
+        </div>
     </header>
 
     <div class="dashboard-container">
         <div class="sidebar">
-            <button onclick="toggleViewProfile()">View Profile</button>
-            <button onclick="toggleUpdateProfile()">Update Profile</button>
-            <button onclick=window.location.href='{% url 'view_requests' %}'>View Request</button>
-            <button onclick=window.location.href='{% url 'view_service_history' %}'>View Service History</button>
-            <button>View Payment History</button>
-            <button onclick=window.location.href="{% url 'view_feedback' %}">View Feedback</button>
-            <button>Message From User</button>
+
+            <button onclick=window.location.href='{% url 'view_requests' %}'><i class="fas fa-list-alt"></i> View Requests</button>
+            <button onclick=window.location.href='{% url 'view_service_history' %}'><i class="fas fa-history"></i> Service History</button>
+            <button><i class="fas fa-money-bill-wave"></i> Payment History</button>
+            <button onclick=window.location.href='{% url 'view_feedback' %}'><i class="fas fa-comment-alt"></i> View Feedback</button>
+            <button><i class="fas fa-envelope"></i> Messages</button>
         </div>
 
         <div class="content">
-            <h2>Welcome {{ user.name }} To Your Dashboard</h2>
-            {% if messages %}
-            {% for message in messages %}
-                <div class="alert">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-           
-
-            
-            <!-- Update Profile Form Section -->
-            <div class="scrollable-container">
-                <div class="update-profile" id="updateProfileSection">
-                    <h3>Update Profile</h3>
-                    {% if messages %}
-                        {% for message in messages %}
-                            <div class="alert alert-success">{{ message }}</div>
-                        {% endfor %}
-                    {% endif %}
-                    <form method="post" action="{% url 'update_profile_service_provider' %}" id="profileForm">
-                        {% csrf_token %}
-                        {{ form.non_field_errors }}
-
-                        <label for="name">Name:</label>
-                        {{ form.name }}
-                        <span id="nameError" class="error-message"></span>
-
-                        <label for="username">Username:</label>
-                        {{ form.username }}
-
-                        <label for="address">Address:</label>
-                        {{ form.address }}
-                        <span id="addressError" class="error-message"></span>
-
-                        <label for="phone">Phone:</label>
-                        {{ form.phone }}
-                        <span id="phoneError" class="error-message"></span>
-
-                        <label for="email" id="emailLabel">Email:</label>
-                        <input type="email" name="email" value="{{ form.email.value }}" readonly>
-                        <span id="emailTooltip" class="tooltip">Can't change email due to security reasons</span>
-                        <span id="emailError" class="error-message"></span>
-                                
-                        <button type="submit">Save Changes</button>
-                    </form>
-                </div>
+            <h2>Welcome, {{ user.name }}!</h2>
+            <div id="messageContainer">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
             </div>
-            
-            <!-- View Profile Section -->
-            <div class="view-profile" id="viewProfileSection">
-                <h3>Profile Information</h3>
-                <p><strong>Username:</strong> {{ user.username }}</p>
+
+            <div id="updateProfileSection" class="update-profile">
+                <h3>Update Your Profile</h3>
+                <form method="post" action="{% url 'update_profile_service_provider' %}" id="profileForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_username">Username:</label>
+                        <input type="text" id="id_username" name="username" value="{{ form.username.value|default:user.username }}">
+                        <span id="usernameError" class="error-message"></span>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_name">Name:</label>
+                        <input type="text" id="id_name" name="name" value="{{ form.name.value|default:user.name }}">
+                        <span id="nameError" class="error-message"></span>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_address">Address:</label>
+                        <input type="text" id="id_address" name="address" value="{{ form.address.value|default:user.address }}">
+                        <span id="addressError" class="error-message"></span>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_phone">Phone:</label>
+                        <input type="text" id="id_phone" name="phone" value="{{ form.phone.value|default:user.phone }}">
+                        <span id="phoneError" class="error-message"></span>
+                    </div>
+                
+                    <div class="form-group">
+                        <label for="id_email">Email:</label>
+                        <input type="email" id="id_email" name="email" value="{{ form.email.value|default:user.email }}" readonly>
+                        <span id="emailTooltip" class="tooltip">Email cannot be changed for security reasons</span>
+                        <span id="emailError" class="error-message"></span>
+                    </div>
+                
+                    <button type="submit">Update Profile</button>
+                </form>
+            </div>
+
+            <div id="viewProfileSection" class="view-profile">
+                <h3>Your Profile Information</h3>
                 <p><strong>Name:</strong> {{ user.name }}</p>
                 <p><strong>Email:</strong> {{ user.email }}</p>
                 <p><strong>Phone:</strong> {{ user.phone }}</p>
                 <p><strong>Address:</strong> {{ user.address }}</p>
-                <p><strong>Role:</strong> {{ user.role }}</p>
-                
-                {% if service_provider %}
                 <p><strong>Service Type:</strong> {{ service_provider.service_type.servicetype_name }}</p>
-                {% else %}
-                <p><strong>Service Type:</strong> Not a service provider</p>
-                {% endif %}
-
-                <p><strong>Area Of Service:</strong> {{ service_provider.area_of_service }}</p>
-                <p><strong>Location:</strong> {{ service_provider.location }}</p>
-
-
-
-
+                <p><strong>Area of Service:</strong> {{ service_provider.area_of_service }}</p>
             </div>
         </div>
     </div>
-    <br><br>
+
     <footer>
-        <div class="footer-container">
-            <div class="quick-links">
+        <div class="footer-content">
+            <div class="footer-section">
                 <h4>Quick Links</h4>
-                <a href="#">Contact Us</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms & Conditions</a>
+                <a href="#">Home</a>
+                <a href="#">Services</a>
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
             </div>
-            <p>© 2024 Roadside Assistance. All rights reserved.</p>
-            <p>Contact us: road.guardian08@gmail.com | +1 234 567 890</p>
-            <div class="social">
-                <h4>Social</h4>
-                <a href="#">Facebook</a>
-                <a href="#">Twitter</a>
-                <a href="#">Instagram</a>
-                <a href="#">YouTube</a>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: road.guardian08@gmail.com</p>
+                <p>Phone: +1 234 567 890</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
             </div>
         </div>
+        <p>&copy; 2024 Road Guardian. All rights reserved.</p>
     </footer>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // DOM Elements
+            const userMenuBtn = document.querySelector('.user-menu-btn');
+            const userDropdown = document.querySelector('.user-dropdown');
             const form = document.getElementById('profileForm');
-            const name = form.querySelector('[name="name"]');
-            const address = form.querySelector('[name="address"]');
-            const phone = form.querySelector('[name="phone"]');
-            const email = form.querySelector('[name="email"]');
+            const messageContainer = document.getElementById('messageContainer');
+            const updateSection = document.getElementById('updateProfileSection');
+            const viewSection = document.getElementById('viewProfileSection');
             
+            // Form Elements
+            const username = document.getElementById('id_username');
+            const name = document.getElementById('id_name');
+            const address = document.getElementById('id_address');
+            const phone = document.getElementById('id_phone');
+            const email = document.getElementById('id_email');
+            
+            // Error Elements
+            const usernameError = document.getElementById('usernameError');
             const nameError = document.getElementById('nameError');
             const addressError = document.getElementById('addressError');
             const phoneError = document.getElementById('phoneError');
             const emailError = document.getElementById('emailError');
-
-        // JavaScript to handle hover functionality for the email label
-        const emailLabel = document.getElementById('emailLabel');
-        const emailTooltip = document.getElementById('emailTooltip');
-
-        // Show tooltip when mouse enters email label
-        emailLabel.addEventListener('mouseover', function () {
-            emailTooltip.style.display = 'block';
-            emailTooltip.style.left = emailLabel.getBoundingClientRect().left + 'px';
-            emailTooltip.style.top = (emailLabel.getBoundingClientRect().top - emailTooltip.offsetHeight - 5) + 'px'; // Position above the label
-        });
-
-        // Hide tooltip when mouse leaves email label
-        emailLabel.addEventListener('mouseout', function () {
-            emailTooltip.style.display = 'none';
-        });
-            
-           // Name Validation
+            const emailTooltip = document.getElementById('emailTooltip');
+    
+            // Validation Functions
+            function validateUsername() {
+                if (!username.value.trim()) {
+                    showError(usernameError, "Username is required");
+                    username.classList.add('error');
+                    return false;
+                }
+                username.classList.remove('error');
+                clearError(usernameError);
+                return true;
+            }
+    
             function validateName() {
-                const nameValue = name.value;
-                const nameRegex = /^[A-Z][a-zA-Z\s]*$/;  // Allows capital at the start followed by alphabets and spaces
-                if (!nameRegex.test(nameValue)) {
-                    nameError.textContent = "Name must start with a capital letter and contain only alphabets.";
+                const nameRegex = /^[A-Z][a-zA-Z\s]*$/;
+                if (!name.value.trim() || !nameRegex.test(name.value.trim())) {
+                    showError(nameError, "Name must start with a capital letter and contain only alphabets");
+                    name.classList.add('error');
                     return false;
                 }
-                nameError.textContent = "";
+                name.classList.remove('error');
+                clearError(nameError);
                 return true;
             }
-
-            // Address Validation (Alphabets only)
+    
             function validateAddress() {
-                const addressValue = address.value;
-                // Updated regex to allow alphabets, spaces, periods, commas, and parentheses
-                const addressRegex = /^[a-zA-Z\s.,()]*$/;
-                
-                if (!addressRegex.test(addressValue)) {
-                    addressError.textContent = "Address must contain only alphabets, periods (.), commas (,), and parentheses (()).";
+                const addressRegex = /^[a-zA-Z0-9\s.,()]+$/;
+                if (!address.value.trim()) {
+                    showError(addressError, "Address is required");
+                    address.classList.add('error');
                     return false;
                 }
-                
-                addressError.textContent = "";
+                if (!addressRegex.test(address.value.trim())) {
+                    showError(addressError, "Address must only contain letters, numbers, spaces, periods, commas, and parentheses");
+                    address.classList.add('error');
+                    return false;
+                }
+                address.classList.remove('error');
+                clearError(addressError);
                 return true;
             }
-
-
-            // Phone Validation (Exactly 10 digits, no repetition)
+    
             function validatePhone() {
-                const phoneValue = phone.value;
                 const phoneRegex = /^\d{10}$/;
-                if (!phoneRegex.test(phoneValue) || /(\d)\1{2}/.test(phoneValue)) {
-                    phoneError.textContent = "Phone number must be exactly 10 digits and not contain repeated sequences.";
+                if (!phone.value.trim() || !phoneRegex.test(phone.value.trim())) {
+                    showError(phoneError, "Phone number must be exactly 10 digits");
+                    phone.classList.add('error');
                     return false;
                 }
-                phoneError.textContent = "";
+                phone.classList.remove('error');
+                clearError(phoneError);
                 return true;
             }
-
-            // Email Validation (Must be a Gmail address)
-            function validateEmail() {
-                const emailValue = email.value;
-                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-                if (!emailRegex.test(emailValue)) {
-                    emailError.textContent = "Email must be a valid Gmail address.";
-                    return false;
+    
+            // Error Handling Functions
+            function showError(element, message) {
+                element.textContent = message;
+                element.style.opacity = '1';
+                element.classList.add('visible');
+            }
+    
+            function clearError(element) {
+                element.textContent = '';
+                element.style.opacity = '0';
+                element.classList.remove('visible');
+            }
+    
+            // Check if there are any visible errors
+            function hasVisibleErrors() {
+                return document.querySelectorAll('.error-message.visible').length > 0;
+            }
+    
+            // Message Handling Function
+            function showMessage(message, type) {
+                const existingMessage = messageContainer.querySelector('.alert');
+                if (existingMessage) {
+                    existingMessage.remove();
                 }
-                emailError.textContent = "";
-                return true;
+    
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type}`;
+                alertDiv.textContent = message;
+                messageContainer.appendChild(alertDiv);
+    
+                if (type === 'success') {
+                    setTimeout(() => {
+                        alertDiv.classList.add('fade-out');
+                        setTimeout(() => {
+                            if (alertDiv.parentNode === messageContainer) {
+                                messageContainer.removeChild(alertDiv);
+                            }
+                        }, 300);
+                    }, 3000);
+                }
             }
-
-
-
-            // Event Listeners for Real-Time Validation
+    
+            // Form Submission
+            form.addEventListener('submit', function(event) {
+                let isValid = true;
+                
+                // Validate all fields
+                if (!validateUsername()) isValid = false;
+                if (!validateName()) isValid = false;
+                if (!validateAddress()) isValid = false;
+                if (!validatePhone()) isValid = false;
+    
+                if (!isValid) {
+                    event.preventDefault();
+                    updateSection.style.display = 'block';
+                    viewSection.style.display = 'none';
+                    showMessage("Please correct the errors below", "error");
+                }
+            });
+    
+            // Real-time validation
+            username.addEventListener('input', validateUsername);
             name.addEventListener('input', validateName);
             address.addEventListener('input', validateAddress);
             phone.addEventListener('input', validatePhone);
-            email.addEventListener('input', validateEmail);
-
-
-            form.addEventListener('submit', function(event) {
-                const isNameValid = validateName();
-                const isAddressValid = validateAddress();
-                const isPhoneValid = validatePhone();
-                const isEmailValid = validateEmail();
-                
-                if (!isNameValid || !isAddressValid || !isPhoneValid || !isEmailValid) {
-                    event.preventDefault(); // Prevent form submission if there are validation errors
+    
+            // User Menu Dropdown
+            userMenuBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+            });
+    
+            document.addEventListener('click', function(event) {
+                if (!userMenuBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+                    userDropdown.style.display = 'none';
                 }
             });
+    
+            // Auto-hide success messages only
+            const existingSuccessAlerts = document.querySelectorAll('.alert-success');
+            existingSuccessAlerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.classList.add('fade-out');
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.parentNode.removeChild(alert);
+                        }
+                    }, 300);
+                }, 3000);
+            });
+
         });
-
-        // Toggle View Profile
-        function toggleViewProfile() {
-            const viewProfileSection = document.getElementById('viewProfileSection');
-            const updateProfileSection = document.getElementById('updateProfileSection');
-            updateProfileSection.style.display = 'none';
-            viewProfileSection.style.display = viewProfileSection.style.display === 'none' ? 'block' : 'none';
-        }
-
-        // Toggle Update Profile
+    
+        // Profile Toggle Functions
         function toggleUpdateProfile() {
-            const viewProfileSection = document.getElementById('viewProfileSection');
-            const updateProfileSection = document.getElementById('updateProfileSection');
-            viewProfileSection.style.display = 'none';
-            updateProfileSection.style.display = updateProfileSection.style.display === 'none' ? 'block' : 'none';
+            const viewSection = document.getElementById('viewProfileSection');
+            const updateSection = document.getElementById('updateProfileSection');
+            
+            // Always show update section when toggling
+            viewSection.style.display = 'none';
+            updateSection.style.display = 'block';
         }
-    </script>
-    <script>
+    
+        function toggleViewProfile() {
+            const viewSection = document.getElementById('viewProfileSection');
+            const updateSection = document.getElementById('updateProfileSection');
+            
+            // Only allow viewing if there are no errors
+            if (!document.querySelector('.error-message.visible')) {
+                updateSection.style.display = 'none';
+                viewSection.style.display = 'block';
+            }
+        }
+    
+        // Prevent Back Navigation
         window.history.pushState(null, "", window.location.href); 
         window.onpopstate = function() {
             window.history.pushState(null, "", window.location.href);

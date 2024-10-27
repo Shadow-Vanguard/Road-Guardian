@@ -447,15 +447,13 @@ from .models import CustomUser  # Your custom user model
 @never_cache
 def admin_dashboard(request):
     if 'admin_id' in request.session:
-    
-        user = request.user  # Get the current logged-in user (admin)
 
+        user = request.user  # Get the current logged-in user
         context = {
             'user': user,  # Pass the user object to display additional admin info if needed
             'form': AdminProfileUpdateForm(instance=user) 
         }
-
-        return render(request, 'admin/admin_dashboard.html', context)  # Render the dashboard template
+        return render(request, 'admin/admin_dashboard.html', context)  # Render the dashboard template
     else:
         return redirect('login')
 
@@ -633,35 +631,38 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import ServiceProvider
 
-@login_required
+@never_cache
 def service_provider_dashboard(request):
-    # Get the current logged-in user
-    user = request.user  
-    
-    # Fetch the service provider information if available
-    try:
-        service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
-    except ServiceProvider.DoesNotExist:
-        service_provider = None
+    if 'service_provider_id' in request.session:
+        user = CustomUser.objects.get(id=request.session['service_provider_id'])
 
-    if request.method == 'POST':
-        form = CustomUserUpdateForm(request.POST, instance=user)
-        if form.is_valid():
-            form.save()  # Save the user profile updates
-            
-            # Re-fetch the service provider to ensure updated information is shown
-            try:
-                service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
-            except ServiceProvider.DoesNotExist:
-                service_provider = None
+        # Fetch the service provider information if available
+        try:
+            service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
+        except ServiceProvider.DoesNotExist:
+            service_provider = None
+
+        if request.method == 'POST':
+            form = CustomUserUpdateForm(request.POST, instance=user)
+            if form.is_valid():
+                form.save()  # Save the user profile updates
+                
+                # Re-fetch the service provider to ensure updated information is shown
+                try:
+                    service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
+                except ServiceProvider.DoesNotExist:
+                    service_provider = None
+        else:
+            form = CustomUserUpdateForm(instance=user)
+        
+        # Pass both the form and service provider information to the template
+        return render(request, 'service_provider/serviceprovider_dashboard.html', {
+            'form': form,
+            'service_provider': service_provider,
+        })
     else:
-        form = CustomUserUpdateForm(instance=user)
+        return redirect('login')
     
-    # Pass both the form and service provider information to the template
-    return render(request, 'service_provider/serviceprovider_dashboard.html', {
-        'form': form,
-        'service_provider': service_provider,
-    })
 
 #update_profile
 
@@ -776,12 +777,7 @@ def view_feedback(request):
         messages.error(request, "You are not registered as a service provider.")
         return redirect('serviceprovider_dashboard')
     
-from django.shortcuts import redirect
-from django.contrib import messages
-
+@login_required
 def send_bill(request, booking_id):
-    # Add your logic here to send the bill
-    # This could involve creating a new Bill object, sending an email, etc.
-    
-    messages.success(request, "Bill sent successfully!")
-    return redirect('view_requests')
+    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
+    return render(request, 'service_provider/send_bill.html', {'booking': booking})
