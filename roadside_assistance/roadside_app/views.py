@@ -60,14 +60,19 @@ def login_view(request):
                 else:
                     # Log the user in and create session
                     auth_login(request, user)
-                    request.session['user_id'] = user.id  # Store the user ID in session
+                   
 
                     # Redirect based on the user role
                     if user.is_superuser:
+                        request.session['admin_id'] = user.id  # Store the user ID in session
                         return redirect('admin_dashboard')
+                    
                     elif user.role == 'user':
+                        request.session['user_id'] = user.id  # Store the user ID in session
                         return redirect('user_dashboard')
+                    
                     elif user.role == 'service_provider':
+                        request.session['service_provider_id'] = user.id  # Store the user ID in session
                         return redirect('service_provider_dashboard')
                     else:
                         return redirect('home')  # Default redirection
@@ -221,27 +226,38 @@ from django.views.decorators.cache import never_cache
 
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import CustomUserUpdateForm
+from .models import CustomUser
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
-@login_required(login_url='/login/')  # Redirect to login if not authenticated
-def user_dashboard(request):
-    return render(request, 'user_dashboard.html')
-
-# View Profile
 @never_cache
 def user_dashboard(request):
     if 'user_id' in request.session:
-        user = request.user  # Get the current logged-in user
+        try:
+            # Try to get the CustomUser instance
+            custom_user = CustomUser.objects.get(username=request.user.username)
+        except CustomUser.DoesNotExist:
+            # If CustomUser doesn't exist, create one
+            custom_user = CustomUser.objects.create(
+                username=request.user.username,
+                email=request.user.email,
+                name=request.user.get_full_name() or request.user.username,
+                role='user'
+            )
 
         if request.method == 'POST':
-            form = CustomUserUpdateForm(request.POST, instance=user)
+            form = CustomUserUpdateForm(request.POST, instance=custom_user)
             if form.is_valid():
-                form.save()  # Save the updated user information
+                form.save()
                 messages.success(request, 'Your changes have been saved.')
-                # return redirect('user_dashboard') # Redirect to display the success message
             else:
                 messages.error(request, 'Please correct the errors below.')
         else:
-            form = CustomUserUpdateForm(instance=user)  # Load the current user data into the form
+            form = CustomUserUpdateForm(instance=custom_user)
 
         context = {
             'form': form,
@@ -428,17 +444,20 @@ from .forms import AdminProfileUpdateForm
 from .models import CustomUser  # Your custom user model
 
 
-@login_required
+@never_cache
 def admin_dashboard(request):
-    user = request.user  # Get the current logged-in user (admin)
+    if 'admin_id' in request.session:
+    
+        user = request.user  # Get the current logged-in user (admin)
 
-    context = {
-        'user': user,  # Pass the user object to display additional admin info if needed
-        'form': AdminProfileUpdateForm(instance=user) 
-    }
+        context = {
+            'user': user,  # Pass the user object to display additional admin info if needed
+            'form': AdminProfileUpdateForm(instance=user) 
+        }
 
-    return render(request, 'admin/admin_dashboard.html', context)  # Render the dashboard template
-
+        return render(request, 'admin/admin_dashboard.html', context)  # Render the dashboard template
+    else:
+        return redirect('login')
 
 
 from .forms import AdminProfileUpdateForm
@@ -555,7 +574,7 @@ def manage_service_categories(request):
         if form.is_valid():
             form.save()
             messages.success(request, 'Service category added successfully.')
-            return redirect('add_service_category')
+            return redirect('manage_service_categories')
     else:
         form = ServiceTypeCategoryForm()
     
@@ -576,14 +595,14 @@ def edit_service_category(request, category_id):
             form.save()
             messages.success(request, 'Service category updated successfully.')
             return redirect('manage_service_categories')
-    return redirect('add_service_category')
+    return redirect('manage_service_categories')
 
 def delete_service_category(request, category_id):
     category = get_object_or_404(ServiceTypeCategory, category_id=category_id)
     if request.method == 'POST':
         category.delete()
         messages.success(request, 'Service category deleted successfully.')
-    return redirect('add_service_category')
+    return redirect('manage_service_categories')
 
 
 
@@ -600,9 +619,12 @@ from django.contrib import messages
 #from .forms import ServiceProviderUpdateForm
 from .models import CustomUser
 
-@login_required
+@never_cache
 def service_provider_dashboard(request):
-    return render(request, 'service_provider/serviceprovider_dashboard.html')
+    if 'service_provider_id' in request.session:
+        return render(request, 'service_provider/serviceprovider_dashboard.html')
+    else:
+        return redirect('login')
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
@@ -753,3 +775,13 @@ def view_feedback(request):
     except ServiceProvider.DoesNotExist:
         messages.error(request, "You are not registered as a service provider.")
         return redirect('serviceprovider_dashboard')
+    
+from django.shortcuts import redirect
+from django.contrib import messages
+
+def send_bill(request, booking_id):
+    # Add your logic here to send the bill
+    # This could involve creating a new Bill object, sending an email, etc.
+    
+    messages.success(request, "Bill sent successfully!")
+    return redirect('view_requests')

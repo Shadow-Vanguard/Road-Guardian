@@ -335,21 +335,21 @@
             {% csrf_token %}
             <div class="form-group">
                 <label for="id_servicetype_name">Service Type Name:</label>
-                <input type="text" name="servicetype_name" id="id_servicetype_name" required>
+                <input type="text" name="servicetype_name" id="servicetypename" required>
             </div>
             <div class="form-group">
                 <label for="id_description">Description:</label>
-                <textarea name="description" id="id_description"></textarea>
+                <textarea name="description" id="description"></textarea>
             </div>
             <div class="form-group">
                 <label for="id_image">Image:</label>
-                <input type="file" name="image" id="id_image">
+                <input type="file" name="image" id="image">
             </div>
-            <button type="submit" class="btn">Add Service Type</button>
+            <button type="submit" id="addservicetype" class="btn">Add Service Type</button>
             
         </form>
 
-        <a href="{% url 'manage_service_categories' %}" class="btn">Manage Service Categories</a>
+        <a href="{% url 'manage_service_categories' %}" id="view_service_category" class="btn">Manage Service Categories</a>
         <br><br>
         <h3>Existing Service Types</h3>
         

@@ -143,11 +143,18 @@
         .fade-out {
                 opacity: 0;
                 transition: opacity 1s ease-out;
-            }
+        }
 
-            .alert-success {
-                transition: opacity 1s ease-out;
-            }
+        .alert-success {
+            transition: opacity 1s ease-out;
+        }
+        .action-link.send-bill {
+            background-color: #f39c12;  /* A different color for the Send Bill button */
+        }
+
+        .action-link.send-bill:hover {
+            background-color: #e67e22;
+        }
 
 
         /* ... (keep other styles unchanged) ... */
@@ -193,9 +200,10 @@
                                 <th>Service Type</th>
                                 <th>Location</th>
                                 <th>Description</th>
+                                <th>Requested At</th>
                                 <th>Status</th>
-                                <th>Created At</th>
                                 <th>Action</th>
+                                
                             </tr>
                         </thead>
                         <tbody>
@@ -205,8 +213,8 @@
                                 <td>{{ booking.service_type_category.category_name }}</td>
                                 <td>{{ booking.location }}</td>
                                 <td>{{ booking.description }}</td>
-                                <td>{{ booking.get_status_display }}</td>
                                 <td>{{ booking.created_at|date:"F d, Y H:i" }}</td>
+                                <td>{{ booking.get_status_display }}</td>
                                 <td>
                                     {% if booking.status == 'pending' %}
                                         <a href="{% url 'accept_booking' booking.id %}" class="action-link">Accept</a>
@@ -214,6 +222,8 @@
                                         <a href="{% url 'start_service' booking.id %}" class="action-link">Start Service</a>
                                     {% elif booking.status == 'ongoing' %}
                                         <a href="{% url 'complete_service' booking.id %}" class="action-link">Complete Service</a>
+                                    {% elif booking.status == 'completed' %}
+                                        <a href="{% url 'send_bill' booking.id %}" class="action-link send-bill">Send Bill</a>
                                     {% endif %}
                                 </td>
                             </tr>

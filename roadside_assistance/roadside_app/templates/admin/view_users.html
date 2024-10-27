@@ -165,9 +165,9 @@ footer .quick-links a:hover, footer .social a:hover {
                                 <form action="{% url 'toggle_active_status' user.id %}" method="post">
                                     {% csrf_token %}
                                     {% if user.is_active %}
-                                        <button type="submit" name="status" value="deactivate" class="btn-active">Deactivate</button>
+                                        <button type="submit" name="status" value="deactivate" id="deactivate" class="btn-active">Deactivate</button>
                                     {% else %}
-                                        <button type="submit" name="status" value="activate" class="btn-inactive">Activate</button>
+                                        <button type="submit" name="status" value="activate" id="activate" class="btn-inactive">Activate</button>
                                     {% endif %}
                                 </form>
                             </td>

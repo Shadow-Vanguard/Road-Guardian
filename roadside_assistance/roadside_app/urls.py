@@ -57,6 +57,7 @@ urlpatterns = [
     path('service-provider/service-history/', views.view_service_history, name='view_service_history'),#view service history
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),#submit feedback
     path('get-bookings/', views.get_bookings, name='get_bookings'),#get bookings
+    path('send-bill/<int:booking_id>/', views.send_bill, name='send_bill'),#send bill
     path('service-provider/view-feedback/', views.view_feedback, name='view_feedback'),#view feedback
     
     #Password

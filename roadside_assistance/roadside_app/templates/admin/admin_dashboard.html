@@ -183,7 +183,7 @@
     <header>
         <h1>24*7 Roadside Assistance</h1>
         <nav>
-            <a href="{% url 'home' %}" class="logout">Log Out</a>
+            <a href="{% url 'logout' %}" class="logout">Log Out</a>
         </nav>
     </header>
 
@@ -191,11 +191,11 @@
         <div class="sidebar">
             <button onclick="toggleViewProfile()">View Profile</button>
             <button onclick="toggleUpdateProfile()">Update Profile</button>
-            <a href="{% url 'view_users' %}">
-                <button>View Users</button>
+            <a href="{% url 'view_users' %}" >
+                <button id="view_user">View Users</button>
             </a>
             <a href="{% url 'manage_service_types' %}">
-                <button>Manage Service Types</button>
+                <button id="view_service">Manage Service Types</button>
             </a>
             <button>View Complaints</button>
             <button>View Service History</button>
