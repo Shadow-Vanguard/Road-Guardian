@@ -45,21 +45,28 @@ urlpatterns = [
     path('get-category-charge/', views.get_category_charge, name='get_category_charge'),#get category charge
 
 
+    
     #serviceprovider Dashboard URL
     path('serviceprovider_dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
     path('update-profile/', views.update_profile, name='update_profile_service_provider'),
 
-    path('service-provider/view-requests/', views.view_requests, name='view_requests'),#view requests from user
-    path('service-provider/accept-booking/<int:booking_id>/', views.accept_booking, name='accept_booking'),#accept booking  
-    path('service-provider/start-service/<int:booking_id>/', views.start_service, name='start_service'),#start service
-    path('service-provider/complete-service/<int:booking_id>/', views.complete_service, name='complete_service'),#complete service
+    # path('service-provider/view-requests/', views.view_requests, name='view_requests'),#view requests from user
+    # path('service-provider/accept-booking/<int:booking_id>/', views.accept_booking, name='accept_booking'),#accept booking  
+    # path('service-provider/start-service/<int:booking_id>/', views.start_service, name='start_service'),#start service
+    # path('service-provider/complete-service/<int:booking_id>/', views.complete_service, name='complete_service'),#complete service
     
     path('service-provider/service-history/', views.view_service_history, name='view_service_history'),#view service history
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),#submit feedback
     path('get-bookings/', views.get_bookings, name='get_bookings'),#get bookings
-    path('send-bill/<int:booking_id>/', views.send_bill, name='send_bill'),#send bill
+    # path('send-bill/<int:booking_id>/', views.send_bill, name='send_bill'),#send bill
     path('service-provider/view-feedback/', views.view_feedback, name='view_feedback'),#view feedback
-    
+
+
+    path('view_requests/', views.view_requests, name='view_requests'),
+    path('accept_booking/<int:booking_id>/', views.accept_booking, name='accept_booking'),
+    path('start_service/<int:booking_id>/', views.start_service, name='start_service'),
+    path('complete_service/<int:booking_id>/', views.complete_service, name='complete_service'),
+    path('send_bill/<int:booking_id>/', views.send_bill, name='send_bill'),
     #Password
     path('password-reset/', CustomPasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),

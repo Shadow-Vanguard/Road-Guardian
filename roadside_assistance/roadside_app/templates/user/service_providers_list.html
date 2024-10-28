@@ -4,256 +4,538 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Providers for {{ service_type.servicetype_name }}</title>
+    <title>Service Providers - Road Guardian</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        /* html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden; 
-            overflow-y: hidden;  
-        } */
+        :root {
+            --primary-color: #4CAF50;
+            --secondary-color: #45a049;
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --shadow-color: rgba(0,0,0,0.1);
+        }
 
-        body {
-            font-family: Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f4f4f4;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 1000px;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: #fff;
-            overflow-y: auto;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        body, html {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            height: 100%;
+            background-color: var(--background-color);
+            overflow-x: hidden;
         }
-        h1 {
-            color: #2c3e50;
+
+        /* Header Styles */
+        header {
+            background-color: #ffffff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .user-menu-btn:hover {
+            color: var(--primary-color);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-radius: 5px;
+            display: none;
+            min-width: 230px;
+            z-index: 1001;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .user-dropdown a:hover {
+            background-color: #f5f5f5;
+            color: var(--primary-color);
+        }
+
+        .user-dropdown i {
+            margin-right: 10px;
+            width: 20px;
             text-align: center;
         }
+
+        /* Main Container Styles */
+        .main-container {
+            margin-top: 80px;
+            padding: 20px;
+            min-height: calc(100vh - 80px - 200px);
+            background-color: #f5f5f5;
+        }
+
+        .providers-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px var(--shadow-color);
+            padding: 25px;
+            overflow-y: auto;
+            max-height: calc(100vh - 200px);
+        }
+
+        .providers-container h3 {
+            color: var(--primary-color);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            text-align: center;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background-color: #ffffff;
         }
+
+        thead {
+            position: sticky;
+            top: 0;
+            background-color: #f8f9fa;
+            z-index: 10;
+        }
+
         th, td {
-            padding: 12px;
+            padding: 15px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+
         th {
-            background-color: #f2f2f2;
-            font-weight: bold;
+            background-color: #f8f9fa;
+            color: var(--primary-color);
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
         }
+
         tr:hover {
-            background-color: #14cbc25e;
-        }
-    
-        header {
-            background-color: #14da6aa3;
-            color: rgb(0, 0, 0);
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        header h1 {
-            font-size: 28px;
-            margin: 0;
-        }
-
-        header nav a {
-            color: #333;
-            text-decoration: none;
-            margin-left: 20px;
-            font-size: 18px;
-            transition: color 0.3s ease;
-        }
-
-        header nav a:hover {
-            color: #3498db;
-        }
-        header h1 {
-                flex-direction: column;
-                text-align: center;
-        }
-        header h2 {
-                flex-direction:row;
-                text-align: center;
-                margin-left: 10%;
-        }
-
-
-        footer {
-            background-color: #14da6aa3;
-            color: #fff;
-            padding: 10px 0;
-            text-align: center;
-            margin-top: 28%;
-        }
-        .footer p1{
-            margin-left: 40%;
-        }
-        .footer p2{
-            margin-left: 40%;
-        }
-
-        .logout {
-            padding: 9px;
-            margin-bottom: 10px;
-            margin-top: 15px;
-            font-size: 18px;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-            background-color: #fff;
-            border: 1px solid #4CAF50;
+            background-color: #f5f5f5;
             transition: background-color 0.3s;
-            text-align: center;
         }
 
-        .logout:hover {
-            background-color: #ff0000e9;
-            color: #fff;
+        td {
+            vertical-align: middle;
         }
-        .dashboard {
-            padding: 9px;
-            margin-bottom: 10px;
-            margin-top: 15px;
-            font-size: 18px;
-            border-radius: 6px;
+
+        /* Button Styles */
+        .book-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
             text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-            background-color: #fff;
-            border: 1px solid #4CAF50;
-            transition: background-color 0.3s;
+            display: inline-block;
+            transition: all 0.3s;
+            font-weight: 500;
             text-align: center;
         }
 
-        .dashboard:hover {
-            background-color: #138ebfc9;
-            color: #fff;
-        }
-        .dashboard1 {
-            padding: 9px;
-            margin-bottom: 10px;
-            margin-top: 15px;
-            font-size: 18px;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-            background-color: #fff;
-            border: 1px solid #4CAF50;
-            transition: background-color 0.3s;
-            text-align: center;
+        .book-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px var(--shadow-color);
         }
 
-        .dashboard1:hover {
-            background-color: #ff6a00c9;
-            color: #fff;
+        /* Status Styles */
+        .status-available {
+            color: #28a745;
+            font-weight: 500;
         }
+
+        .status-unavailable {
+            color: #dc3545;
+            font-weight: 500;
+        }
+
+        /* Message Styles */
         .message-container {
             position: fixed;
-            top: 95px;
+            top: 90px;
             right: 20px;
             z-index: 1000;
         }
 
         .message {
-            padding: 10px 20px;
+            padding: 12px 24px;
             margin-bottom: 10px;
-            border-radius: 4px;
-            color: #fff;
+            border-radius: 5px;
+            color: white;
             opacity: 1;
-            transition: opacity 0.5s ease-in-out;
+            transition: opacity 0.5s;
+            box-shadow: 0 2px 5px var(--shadow-color);
+            min-width: 250px;
         }
 
-        .success { background-color: #28a745; }
-        .error { background-color: #dc3545; }
-        .warning { background-color: #ffc107; color: #333; }
-        .info { background-color: #17a2b8; }
-
-        .hide {
-            opacity: 0;
+        .success {
+            background-color: #28a745;
         }
 
-   
+        .error {
+            background-color: #dc3545;
+        }
+
+        .warning {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .info {
+            background-color: #17a2b8;
+        }
+
+        /* Footer Styles */
+        footer {
+            background-color: #e1dcdc;
+            padding: 2rem 0;
+            margin-top: auto;
+            border-top: 1px solid #dee2e6;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+
+        .footer-section {
+            flex: 1;
+            margin: 0 15px;
+        }
+
+        .footer-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+
+        .footer-section p {
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        footer > p {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+            color: #666;
+        }
+
+        /* Scrollbar Styles */
+        .providers-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .providers-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .providers-container::-webkit-scrollbar-thumb {
+            background: var(--primary-color);
+            border-radius: 4px;
+        }
+
+        .providers-container::-webkit-scrollbar-thumb:hover {
+            background: var(--secondary-color);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .providers-container {
+                margin: 0 20px;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .footer-content {
+                flex-wrap: wrap;
+            }
+            
+            .footer-section {
+                flex: 0 0 50%;
+                margin-bottom: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .providers-container {
+                padding: 15px;
+                margin: 0 10px;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .footer-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .footer-section {
+                flex: 0 0 100%;
+                margin: 0 0 2rem 0;
+            }
+
+            header {
+                padding: 1rem 3%;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .user-name {
+                display: none;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .providers-container h3 {
+                font-size: 1.5rem;
+            }
+
+            .book-btn {
+                padding: 6px 12px;
+                font-size: 0.9rem;
+            }
+
+            .message {
+                min-width: auto;
+                width: calc(100vw - 40px);
+                right: 20px;
+            }
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>ROAD GUARDIAN</h1>
-        <h2>REQUEST ASSISTANCE</h2>
-        <nav>
-            <a href="{% url 'request_assistance' %}" class="dashboard">Go To Request Assistance</a>
-            <a href="{% url 'user_dashboard' %}" class="logout">Go To Dashboard</a>
-        </nav>
+        <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
+        <div class="user-info">
+            <span class="user-name">{{ user.name }}</span>
+            <div class="user-menu">
+                <button class="user-menu-btn"><i class="fas fa-user"></i></button>
+                <div class="user-dropdown">
+                    <a href="{% url 'user_dashboard' %}"><i class="fas fa-dashboard"></i> Go to Dashboard</a>
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <a href="#" onclick="this.parentNode.submit()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                    </form>
+                </div>
+            </div>
+        </div>
     </header>
+
+    <div class="main-container">
+        <div class="providers-container">
+            <h3>Service Providers for {{ service_type.servicetype_name }}</h3>
+            {% if service_providers %}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Area of Service</th>
+                            <th>Location</th>
+                            <th>Availability</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for provider in service_providers %}
+                        <tr>
+                            <td>{{ provider.user.name }}</td>
+                            <td>{{ provider.user.phone }}</td>
+                            <td>{{ provider.area_of_service }}</td>
+                            <td>{{ provider.location }}</td>
+                            <td>
+                                {% if provider.availability_status %}
+                                    <span style="color: #28a745;">Available</span>
+                                {% else %}
+                                    <span style="color: #dc3545;">Not Available</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'book_assistance' provider.id %}" class="book-btn">
+                                    Book Assistance
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p style="text-align: center; margin-top: 20px;">No service providers available for this service type.</p>
+            {% endif %}
+        </div>
+    </div>
+
     {% if messages %}
-        <div id="message-container" class="message-container">
+        <div class="message-container">
             {% for message in messages %}
                 <div class="message {{ message.tags }}">{{ message }}</div>
             {% endfor %}
         </div>
     {% endif %}
-    <script>
-        // Automatically hide alerts after 5 seconds
-        setTimeout(function() {
-            var alerts = document.getElementsByClassName('alert');
-            for (var i = 0; i < alerts.length; i++) {
-                alerts[i].classList.add('hidden');
-            }
-        }, 5000);  // 5000 milliseconds = 5 seconds
-    </script>
-    <div class="container">
-        <h3>Service Providers for {{ service_type.servicetype_name }}</h3>
-        {% if service_providers %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Area of Service</th>
-                        <th>Location</th>
-                        <th>Availability</th>
-                        <th>Request Assistance</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for provider in service_providers %}
-                    <tr>
-                        <td>{{ provider.user.name }}</td>
-                        <td>{{ provider.user.phone }}</td>
-                        <td>{{ provider.area_of_service }}</td>
-                        <td>{{ provider.location }}</td>
-                        <td>{% if provider.availability_status %}Available{% else %}Not Available{% endif %}</td>
-                        <td>
-                            <a href="{% url 'book_assistance' provider.id %}" class="dashboard1">Book Assistance</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No service providers available for this service type.</p>
-        {% endif %}
-    </div>
+
     <footer>
-        <div class="footer-container">
-        
-            <p1>© 2024 Roadside Assistance. All rights reserved.</p1>
-            <p2>Contact us: road.guardian08@gmail.com | +1 234 567 890</p2>
-            
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#">Home</a>
+                <a href="#">Services</a>
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: road.guardian08@gmail.com</p>
+                <p>Phone: +1 234 567 890</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            </div>
         </div>
+        <p>&copy; 2024 Road Guardian. All rights reserved.</p>
     </footer>
+
+    <script>
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                const messages = document.querySelectorAll('.message');
+                messages.forEach(function(message) {
+                    message.style.opacity = '0';
+                    setTimeout(function() {
+                        message.remove();
+                    }, 500);
+                });
+            }, 5000);
+        });
+    </script>
+            <script>
+                // Existing message auto-hide code...
+            
+                // Dropdown functionality
+                document.addEventListener('DOMContentLoaded', function() {
+                    const userMenuBtn = document.querySelector('.user-menu-btn');
+                    const userDropdown = document.querySelector('.user-dropdown');
+                    
+                    // Toggle dropdown when clicking the button
+                    userMenuBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                    });
+            
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!userDropdown.contains(e.target) && !userMenuBtn.contains(e.target)) {
+                            userDropdown.style.display = 'none';
+                        }
+                    });
+            
+                    // Prevent dropdown from closing when clicking inside it
+                    userDropdown.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                });
+            
+                // Add these functions for profile toggles
+                function toggleViewProfile() {
+                    window.location.href = "{% url 'user_dashboard' %}#view";
+                }
+            
+                function toggleUpdateProfile() {
+                    window.location.href = "{% url 'user_dashboard' %}#update";
+                }
+            </script>
 </body>
 </html>

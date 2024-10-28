@@ -249,6 +249,7 @@ def user_dashboard(request):
                 role='user'
             )
 
+        # Handle form submission
         if request.method == 'POST':
             form = CustomUserUpdateForm(request.POST, instance=custom_user)
             if form.is_valid():
@@ -259,13 +260,19 @@ def user_dashboard(request):
         else:
             form = CustomUserUpdateForm(instance=custom_user)
 
+        # Fetch service types
+        service_types = ServiceType.objects.all()
+
+        # Combine all context data
         context = {
             'form': form,
+            'user': custom_user,
+            'service_types': service_types,
         }
+        
         return render(request, 'user/user_dashboard.html', context)
     else:
         return redirect('login')
-
 
 def update_profile(request):
     return render(request, 'user/update_profile.html')
@@ -375,6 +382,8 @@ def get_category_charge(request):
         return JsonResponse({'charge': category.charge})
     except ServiceTypeCategory.DoesNotExist:
         return JsonResponse({'charge': ''}, status=404)
+        
+        
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -610,136 +619,208 @@ def delete_service_category(request, category_id):
 
 
 # #Service Provider
-
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 from django.contrib import messages
-#from .forms import ServiceProviderUpdateForm
-from .models import CustomUser
+from .models import CustomUser, ServiceProvider, Booking
+from .forms import CustomUserUpdateForm
+from datetime import datetime
 
 @never_cache
-def service_provider_dashboard(request):
-    if 'service_provider_id' in request.session:
-        return render(request, 'service_provider/serviceprovider_dashboard.html')
-    else:
-        return redirect('login')
-
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
-
-
-from django.contrib.auth.decorators import login_required
-from .models import ServiceProvider
-
-@never_cache
-def service_provider_dashboard(request):
-    if 'service_provider_id' in request.session:
-        user = CustomUser.objects.get(id=request.session['service_provider_id'])
-
-        # Fetch the service provider information if available
-        try:
-            service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
-        except ServiceProvider.DoesNotExist:
-            service_provider = None
-
-        if request.method == 'POST':
-            form = CustomUserUpdateForm(request.POST, instance=user)
-            if form.is_valid():
-                form.save()  # Save the user profile updates
-                
-                # Re-fetch the service provider to ensure updated information is shown
-                try:
-                    service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
-                except ServiceProvider.DoesNotExist:
-                    service_provider = None
-        else:
-            form = CustomUserUpdateForm(instance=user)
-        
-        # Pass both the form and service provider information to the template
-        return render(request, 'service_provider/serviceprovider_dashboard.html', {
-            'form': form,
-            'service_provider': service_provider,
-        })
-    else:
-        return redirect('login')
-    
-
-#update_profile
-
 @login_required
-def update_profile(request):
-    user = request.user  # Get the current logged-in user
-
-    # Fetch the service provider information if available
+def service_provider_dashboard(request):
+    """
+    Service provider dashboard view showing summary of requests and services
+    """
     try:
-        service_provider = ServiceProvider.objects.select_related('service_type').get(user=user)
-    except ServiceProvider.DoesNotExist:
-        service_provider = None
-
-    if request.method == 'POST':
-        form = CustomUserUpdateForm(request.POST, instance=user)
+        service_provider = ServiceProvider.objects.select_related('service_type').get(user=request.user)
         
-        if form.is_valid():
-            print("Form is valid. Saving...")  # Debugging output
-            form.save()  # Save the updated user information
-            messages.success(request, 'Your changes have been saved.')
-            return redirect('service_provider_dashboard')  # Redirect to the dashboard
-        else:
-            print("Form errors:", form.errors)  # Log errors for debugging
-            messages.error(request, 'Please correct the errors below.')
-    else:
-        form = CustomUserUpdateForm(instance=user)  # Load the current user data into the form
+        # Get counts for different request statuses
+        pending_requests = Booking.objects.filter(
+            service_provider=service_provider,
+            status='pending'
+        ).count()
+        
+        ongoing_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='ongoing'
+        ).count()
+        
+        completed_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='completed'
+        ).count()
 
-    # Pass the form and the service provider information to the template
-    return render(request, 'service_provider/serviceprovider_dashboard.html', {
-        'form': form,
-        'service_provider': service_provider,  # Ensure this is passed
-    })
+        accepted_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='accepted'
+        ).count()
 
-# view requests from user
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import Booking
+        # Get recent requests
+        recent_requests = Booking.objects.filter(
+            service_provider=service_provider
+        ).order_by('-created_at')[:5]
 
+        context = {
+            'user': request.user,
+            'service_provider': service_provider,
+            'pending_requests_count': pending_requests,
+            'ongoing_services_count': ongoing_services,
+            'completed_services_count': completed_services,
+            'accepted_services_count': accepted_services,
+            'recent_requests': recent_requests
+        }
+        
+    except ServiceProvider.DoesNotExist:
+        messages.error(request, 'Service Provider profile not found.')
+        context = {
+            'user': request.user,
+            'pending_requests_count': 0,
+            'ongoing_services_count': 0,
+            'completed_services_count': 0,
+            'accepted_services_count': 0
+        }
+
+    return render(request, 'service_provider/serviceprovider_dashboard.html', context)
+
+@never_cache
 @login_required
 def view_requests(request):
-    # Get all bookings for the current service provider
-    bookings = Booking.objects.filter(service_provider__user=request.user).order_by('-created_at')
+    """
+    View to display service requests based on their status
+    """
+    try:
+        service_provider = ServiceProvider.objects.get(user=request.user)
+        status = request.GET.get('status', 'all')
+        
+        # Base query
+        bookings = Booking.objects.filter(service_provider=service_provider)
+        
+        # Apply status filter
+        if status != 'all':
+            bookings = bookings.filter(status=status)
+        
+        # Get counts for the summary
+        context = {
+            'bookings': bookings.order_by('-created_at'),
+            'current_status': status,
+            'pending_count': Booking.objects.filter(service_provider=service_provider, status='pending').count(),
+            'ongoing_count': Booking.objects.filter(service_provider=service_provider, status='ongoing').count(),
+            'completed_count': Booking.objects.filter(service_provider=service_provider, status='completed').count(),
+            'accepted_count': Booking.objects.filter(service_provider=service_provider, status='accepted').count(),
+            'user': request.user,
+            'service_provider': service_provider
+        }
+        
+    except ServiceProvider.DoesNotExist:
+        messages.error(request, 'Service Provider profile not found.')
+        return redirect('service_provider_dashboard')
     
-    context = {
-        'bookings': bookings
-    }
     return render(request, 'service_provider/view_requests.html', context)
 
-from django.shortcuts import get_object_or_404, redirect
-from django.contrib import messages
+@never_cache
+@login_required
+def update_profile(request):
+    """
+    Handle service provider profile updates
+    """
+    try:
+        service_provider = ServiceProvider.objects.select_related('service_type').get(user=request.user)
+        
+        if request.method == 'POST':
+            form = CustomUserUpdateForm(request.POST, instance=request.user)
+            if form.is_valid():
+                form.save()
+                messages.success(request, 'Profile updated successfully.')
+                return redirect('service_provider_dashboard')
+            else:
+                messages.error(request, 'Please correct the errors below.')
+        else:
+            form = CustomUserUpdateForm(instance=request.user)
+            
+        context = {
+            'form': form,
+            'service_provider': service_provider,
+        }
+        
+    except ServiceProvider.DoesNotExist:
+        messages.error(request, 'Service Provider profile not found.')
+        return redirect('service_provider_dashboard')
+        
+    return render(request, 'service_provider/serviceprovider_dashboard.html', context)
 
 @login_required
-def accept_booking(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
-    if booking.status == 'pending':
-        booking.status = 'accepted'
-        booking.save()
-        messages.success(request, 'Booking accepted successfully.')
+def booking_status_update(request, booking_id, new_status):
+    """
+    Generic view to handle booking status updates
+    """
+    try:
+        booking = get_object_or_404(Booking, 
+             id=booking_id, 
+             service_provider__user=request.user)
+        
+        # Define valid status transitions
+        valid_transitions = {
+            'pending': ['accepted'],
+            'accepted': ['ongoing'],
+            'ongoing': ['completed']
+        }
+        
+        if new_status in valid_transitions.get(booking.status, []):
+            booking.status = new_status
+            booking.save()
+            
+            status_messages = {
+                'accepted': 'Booking accepted successfully.',
+                'ongoing': 'Service started successfully.',
+                'completed': 'Service completed successfully.'
+            }
+            messages.success(request, status_messages[new_status])
+        else:
+            messages.error(request, f'Invalid status transition from {booking.status} to {new_status}')
+            
+    except Booking.DoesNotExist:
+        messages.error(request, 'Booking not found.')
+        
     return redirect('view_requests')
+
+# Specific status update views
+@login_required
+def accept_booking(request, booking_id):
+    return booking_status_update(request, booking_id, 'accepted')
 
 @login_required
 def start_service(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
-    if booking.status == 'accepted':
-        booking.status = 'ongoing'
-        booking.save()
-        messages.success(request, 'Service started successfully.')
-    return redirect('view_requests')
+    return booking_status_update(request, booking_id, 'ongoing')
 
 @login_required
 def complete_service(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
-    if booking.status == 'ongoing':
-        booking.status = 'completed'
-        booking.save()
-        messages.success(request, 'Service completed successfully.')
-    return redirect('view_requests')
+    return booking_status_update(request, booking_id, 'completed')
+
+# @login_required
+# def view_service_history(request):
+#     """
+#     View to display completed service history
+#     """
+#     try:
+#         service_provider = ServiceProvider.objects.get(user=request.user)
+#         service_history = Booking.objects.filter(
+#             service_provider=service_provider,
+#             status='completed'
+#         ).order_by('-created_at')
+        
+#         context = {
+#             'service_history': service_history,
+#             'user': request.user,
+#             'service_provider': service_provider
+#         }
+        
+#     except ServiceProvider.DoesNotExist:
+#         messages.error(request, 'Service Provider profile not found.')
+#         return redirect('service_provider_dashboard')
+        
+    return render(request, 'service_provider/service_history.html', context)
 
 #view service history
 from django.shortcuts import render

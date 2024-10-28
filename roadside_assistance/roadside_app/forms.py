@@ -226,7 +226,7 @@ class BookAssistanceForm(forms.ModelForm):
         widgets = {
             'service_type_category': forms.Select(attrs={'class': 'form-control'}),
             'charge': forms.Select(attrs={'class': 'form-control'}),
-            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your current location'}),
+            'location': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your current location or click on the map icon to select your location'}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Describe the issue or service needed'}),
         }
 
