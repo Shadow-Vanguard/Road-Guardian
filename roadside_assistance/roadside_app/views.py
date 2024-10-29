@@ -418,6 +418,18 @@ def get_bookings(request):
     return JsonResponse(list(bookings), safe=False)
 
 
+@login_required
+def user_service_history(request):
+    service_history = Booking.objects.filter(
+        user=request.user
+    ).select_related('service_provider', 'service_type_category').order_by('-created_at')
+    
+    context = {
+        'service_history': service_history,
+        'user': request.user,
+    }
+    return render(request, 'user/user_service_history.html', context)
+
 ########################################################################################################
 
 #Admin

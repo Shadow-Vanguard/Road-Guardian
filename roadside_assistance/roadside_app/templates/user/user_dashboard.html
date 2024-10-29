@@ -8,18 +8,63 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        :root {
+        /* Theme Variables */
+        :root[data-theme="light"] {
             --primary-color: #4CAF50;
             --secondary-color: #45a049;
             --background-color: #ffffff;
             --text-color: #333333;
             --shadow-color: rgba(0,0,0,0.1);
+            --table-bg: #ffffff;
+            --table-hover: #f5f5f5;
+            --header-bg: #ffffff;
+            --sidebar-bg: #f0f4f8;
+            --card-bg: #ffffff;
+            --footer-bg: #ffffff;
+            --footer-text: #000000;
+            --border-color: #ddd;
+            --service-card-bg: rgba(255, 255, 255, 0.9);
+            --service-card-border: #04f043cd;
+            --service-card-shadow: rgba(0, 0, 0, 0.1);
+            --hover-shadow: cadetblue;
+            --form-bg: #f9f9f9;
+            --input-bg: #ffffff;
+            --dropdown-bg: #ffffff;
+            --dropdown-hover: #f5f5f5;
         }
+
+        :root[data-theme="dark"] {
+            --primary-color: #4CAF50;
+            --secondary-color: #45a049;
+            --background-color: #1a1a1a;
+            --text-color: #ffffff;
+            --text-color-secondary: black;
+            --shadow-color: rgba(255,255,255,0.1);
+            --table-bg: #2d2d2d;
+            --table-hover: #3d3d3d;
+            --header-bg: #2d2d2d;
+            --sidebar-bg: #2d2d2d;
+            --card-bg: #2d2d2d;
+            --footer-bg: #2d2d2d;
+            --footer-text: #ffffff;
+            --border-color: #444;
+            --service-card-bg: rgba(45, 45, 45, 0.9);
+            --service-card-border: #04f043cd;
+            --service-card-shadow: rgba(255, 255, 255, 0.1);
+            --hover-shadow: #4CAF50;
+            --form-bg: #2d2d2d;
+            --input-bg: #3d3d3d;
+            --dropdown-bg: #2d2d2d;
+            --dropdown-hover: #3d3d3d;
+        }
+
+        /* Base Styles */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body, html {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
@@ -27,9 +72,12 @@
             height: 100%;
             overflow-x: hidden;
             background-color: var(--background-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
+        /* Header Styles */
         header {
-            background-color: #ffffff;
+            background-color: var(--header-bg);
             padding: 1rem 5%;
             display: flex;
             justify-content: space-between;
@@ -40,99 +88,98 @@
             right: 0;
             z-index: 1000;
             box-shadow: 0 2px 10px var(--shadow-color);
+            transition: background-color 0.3s ease;
         }
+
         header h1 {
             color: var(--primary-color);
             font-size: 1.8rem;
         }
+
+        /* Theme Switch Styles */
+        .theme-switch {
+            display: flex;
+            align-items: center;
+            margin-right: 20px;
+        }
+
+        .theme-switch-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            padding: 5px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .theme-switch-button:hover {
+            background-color: var(--shadow-color);
+            transform: scale(1.1);
+        }
+
+        /* User Info Styles */
         .user-info {
             display: flex;
             align-items: center;
         }
+
         .user-name {
             margin-right: 1rem;
             color: var(--text-color);
         }
-        .user-menu {
-            position: relative;
-        }
-        .user-menu-btn {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        .user-dropdown {
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background-color: #ffffff;
-            box-shadow: 0 2px 10px var(--shadow-color);
-            border-radius: 5px;
-            display: none;
-            min-width: 200px;
-            z-index: 1001;
-        }
 
-        .user-dropdown a {
-            display: block;
-            padding: 12px 20px;
-            color: var(--text-color);
-            text-decoration: none;
-            transition: all 0.3s;
-        }
-
-        .user-dropdown a:hover {
-            background-color: #f5f5f5;
-            color: var(--primary-color);
-        }
-
-        .user-dropdown i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
+        /* Dashboard Container */
         .dashboard-container {
             display: flex;
             margin-top: 80px;
             min-height: calc(100vh - 80px);
         }
+
+        /* Sidebar Styles */
         .sidebar {
             width: 250px;
             margin-top: 17px;
-            background-color: #f0f4f8;
+            background-color: var(--sidebar-bg);
             padding: 2rem;
             margin-bottom: 15px;
             box-shadow: 2px 0 10px var(--shadow-color);
+            transition: background-color 0.3s ease;
         }
+
         .sidebar button {
             width: 100%;
             padding: 12px;
             margin-bottom: 1rem;
             font-size: 1rem;
             border: none;
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             color: var(--text-color);
             cursor: pointer;
             transition: all 0.3s;
             border-radius: 5px;
             text-align: left;
         }
+
         .sidebar button:hover {
             background-color: var(--primary-color);
             color: #ffffff;
             transform: translateY(-2px);
             box-shadow: 0 4px 6px rgba(76,175,80,0.2);
         }
+        /* Content Area Styles */
         .content {
             flex-grow: 1;
-            background-color: #ffffff;
+            background-color: var(--card-bg);
             border-radius: 10px;
             box-shadow: 0 4px 6px var(--shadow-color);
             padding: 2rem;
             margin: 1rem;
+            position: relative;
+            transition: background-color 0.3s ease;
         }
+
         .content h2 {
             color: var(--primary-color);
             margin-bottom: 1.5rem;
@@ -140,56 +187,82 @@
             border-bottom: 2px solid var(--primary-color);
             padding-bottom: 0.5rem;
         }
-        /* Update the existing update-profile and view-profile styles */
+
+        /* Service Type Styles */
+        .service-type-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .service-type {
+            background-color: var(--service-card-bg);
+            border: 1px solid var(--service-card-border);
+            border-radius: 10px;
+            margin: 15px;
+            padding: 20px;
+            width: calc(33.333% - 30px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 4px 8px var(--service-card-shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-type:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 10px 30px var(--hover-shadow);
+        }
+
+        .service-type img {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .service-type p {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 1rem;
+            color: var(--text-color);
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        /* Form Styles */
         .update-profile, .view-profile {
-            background-color: #f9f9f9;
+            background-color: var(--form-bg);
             padding: 2rem;
             border-radius: 10px;
             box-shadow: 0 0 15px var(--shadow-color);
             display: none;
-            position: absolute; /* Add this */
-            top: 0; /* Add this */
-            left: 0; /* Add this */
-            right: 0; /* Add this */
-            z-index: 100; /* Add this */
-            margin: 1rem; /* Add this */
-        }
-
-        /* Add this new style for the content position */
-        .content {
-            flex-grow: 1;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px var(--shadow-color);
-            padding: 2rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
             margin: 1rem;
-            position: relative; /* Add this */
+            transition: background-color 0.3s ease;
         }
 
-        /* Update the services section style */
-        .services-section {
-            position: relative; /* Add this */
-            z-index: 1; /* Add this */
-        }
-        .update-profile h3, .view-profile h3 {
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-        }
         form label {
             display: block;
             margin-bottom: 0.5rem;
             color: var(--text-color);
         }
+
         form input, form select {
             width: 100%;
             padding: 0.8rem;
             margin-bottom: 1rem;
-            border: 1px solid #ddd;
-            background-color: #ffffff;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
             color: var(--text-color);
             border-radius: 5px;
         }
+
         form button[type="submit"] {
             background-color: var(--primary-color);
             color: #fff;
@@ -204,31 +277,15 @@
             background-color: #cccccc;
             cursor: not-allowed;
         }
-        form button:hover {
-            background-color: var(--secondary-color);
-        }
-        .error-message {
-            color: #f44336;
-            font-size: 0.9rem;
-            margin-top: 0.25rem;
-        }
-        .alert {
-            padding: 1rem;
-            margin-bottom: 1rem;
-            border-radius: 5px;
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-        }
+
+        /* Footer Styles */
         footer {
-            background-color: #14da6aa3;
-            color: #000;
+            background-color: var(--footer-bg);
+            color: var(--footer-text);
             padding: 2rem 0;
             margin-top: auto;
             width: 100%;
+            transition: background-color 0.3s ease;
         }
 
         .footer-content {
@@ -245,46 +302,99 @@
         }
 
         .footer-section h4 {
-            color: #000;
+            color: var(--text-color);
             font-size: 1.2rem;
             margin-bottom: 1rem;
             font-weight: bold;
-            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
         }
 
         .footer-section a, 
         .footer-section p {
-            color: #000;
+            color: var(--text-color);
             text-decoration: none;
             display: block;
             margin-bottom: 0.8rem;
             transition: color 0.3s ease;
-            font-family: Arial, sans-serif;
         }
 
         .footer-section a:hover {
-            color: #fff;
+            color: var(--primary-color);
             transform: translateX(5px);
         }
 
-        .footer-section i {
+        /* Dropdown Styles */
+/* Update the user menu button styles */
+        .user-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);  /* This ensures icon color matches the text color */
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .user-menu-btn i {
+            color: var(--text-color);  /* Explicitly set icon color */
+        }
+
+        .user-menu-btn:hover {
+            background-color: var(--shadow-color);
+        }
+
+        /* Update user menu container */
+        .user-menu {
+            position: relative;
+            margin-left: 10px;
+        }
+
+        /* Update dropdown styles */
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-radius: 5px;
+            display: none;
+            min-width: 200px;
+            z-index: 1001;
+            margin-top: 5px;
+            border: 1px solid var(--border-color);
+        }
+
+        .user-dropdown a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .user-dropdown a i {
             margin-right: 10px;
             width: 20px;
             text-align: center;
+            color: var(--text-color);  /* Ensure dropdown icons also use text color */
         }
 
-        footer > p {
-            text-align: center;
-            margin-top: 2rem;
-            padding-top: 1rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            font-family: Arial, sans-serif;
+        .user-dropdown a:hover {
+            background-color: var(--dropdown-hover);
+            color: var(--primary-color);
         }
 
-        /* Responsive footer */
+        /* Responsive Styles */
         @media (max-width: 768px) {
             .footer-content {
                 grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .service-type {
+                width: calc(50% - 30px);
             }
         }
 
@@ -296,39 +406,62 @@
             .footer-section {
                 text-align: center;
             }
-        }
-        .service-type-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-        }
-
-        .service-type {
-            background-color: rgba(255, 255, 255, 0.9);
-            border: 1px solid #04f043cd;
-            border-radius: 10px;
-            margin: 15px;
-            padding: 20px;
-            width: calc(33.333% - 30px);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease; /* Add smooth transition */
-            cursor: pointer; /* Add pointer cursor */
+            
+            .service-type {
+                width: calc(100% - 30px);
+            }
         }
 
-        .service-type img {
-            max-width: 100%;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 15px;
+        /* Table Styles */
+        .service-history-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: var(--table-bg);
+            box-shadow: 0 2px 4px var(--shadow-color);
+            transition: background-color 0.3s ease;
         }
 
+        .service-history-table th,
+        .service-history-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-color);
+        }
+
+        .service-history-table th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+
+        .service-history-table tr:hover {
+            background-color: var(--table-hover);
+        }
+
+        /* Status Colors */
+        .status-pending { color: #ffa500; }
+        .status-completed { color: #4CAF50; }
+        .status-cancelled { color: #f44336; }
+
+        /* Theme Switch Styles */
+        .theme-switch {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .theme-switch-button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        /* Service Type Button Styles */
         .service-type .button {
             display: inline-block;
-            background-color: #28a745;
+            background-color: #28a745; /* Default green */
             color: white;
             padding: 10px 20px;
             text-align: center;
@@ -338,63 +471,70 @@
             cursor: pointer;
             border: none;
             border-radius: 5px;
-            transition: background-color 0.3s ease;
+            transition: all 0.3s ease;
             font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+            position: relative;
+            overflow: hidden;
         }
 
-        .service-type:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 10px 30px cadetblue;
-            /* background-color: cadetblue;
-            border-color: cadetblue; */
-        }
-
-       /* Update the button hover effect to match */
+        /* Hover effect */
         .service-type .button:hover {
-            background-color: #218838;
-            transform: scale(1.05);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-            
+            background-color: #34ce57; /* Lighter green */
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.4);
         }
 
+        /* Active state */
         .service-type .button:active {
-            background-color: #1e7e34;
-        }
-        .service-type:active {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px cadetblue;
+            background-color: #218838; /* Darker green */
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(40, 167, 69, 0.4);
         }
 
-        .service-type p {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 1rem;
-            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        /* Optional: Add a ripple effect */
+        .service-type .button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease-out, height 0.3s ease-out;
         }
 
-        /* Update media queries */
-        @media (max-width: 768px) {
-            .service-type {
-                width: calc(50% - 30px);
-            }
+        .service-type .button:hover::after {
+            width: 200px;
+            height: 200px;
         }
 
-        @media (max-width: 480px) {
-            .service-type {
-                width: calc(100% - 30px);
-            }
+        /* Dark mode support */
+        :root[data-theme="dark"] .service-type .button {
+            background-color: #28a745;
         }
 
-        /* Adjust content area for services */
-        .content {
-            padding: 2rem;
-            margin: 1rem;
-            background-color: #f0f4f8;
+        :root[data-theme="dark"] .service-type .button:hover {
+            background-color: #34ce57;
         }
 
-        /* Remove the previous services-grid styles */
-        .services-grid {
-            display: none;
+        :root[data-theme="dark"] .service-type .button:active {
+            background-color: #218838;
+        }
+
+        /* Disabled state */
+        .service-type .button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Optional: Add focus state for accessibility */
+        .service-type .button:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.5);
         }
     </style>
 </head>
@@ -402,6 +542,12 @@
     <header>
         <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
         <div class="user-info">
+            <div class="theme-switch">
+                <button class="theme-switch-button" id="themeSwitch">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+           
             <span class="user-name">{{ user.name }}</span>
             <div class="user-menu">
                 <button class="user-menu-btn"><i class="fas fa-user"></i></button>
@@ -419,7 +565,8 @@
 
     <div class="dashboard-container">
         <div class="sidebar">
-            <button><i class="fas fa-history"></i> View Payment History</button>
+            <button onclick=window.location.href='{% url 'user_service_history' %}'><i class="fas fa-history"></i> View Service History</button>
+            <button><i class="fas fa-money-bill"></i> View Payment History</button>
             <button onclick=window.location.href='{% url 'submit_feedback' %}'><i class="fas fa-comment-alt"></i> Send Feedback</button>
             <button><i class="fas fa-comments"></i> Chat with Service Providers</button>
         </div>
@@ -739,6 +886,46 @@
         }
     }
 
+        // Prevent going back to login page
+        window.history.pushState(null, "", window.location.href); 
+        window.onpopstate = function() {
+            window.history.pushState(null, "", window.location.href);
+        };
+    </script>
+    <script>
+        // Theme switcher functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeSwitch = document.getElementById('themeSwitch');
+            const themeSwitchIcon = themeSwitch.querySelector('i');
+            
+            // Check for saved theme preference
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+    
+            themeSwitch.addEventListener('click', function() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+                
+                // Update theme
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                
+                // Update icon
+                updateThemeIcon(newTheme);
+            });
+    
+            function updateThemeIcon(theme) {
+                if (theme === 'dark') {
+                    themeSwitchIcon.classList.remove('fa-moon');
+                    themeSwitchIcon.classList.add('fa-sun');
+                } else {
+                    themeSwitchIcon.classList.remove('fa-sun');
+                    themeSwitchIcon.classList.add('fa-moon');
+                }
+            }
+        });
+    
         // Prevent going back to login page
         window.history.pushState(null, "", window.location.href); 
         window.onpopstate = function() {

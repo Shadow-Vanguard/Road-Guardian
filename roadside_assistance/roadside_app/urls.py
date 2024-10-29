@@ -44,16 +44,11 @@ urlpatterns = [
     path('book-assistance/<int:provider_id>/', views.book_assistance, name='book_assistance'),#book assistance
     path('get-category-charge/', views.get_category_charge, name='get_category_charge'),#get category charge
 
-
+    path('user-service-history/', views.user_service_history, name='user_service_history'),#user service history
     
     #serviceprovider Dashboard URL
     path('serviceprovider_dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
     path('update-profile/', views.update_profile, name='update_profile_service_provider'),
-
-    # path('service-provider/view-requests/', views.view_requests, name='view_requests'),#view requests from user
-    # path('service-provider/accept-booking/<int:booking_id>/', views.accept_booking, name='accept_booking'),#accept booking  
-    # path('service-provider/start-service/<int:booking_id>/', views.start_service, name='start_service'),#start service
-    # path('service-provider/complete-service/<int:booking_id>/', views.complete_service, name='complete_service'),#complete service
     
     path('service-provider/service-history/', views.view_service_history, name='view_service_history'),#view service history
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),#submit feedback
