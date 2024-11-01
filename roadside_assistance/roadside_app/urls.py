@@ -53,7 +53,6 @@ urlpatterns = [
     path('service-provider/service-history/', views.view_service_history, name='view_service_history'),#view service history
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),#submit feedback
     path('get-bookings/', views.get_bookings, name='get_bookings'),#get bookings
-    # path('send-bill/<int:booking_id>/', views.send_bill, name='send_bill'),#send bill
     path('service-provider/view-feedback/', views.view_feedback, name='view_feedback'),#view feedback
 
 
@@ -61,7 +60,12 @@ urlpatterns = [
     path('accept_booking/<int:booking_id>/', views.accept_booking, name='accept_booking'),
     path('start_service/<int:booking_id>/', views.start_service, name='start_service'),
     path('complete_service/<int:booking_id>/', views.complete_service, name='complete_service'),
-    path('send_bill/<int:booking_id>/', views.send_bill, name='send_bill'),
+
+    path('bill/<int:booking_id>/', views.bill_view, name='bill_view'),
+    path('submit_bill/<int:booking_id>/', views.submit_bill, name='submit_bill'),
+
+
+
     #Password
     path('password-reset/', CustomPasswordResetView.as_view(), name='password_reset'),
     path('password-reset/done/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),

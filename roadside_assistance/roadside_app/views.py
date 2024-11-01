@@ -869,8 +869,71 @@ def view_feedback(request):
     except ServiceProvider.DoesNotExist:
         messages.error(request, "You are not registered as a service provider.")
         return redirect('serviceprovider_dashboard')
+
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Booking, ServiceProvider  # Ensure you import the necessary models
+
+def bill_view(request, booking_id):
+    # Get the booking details
+    booking = get_object_or_404(Booking, id=booking_id)
     
-@login_required
-def send_bill(request, booking_id):
-    booking = get_object_or_404(Booking, id=booking_id, service_provider__user=request.user)
-    return render(request, 'service_provider/send_bill.html', {'booking': booking})
+    # Fetch the service provider associated with the booking
+    service_provider = booking.service_provider
+
+    charge = booking.service_type_category.charge
+
+    # Render the bill form with booking details
+    return render(request, 'service_provider/bill.html', {
+        'booking': booking,
+        'user': booking.user,
+        'service_provider': service_provider,
+        'charge':charge
+    })
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from .models import Booking, Bill 
+import re  # Import the regular expressions module
+
+def submit_bill(request, booking_id):
+    # Fetch the booking details using the booking_id
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    if request.method == 'POST':
+        # Fetching details from the booking instance
+        user = booking.user.name  # Fetch the username from the booking instance
+        service_provider = booking.service_provider.user.name  # Fetch the service provider's name
+        service_type = booking.service_type_category.category_name  # Fetch the service type name
+        
+        # Extract numeric value from charge string
+        charge_str = booking.service_type_category.charge
+        charge = float(re.search(r"[\d.]+", charge_str).group())  # Extract the numeric part
+
+        # Get the additional inputs from the form
+        try:
+            kilometers = float(request.POST.get('kilometers', 0))  # Default to 0 if not provided
+            additional_charge = float(request.POST.get('additional_charge', 0))  # Default to 0 if not provided
+        except ValueError:
+            messages.error(request, 'Invalid input for kilometers or additional charge.')
+            return redirect('bill_view', booking_id=booking_id)
+
+        # Calculate the total amount
+        total_amount = (charge * kilometers) + additional_charge
+
+        # Create a new Bill instance and save it to the database
+        Bill.objects.create(
+            user=user,
+            service_provider=service_provider,
+            service_type=service_type,
+            charge=charge,
+            kilometers=kilometers,
+            additional_charge=additional_charge,
+            total_amount=total_amount
+        )
+
+        messages.success(request, 'Bill submitted successfully!')
+        return redirect('service_provider_dashboard')  # Redirect to a relevant page after submission
+
+    # If the request method is not POST, redirect to the bill view
+    return redirect('bill_view', booking_id=booking_id)

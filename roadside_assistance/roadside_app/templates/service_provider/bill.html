@@ -1,0 +1,123 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bill - Road Guardian</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Similar styles to other pages */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+        }
+        header {
+            background-color: #14da6aa3;
+            color: rgb(0, 0, 0);
+            padding: 15px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        footer {
+            background-color: #14da6aa3;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+        .form-container {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin: 20px;
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ROAD GUARDIAN</h1>
+        <div class="user-info">
+            <span class="user-name">{{ user.name }}</span>
+            <div class="user-menu">
+                <button class="user-menu-btn"><i class="fas fa-user"></i></button>
+                <div class="user-dropdown">
+                    <a href="{% url 'service_provider_dashboard' %}"><i class="fas fa-user"></i> Go to Dashboard</a>
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <a href="#" onclick="this.parentNode.submit()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div class="form-container">
+            <h2>Bill Details</h2>
+            <form id="billForm" action="{% url 'submit_bill' booking.id %}" method="post">
+                {% csrf_token %}
+                <p>User: {{ booking.user.name }}</p>
+                <p>Service Provider: {{ service_provider.user.name }}</p>
+                <p>Service Type: {{ booking.service_type_category.category_name }}</p>
+                <p> Service Charge: {{ booking.service_type_category.charge }}</p>
+
+                <label for="kilometers">Kilometers Run:</label>
+                <input type="number" id="kilometers" name="kilometers" value="0" oninput="calculateTotal()">
+
+                <label for="additional_charge">Additional Charge:</label>
+                <input type="number" id="additional_charge" name="additional_charge" value="0" oninput="calculateTotal()">
+
+                <label for="total_amount">Total Amount:</label>
+                <input type="number" id="total_amount" name="total_amount" value="0" readonly>
+
+                <button type="submit">Submit Bill</button>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Roadside Assistance. All rights reserved.</p>
+        <p>Contact us: road.guardian08@gmail.com | +1 234 567 890</p>
+    </footer>
+    <script>
+        function calculateTotal() {
+            const charge = parseFloat(document.getElementById('charge').value) || 0;  // Fetch charge from the input
+            const kilometers = parseFloat(document.getElementById('kilometers').value) || 0;
+            const additionalCharge = parseFloat(document.getElementById('additional_charge').value) || 0;
+    
+            const total = (charge * kilometers) + additionalCharge;
+            document.getElementById('total_amount').value = total.toFixed(2);
+        }
+    </script>
+</body>
+</html>

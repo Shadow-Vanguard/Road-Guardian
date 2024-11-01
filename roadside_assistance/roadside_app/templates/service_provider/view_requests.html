@@ -488,10 +488,11 @@
                                     {% elif booking.status == 'ongoing' %}
                                         <a href="{% url 'complete_service' booking.id %}?current_status={{ current_status }}" 
                                            class="action-link">Complete Service</a>
-                                    {% elif booking.status == 'completed' %}
-                                        <a href="{% url 'send_bill' booking.id %}?current_status={{ current_status }}" 
-                                           class="action-link send-bill">Send Bill</a>
-                                    {% endif %}
+                                        {% elif booking.status == 'completed' %}
+                                            <a href="{% url 'submit_bill' booking.id %}" 
+                                                class="action-link send-bill" 
+                                                onclick="return confirm('Are you sure you want to send the bill for this service?');">Send Bill</a>
+                                       {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}

@@ -146,3 +146,18 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback from {self.user.name} for {self.service_provider.user.name}"
+    
+from django.db import models
+
+class Bill(models.Model):
+    user = models.CharField(max_length=255)
+    service_provider = models.CharField(max_length=255)
+    service_type = models.CharField(max_length=255)
+    charge = models.DecimalField(max_digits=10, decimal_places=2)
+    kilometers = models.DecimalField(max_digits=10, decimal_places=2)
+    additional_charge = models.DecimalField(max_digits=10, decimal_places=2)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Bill for {self.user} - {self.service_type}"
