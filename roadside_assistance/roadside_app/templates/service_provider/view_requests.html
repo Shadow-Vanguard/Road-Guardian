@@ -8,28 +8,37 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #3498db; /* Primary color */
+            --secondary-color: #2980b9; /* Secondary color */
+            --background-color: #ecf0f1; /* Background color */
+            --text-color: #34495e; /* Text color */
+            --shadow-color: rgba(0,0,0,0.1); /* Shadow color */
+            --error-color: #e74c3c; /* Error color */
+            --success-color: #2ecc71; /* Success color */
+        }
+    
         /* Your existing styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: var(--background-color);
             height: 100vh;
             display: flex;
             flex-direction: column;
-            
         }
-
+    
         header {                                
-            background-color: #14da6aa3;
-            color: rgb(0, 0, 0);
+            background-color: var(--primary-color);
+            color: white;
             padding: 15px 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-
+    
         /* Add new styles for status filter */
         .status-filter {
             display: flex;
@@ -41,7 +50,7 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             flex-wrap: wrap;
         }
-
+    
         .filter-btn {
             padding: 10px 20px;
             border: none;
@@ -55,35 +64,34 @@
             align-items: center;
             gap: 8px;
         }
-
+    
         .filter-btn:hover {
             background-color: #e0e0e0;
             transform: translateY(-1px);
         }
-
+    
         .filter-btn.active {
-            background-color: #4CAF50;
+            background-color: var(--primary-color);
             color: white;
         }
-
+    
         .count-badge {
             background-color: rgba(0,0,0,0.1);
             padding: 2px 8px;
             border-radius: 10px;
             font-size: 0.9em;
         }
-
+    
         .filter-btn.active .count-badge {
             background-color: rgba(255,255,255,0.2);
         }
-
-        /* Your other existing styles */
+    
         main {
             flex: 1;
             overflow: hidden;
             padding: 20px;
         }
-
+    
         .content {
             background-color: #fff;
             border-radius: 8px;
@@ -91,46 +99,12 @@
             height: 100%;
             overflow-y: auto;
             padding: 20px;
+            margin-bottom: 9%;
         }
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f4;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {                                
-            background-color: #14da6aa3;
-            color:#4CAF50;
-            padding: 15px 25px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        /* ... (keep other header styles unchanged) ... */
-
-        main {
-            flex: 1;
-            overflow: hidden;
-            padding: 20px;
-        }
-
-        .content {
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            height: 100%;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
+    
         h2 {
-            color: #333;
-            border-bottom: 2px solid #4CAF50;
+            color: var(--text-color);
+            border-bottom: 2px solid var(--primary-color);
             padding-bottom: 0.5rem;
             position: sticky;
             top: 0;
@@ -139,48 +113,55 @@
             padding-top: 10px;
             z-index: 1;
         }
-
+    
         table {
             width: 100%;
             border-collapse: collapse;
         }
+    
         th, td {
             padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
+    
         th {
-            background-color: #4CAF50;
+            background-color: var(--primary-color);
             color: white;
             position: sticky;
             top: 43px; /* Adjust this value based on your h2 height */
             z-index: 1;
         }
+    
         tr:hover {
-            background-color: #14cbc25e;
+            background-color: rgba(52, 152, 219, 0.1);
         }
+    
         .action-link {
             display: inline-block;
             padding: 8px 12px;
-            background-color: #4CAF50;
+            background-color: var(--primary-color);
             color: white;
             text-decoration: none;
             border-radius: 4px;
         }
+    
         .action-link:hover {
-            background-color: #45a049;
+            background-color: var(--secondary-color);
         }
-        
+    
         footer {
-            background-color: #14da6aa3;
+            background-color: var(--primary-color);
             color: #fff;
             padding: 10px 0;
             text-align: center;
         }
+    
         .footer p1, .footer p2 {
             display: block;
             margin: 5px 0;
         }
+    
         .logout {
             padding: 9px;
             margin-bottom: 10px;
@@ -188,124 +169,41 @@
             font-size: 18px;
             border-radius: 6px;
             text-decoration: none;
-            color: #4CAF50;
+            color: var(--primary-color);
             font-weight: bold;
             background-color: #fff;
-            border: 1px solid #4CAF50;
+            border: 1px solid var(--primary-color);
             transition: background-color 0.3s;
             text-align: center;
         }
-
+    
         .logout:hover {
             background-color: #ea0606;
             color: #fff;
         }
-        .dashboard {
-            padding: 9px;
-            margin-bottom: 10px;
-            margin-top: 15px;
-            font-size: 18px;
-            border-radius: 6px;
-            text-decoration: none;
-            color: #4CAF50;
-            font-weight: bold;
-            background-color: #fff;
-            border: 1px solid #4CAF50;
-            transition: background-color 0.3s;
-            text-align: center;
-        }
-
-        .dashboard:hover {
-            background-color: #138ebfc9;
-            color: #fff;
-        }
-        .scrollable-container {
-            max-height: 700px; /* Set the max height you want */
-            overflow-y: auto; /* Enable vertical scrolling */
-            margin-top: 100px; /* Optional: Space between the sidebar and the form */
-        }
+    
         .fade-out {
-                opacity: 0;
-                transition: opacity 1s ease-out;
+            opacity: 0;
+            transition: opacity 1s ease-out;
         }
-
+    
         .alert-success {
             transition: opacity 1s ease-out;
         }
+    
         .action-link.send-bill {
             background-color: #f39c12;  /* A different color for the Send Bill button */
         }
-
+    
         .action-link.send-bill:hover {
             background-color: #e67e22;
         }
-        .status-filter {
-            margin: 20px 0;
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            padding: 10px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    
+        .scrollable-container {
+            max-height: 780px; /* Set the max height you want */
+            overflow-y: auto; /* Enable vertical scrolling */
+            margin-top: 30px; /* Optional: Space between the sidebar and the form */
         }
-
-        .filter-btn {
-            padding: 10px 20px;
-            border-radius: 20px;
-            background-color: #f0f0f0;
-            color: #333;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .filter-btn i {
-            font-size: 1.1rem;
-        }
-
-        .filter-btn:hover {
-            background-color: #e0e0e0;
-            transform: translateY(-1px);
-        }
-
-        .filter-btn.active {
-            background-color: #4CAF50;
-            color: white;
-        }
-
-        .count-badge {
-            background-color: rgba(0,0,0,0.1);
-            padding: 2px 8px;
-            border-radius: 10px;
-            font-size: 0.9em;
-        }
-
-        .filter-btn.active .count-badge {
-            background-color: rgba(255,255,255,0.2);
-        }
-                /* Navbar Styles */
-        header {
-            background-color: #ffffff;
-            padding: 1rem 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            box-shadow: 0 2px 10px var(--shadow-color);
-        }
-
-        header h1 {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-        }
-
         .user-info {
             display: flex;
             align-items: center;
@@ -350,54 +248,6 @@
         .user-dropdown a:hover {
             background-color: #f0f0f0;
         }
-        /* Footer Styles */
-        footer {
-            background-color: #f0f0f0;
-            color: var(--text-color);
-            text-align: center;
-            padding: 2rem 0;
-            margin-top: .5rem;
-        }
-
-        .footer-content {
-            display: flex;
-            justify-content: space-around;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
-        }
-
-        .footer-section {
-            text-align: left;
-        }
-
-        .footer-section h4 {
-            color: var(--primary-color);
-            margin-bottom: 1rem;
-        }
-
-        .footer-section a {
-            color: var(--text-color);
-            text-decoration: none;
-            display: block;
-            margin-bottom: 0.5rem;
-            transition: color 0.3s;
-        }
-
-        .footer-section a:hover {
-            color: var(--primary-color);
-        }
-
-        @media (max-width: 768px) {
-            .footer-content {
-                flex-direction: column;
-            }
-            .footer-section {
-                margin-bottom: 1.5rem;
-            }
-        }
-
-
     </style>
 </head>
 <body>

@@ -8,58 +8,85 @@
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #3498db; /* Primary color */
+            --secondary-color: #2980b9; /* Secondary color */
+            --background-color: #ecf0f1; /* Background color */
+            --text-color: #34495e; /* Text color */
+            --shadow-color: rgba(0,0,0,0.1); /* Shadow color */
+            --error-color: #e74c3c; /* Error color */
+            --success-color: #2ecc71; /* Success color */
+        }
         /* Similar styles to other pages */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4;
+            background-color: var(--background-color); /* Use the same background color variable */
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
+    
         header {
-            background-color: #14da6aa3;
-            color: rgb(0, 0, 0);
+            background-color: var(--primary-color); /* Use the primary color variable */
+            color: white;
             padding: 15px 25px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+    
         footer {
-            background-color: #14da6aa3;
+            background-color: var(--primary-color); /* Use the primary color variable */
             color: #fff;
             padding: 10px 0;
             text-align: center;
+            margin-top: 10%;
         }
+        main {
+            display: flex; /* Use Flexbox */
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            flex: 1; /* Allow main to grow and fill available space */
+            padding: 20px;
+        }
+    
         .form-container {
             padding: 20px;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin: 20px;
+            width: 100%; /* Make it responsive */
+            max-width: 500px; /* Set a max width for the form */
         }
+    
         label {
             display: block;
             margin: 10px 0 5px;
         }
+    
         input, select {
-            width: 100%;
+            width: 95%;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+    
         button {
             padding: 10px 20px;
-            background-color: #4CAF50;
+            background-color: var(--primary-color); /* Use the primary color variable */
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-left: 40%;
         }
+    
         button:hover {
-            background-color: #45a049;
+            background-color: var(--secondary-color); /* Use the secondary color variable */
         }
     </style>
 </head>
@@ -83,13 +110,13 @@
 
     <main>
         <div class="form-container">
-            <h2>Bill Details</h2>
+            <h2 style="text-align: center;">BILL DETAILS</h2>
             <form id="billForm" action="{% url 'submit_bill' booking.id %}" method="post">
                 {% csrf_token %}
-                <p>User: {{ booking.user.name }}</p>
-                <p>Service Provider: {{ service_provider.user.name }}</p>
-                <p>Service Type: {{ booking.service_type_category.category_name }}</p>
-                <p> Service Charge: {{ booking.service_type_category.charge }}</p>
+                <p><b>Name Of User:</b> {{ booking.user.name }}</p>
+                <p><b>Name Of Service Provider:</b> {{ service_provider.user.name }}</p>
+                <p><b>Service Type:</b> {{ booking.service_type_category.category_name }}</p>
+                <p><b>Service Charge:</b> <span id="charge">{{ booking.service_type_category.charge }}</span></p>
 
                 <label for="kilometers">Kilometers Run:</label>
                 <input type="number" id="kilometers" name="kilometers" value="0" oninput="calculateTotal()">
@@ -111,12 +138,12 @@
     </footer>
     <script>
         function calculateTotal() {
-            const charge = parseFloat(document.getElementById('charge').value) || 0;  // Fetch charge from the input
+            const charge = parseFloat(document.getElementById('charge').innerText) || 0;  // Fetch charge from the span
             const kilometers = parseFloat(document.getElementById('kilometers').value) || 0;
             const additionalCharge = parseFloat(document.getElementById('additional_charge').value) || 0;
-    
+
             const total = (charge * kilometers) + additionalCharge;
-            document.getElementById('total_amount').value = total.toFixed(2);
+            document.getElementById('total_amount').value = total.toFixed(2);  // Update total amount
         }
     </script>
 </body>

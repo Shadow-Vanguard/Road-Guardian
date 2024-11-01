@@ -63,7 +63,7 @@ urlpatterns = [
 
     path('bill/<int:booking_id>/', views.bill_view, name='bill_view'),
     path('submit_bill/<int:booking_id>/', views.submit_bill, name='submit_bill'),
-
+    path('get_bill_details/<int:booking_id>/', views.get_bill_details, name='get_bill_details'),
 
 
     #Password

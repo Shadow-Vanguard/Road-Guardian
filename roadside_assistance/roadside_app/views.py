@@ -937,3 +937,22 @@ def submit_bill(request, booking_id):
 
     # If the request method is not POST, redirect to the bill view
     return redirect('bill_view', booking_id=booking_id)
+
+
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from .models import Bill
+
+def get_bill_details(request, booking_id):
+    bill = get_object_or_404(Bill, booking_id=booking_id)  # Adjust as necessary
+    data = {
+        'user': bill.user.name,
+        'service_provider': bill.service_provider.user.name,
+        'service_type': bill.service_type,
+        'charge': bill.charge,
+        'kilometers': bill.kilometers,
+        'additional_charge': bill.additional_charge,
+        'total_amount': bill.total_amount,
+    }
+    return JsonResponse(data)
