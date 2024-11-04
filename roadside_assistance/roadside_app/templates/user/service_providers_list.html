@@ -390,6 +390,25 @@
                 right: 20px;
             }
         }
+        .call-btn {
+            padding: 8px 15px;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .call-btn:hover {
+            background-color: var(--secondary-color);
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px var(--shadow-color);
+        }
     </style>
 </head>
 <body>
@@ -429,7 +448,7 @@
                         {% for provider in service_providers %}
                         <tr>
                             <td>{{ provider.user.name }}</td>
-                            <td>{{ provider.user.phone }}</td>
+                            <td><a href="tel:{{ provider.user.phone }}" class="call-btn"><i class="fas fa-phone"></i> {{ provider.user.phone }}</a></td>
                             <td>{{ provider.area_of_service }}</td>
                             <td>{{ provider.location }}</td>
                             <td>

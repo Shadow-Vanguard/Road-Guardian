@@ -420,15 +420,98 @@ def get_bookings(request):
 
 @login_required
 def user_service_history(request):
+    # Fetch user's service history with related service provider and service type category
     service_history = Booking.objects.filter(
         user=request.user
     ).select_related('service_provider', 'service_type_category').order_by('-created_at')
     
+    # Fetch bills related to the user's bookings
+    bills = Bill.objects.filter(user=request.user.username)  # Adjust if necessary based on your user model
+
     context = {
         'service_history': service_history,
+        'bills': bills,  # Add bills to the context
         'user': request.user,
     }
     return render(request, 'user/user_service_history.html', context)
+
+from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+from .models import Bill
+
+@login_required
+def payment_history(request):
+    # Fetch the bills for the logged-in user
+    bills = Bill.objects.filter(user=request.user.name)  # Adjust as necessary
+    return render(request, 'user/payment_history.html', {'bills': bills})
+
+# Add this import at the top of your views.py file
+from django.shortcuts import get_object_or_404, redirect
+from .models import Bill
+
+@login_required
+def pay_bill_view(request, bill_id):
+    bill = get_object_or_404(Bill, id=bill_id, user=request.user.name)  # Ensure the bill belongs to the current user
+    bill.status = 'paid'  # Update the status to 'paid'
+    bill.save()  # Save the changes
+    return redirect('payment_history')  # Redirect back to the payment history page
+
+
+
+# Add these imports at the top of your views.py file
+import razorpay
+from django.conf import settings
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Bill
+
+# Initialize Razorpay client
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_SECRET_KEY))
+
+@login_required
+def pay_bill_view(request, bill_id):
+    bill = get_object_or_404(Bill, id=bill_id, user=request.user.name)  # Ensure the bill belongs to the current user
+
+    if request.method == 'POST':
+        # Create a Razorpay order
+        order_amount = int(bill.total_amount * 100)  # Amount in paise
+        order_currency = 'INR'
+        order_receipt = str(bill.id)
+
+        # Create order
+        razorpay_order = razorpay_client.order.create({
+            'amount': order_amount,
+            'currency': order_currency,
+            'receipt': order_receipt,
+            'payment_capture': '1'  # Auto capture
+        })
+
+        # Render the payment page with the order ID
+        return render(request, 'user/payment.html', {
+            'razorpay_order_id': razorpay_order['id'],
+            'razorpay_merchant_key': settings.RAZORPAY_API_KEY,
+            'amount': order_amount,
+            'bill_id': bill.id
+        })
+
+    return redirect('payment_history')  # Redirect if not a POST request
+
+@login_required
+def payment_success_view(request, bill_id):
+    if request.method == 'POST':
+        razorpay_order_id = request.POST.get('razorpay_order_id')
+        amount = request.POST.get('amount')
+
+        # Verify the payment here (optional but recommended)
+        # You can use Razorpay's payment verification API
+
+        # Update the bill status to 'paid'
+        bill = get_object_or_404(Bill, id=bill_id, user=request.user.name)
+        bill.status = 'paid'
+        bill.save()
+
+        return redirect('payment_history')  # Redirect to payment history after success
+
+    return redirect('payment_history')  # Redirect if not a POST request
 
 ########################################################################################################
 
@@ -441,12 +524,33 @@ from django.contrib import messages
 from .models import CustomUser
 from .forms import CustomUserUpdateForm
 from .forms import CustomUserUpdateForm as ProfileUpdateForm
+from django.views.decorators.cache import never_cache
 
 
 @login_required
+@never_cache
+ # Ensure you import your CustomUser model
+
 def view_users(request):
-    users = CustomUser.objects.all() 
-    return render(request, 'admin/view_users.html', {'users': users})
+    # Check if the user is logged in and has the appropriate role
+    if 'user_id' in request.session:
+        try:
+            # Retrieve the user from the session
+            user = CustomUser.objects.get(id=request.session['user_id'])
+            
+            # Check if the user has the 'admin' role or any other necessary permission
+            if user.role == 'admin':  # Adjust this condition based on your role management
+                users = CustomUser.objects.all() 
+                return render(request, 'admin/view_users.html', {'users': users})
+            else:
+                messages.error(request, "You do not have permission to view this page.")
+                return redirect('service_provider_dashboard')  # Redirect to a different page if not authorized
+        except CustomUser.DoesNotExist:
+            messages.error(request, "User not found.")
+            return redirect('login')  # Redirect to login if user not found
+    else:
+        messages.error(request, "You need to log in to view this page.")
+        return redirect('login')  # Redirect to login if session does not exist
 
 
  # View Profile of admin
@@ -638,64 +742,103 @@ from django.contrib import messages
 from .models import CustomUser, ServiceProvider, Booking
 from .forms import CustomUserUpdateForm
 from datetime import datetime
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from django.views.decorators.cache import never_cache
+from .models import ServiceProvider, Booking 
 
 @never_cache
-@login_required
+
+@never_cache
 def service_provider_dashboard(request):
     """
     Service provider dashboard view showing summary of requests and services
     """
+    # Check if the user is logged in
+    if 'user_id' in request.session:
+        try:
+            # Retrieve the service provider associated with the logged-in user
+            service_provider = ServiceProvider.objects.select_related('service_type').get(user=request.user)
+            
+            # Get counts for different request statuses
+            pending_requests = Booking.objects.filter(
+                service_provider=service_provider,
+                status='pending'
+            ).count()
+            
+            ongoing_services = Booking.objects.filter(
+                service_provider=service_provider,
+                status='ongoing'
+            ).count()
+            
+            completed_services = Booking.objects.filter(
+                service_provider=service_provider,
+                status='completed'
+            ).count()
+
+            accepted_services = Booking.objects.filter(
+                service_provider=service_provider,
+                status='accepted'
+            ).count()
+
+            # Get recent requests
+            recent_requests = Booking.objects.filter(
+                service_provider=service_provider
+            ).order_by('-created_at')[:5]
+
+            context = {
+                'user': request.user,
+                'service_provider': service_provider,
+                'pending_requests_count': pending_requests,
+                'ongoing_services_count': ongoing_services,
+                'completed_services_count': completed_services,
+                'accepted_services_count': accepted_services,
+                'recent_requests': recent_requests
+            }
+            
+        except ServiceProvider.DoesNotExist:
+            messages.error(request, 'Service Provider profile not found.')
+            context = {
+                'user': request.user,
+                'pending_requests_count': 0,
+                'ongoing_services_count': 0,
+                'completed_services_count': 0,
+                'accepted_services_count': 0
+            }
+
+    else:
+        messages.error(request, "You need to log in to view this page.")
+        return redirect('login')  # Redirect to the login page if not logged in
+
+    return render(request, 'service_provider/serviceprovider_dashboard.html', context)
+
+from django.shortcuts import render
+from django.contrib import messages
+from .models import ServiceProvider, Bill  # Ensure you import your Bill model
+
+def view_payments(request):
+    """
+    View to display payments sent by the service provider.
+    """
     try:
-        service_provider = ServiceProvider.objects.select_related('service_type').get(user=request.user)
+        service_provider = ServiceProvider.objects.get(user=request.user)
         
-        # Get counts for different request statuses
-        pending_requests = Booking.objects.filter(
-            service_provider=service_provider,
-            status='pending'
-        ).count()
-        
-        ongoing_services = Booking.objects.filter(
-            service_provider=service_provider,
-            status='ongoing'
-        ).count()
-        
-        completed_services = Booking.objects.filter(
-            service_provider=service_provider,
-            status='completed'
-        ).count()
-
-        accepted_services = Booking.objects.filter(
-            service_provider=service_provider,
-            status='accepted'
-        ).count()
-
-        # Get recent requests
-        recent_requests = Booking.objects.filter(
-            service_provider=service_provider
-        ).order_by('-created_at')[:5]
+        # Retrieve bills associated with the service provider
+        payments = Bill.objects.filter(service_provider=service_provider.user.name).order_by('-created_at')  # Adjust the field as necessary
 
         context = {
+            'payments': payments,
             'user': request.user,
-            'service_provider': service_provider,
-            'pending_requests_count': pending_requests,
-            'ongoing_services_count': ongoing_services,
-            'completed_services_count': completed_services,
-            'accepted_services_count': accepted_services,
-            'recent_requests': recent_requests
         }
         
     except ServiceProvider.DoesNotExist:
         messages.error(request, 'Service Provider profile not found.')
         context = {
+            'payments': [],
             'user': request.user,
-            'pending_requests_count': 0,
-            'ongoing_services_count': 0,
-            'completed_services_count': 0,
-            'accepted_services_count': 0
         }
 
-    return render(request, 'service_provider/serviceprovider_dashboard.html', context)
-
+    return render(request, 'service_provider/view_payment.html', context)
 @never_cache
 @login_required
 def view_requests(request):

@@ -30,6 +30,7 @@
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            overflow-x: hidden;
         }
 
         /* Header Styles */
@@ -246,7 +247,7 @@
 
     <div class="main-container">
         <div class="feedback-container">
-            <h2>Submit Feedback</h2>
+            <h2> Give A Feedback</h2>
             <form method="post" id="feedbackForm">
                 {% csrf_token %}
                 {{ form.non_field_errors }}

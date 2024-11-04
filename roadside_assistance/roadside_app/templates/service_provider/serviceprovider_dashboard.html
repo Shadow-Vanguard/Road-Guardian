@@ -28,6 +28,7 @@
             color: var(--text-color);
             height: 100%;
             background-color: var(--background-color);
+            overflow-x: hidden;
         }
         header {
             background-color: #ffffff;
@@ -353,6 +354,89 @@
             70% { opacity: 1; }
             100% { opacity: 0; }
         }
+        .update-profile, .view-profile {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            display: none; /* Initially hidden */
+        }
+        .error-message {
+            color: red;
+        }
+        .update-profile {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .update-profile h3 {
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .update-profile label {
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        .update-profile input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            transition: border-color 0.3s;
+        }
+
+        .update-profile input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+        }
+
+        .error-message {
+            color: red;
+            font-size: 0.9rem;
+        }
+
+        .tooltip {
+            display: none;
+            position: absolute;
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            z-index: 10;
+        }
+
+        .email-container {
+            position: relative;
+        }
+
+        .email-container:hover .tooltip {
+            display: block;
+        }
+        .update-button {
+            padding: 10px 20px; /* Padding for the button */
+            background-color: #3498db; /* Primary color */
+            color: white; /* Text color */
+            border: none; /* Remove default border */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 1rem; /* Font size */
+            font-weight: bold; /* Bold text */
+            transition: background-color 0.3s, transform 0.2s; /* Smooth transition for hover effects */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+        }
+
+        .update-button:hover {
+            background-color: #2980b9; /* Darker shade on hover */
+            transform: translateY(-2px); /* Slight lift effect */
+        }
     </style>
 </head>
 <body>
@@ -376,8 +460,8 @@
 
     <div class="dashboard-container">
         <div class="sidebar">
-            <button onclick="window.location.href='#'"><i class="fas fa-comments"></i> Chat with Users</button>
-            <button onclick="window.location.href='#'"><i class="fas fa-money-bill-wave"></i> View Earnings</button>
+            <button onclick=window.location.href='{% url 'view_feedback' %}'><i class="fas fa-comment-alt"></i> View Feedbacks </button>
+            <button onclick=window.location.href='{% url 'view_payment' %}'><i class="fas fa-money-bill-wave"></i> View Earnings</button>
         </div>
 
         <div class="content">
@@ -389,7 +473,51 @@
                     <div class="alert alert-{{ message.tags }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
-        
+
+             <!-- Profile Sections -->
+         <div class="update-profile" id="updateProfileSection" style="display: none;">
+                <h3>Update Your Profile</h3>
+                <form method="post" action="{% url 'user_update_profile' %}" id="profileForm">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    
+                    <label for="name">Name:</label>
+                    {{ form.name }}
+                    <span id="nameError" class="error-message"></span>
+
+                    <label for="username">Username:</label>
+                    {{ form.username }}
+                    <span id="usernameError" class="error-message"></span>
+
+                    <label for="address">Address:</label>
+                    {{ form.address }}
+                    <span id="addressError" class="error-message"></span>
+
+                    <label for="phone">Phone:</label>
+                    {{ form.phone }}
+                    <span id="phoneError" class="error-message"></span>
+
+                    <label for="email" id="emailLabel">Email:</label>
+                    <input type="email" name="email" id="emailField" value="{{ form.email.value }}" readonly>
+                    <span id="emailTooltip" class="tooltip" style="display: none;">Can't change email due to security reasons</span>
+                    <span id="emailError" class="error-message"></span>
+
+                    <button type="submit">Save Changes</button>
+                </form>
+            </div>
+
+
+            <div class="view-profile" id="viewProfileSection" style="display: none;">
+                <h3>Your Profile Information</h3>
+                <p><strong>Username:</strong> {{ user.username }}</p>
+                <p><strong>Name:</strong> {{ user.name }}</p>
+                <p><strong>Email:</strong> {{ user.email }}</p>
+                <p><strong>Phone:</strong> {{ user.phone }}</p>
+                <p><strong>Address:</strong> {{ user.address }}</p>
+                <p><strong>Role:</strong> {{ user.role }}</p>
+            </div>
+
+
             <!-- Update the summary cards section -->
             <div class="dashboard-summary">
                 <div class="summary-card">
@@ -415,60 +543,6 @@
             </div>
         </div>
 
-
-            <!-- Profile sections (hidden by default) -->
-            <div id="updateProfileSection" class="update-profile" style="display: none;">
-                <h3><i class="fas fa-user-edit"></i> Update Profile</h3>
-                <!-- Add your update profile form here -->
-                <form method="post" action="{% url 'update_profile_service_provider' %}" id="profileForm">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_username">Username:</label>
-                        <input type="text" id="id_username" name="username" value="{{ form.username.value|default:user.username }}">
-                        <span id="usernameError" class="error-message"></span>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="id_name">Name:</label>
-                        <input type="text" id="id_name" name="name" value="{{ form.name.value|default:user.name }}">
-                        <span id="nameError" class="error-message"></span>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="id_address">Address:</label>
-                        <input type="text" id="id_address" name="address" value="{{ form.address.value|default:user.address }}">
-                        <span id="addressError" class="error-message"></span>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="id_phone">Phone:</label>
-                        <input type="text" id="id_phone" name="phone" value="{{ form.phone.value|default:user.phone }}">
-                        <span id="phoneError" class="error-message"></span>
-                    </div>
-                
-                    <div class="form-group">
-                        <label for="id_email">Email:</label>
-                        <input type="email" id="id_email" name="email" value="{{ form.email.value|default:user.email }}" readonly>
-                        <span id="emailTooltip" class="tooltip">Email cannot be changed for security reasons</span>
-                        <span id="emailError" class="error-message"></span>
-                    </div>
-                
-                    <button type="submit">Update Profile</button>
-                </form>
-            </div>
-
-            <div id="viewProfileSection" class="view-profile" style="display: none;">
-                <h3><i class="fas fa-user"></i> Profile Information</h3>
-                <!-- Add your view profile content here -->
-                <p><strong>Name:</strong> {{ user.name }}</p>
-                <p><strong>Email:</strong> {{ user.email }}</p>
-                <p><strong>Phone:</strong> {{ user.phone }}</p>
-                <p><strong>Address:</strong> {{ user.address }}</p>
-                <p><strong>Service Type:</strong> {{ service_provider.service_type.servicetype_name }}</p>
-                <p><strong>Area of Service:</strong> {{ service_provider.area_of_service }}</p>
-
-            </div>
-        </div>
     </div>
     <footer>
         <div class="footer-content">
@@ -494,7 +568,7 @@
         </div>
         <p>&copy; 2024 Road Guardian. All rights reserved.</p>
     </footer>
-    
+
 
     <script>
         // Toggle user dropdown menu
@@ -509,42 +583,148 @@
                 document.querySelector('.user-dropdown').style.display = 'none';
             }
         });
-
-        function toggleUpdateProfile() {
-            const updateSection = document.getElementById('updateProfileSection');
-            const viewSection = document.getElementById('viewProfileSection');
-            const requestsSection = document.getElementById('latestRequestsSection');
-            
-            updateSection.style.display = 'block';
-            viewSection.style.display = 'none';
-            requestsSection.style.display = 'none';
-        }
-
-        function toggleViewProfile() {
-            const updateSection = document.getElementById('updateProfileSection');
-            const viewSection = document.getElementById('viewProfileSection');
-            const requestsSection = document.getElementById('latestRequestsSection');
-            
-            viewSection.style.display = 'block';
-            updateSection.style.display = 'none';
-            requestsSection.style.display = 'none';
-        }
-
-        function showRequests() {
-            const updateSection = document.getElementById('updateProfileSection');
-            const viewSection = document.getElementById('viewProfileSection');
-            const requestsSection = document.getElementById('latestRequestsSection');
-            
-            requestsSection.style.display = 'block';
-            updateSection.style.display = 'none';
-            viewSection.style.display = 'none';
-        }
-
-        // Prevent going back to login page
-        window.history.pushState(null, "", window.location.href);
-        window.onpopstate = function() {
-            window.history.pushState(null, "", window.location.href);
-        };
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('profileForm');
+            const name = document.getElementById('id_name');
+            const username = document.getElementById('id_username');
+            const address = document.getElementById('id_address');
+            const phone = document.getElementById('id_phone');
+            const email = document.getElementById('emailField');
+
+            const nameError = document.getElementById('nameError');
+            const usernameError = document.getElementById('usernameError');
+            const addressError = document.getElementById('addressError');
+            const phoneError = document.getElementById('phoneError');
+            const emailError = document.getElementById('emailError');
+
+            let hasErrors = false;
+
+            function validateName() {
+                const nameRegex = /^[A-Z][a-zA-Z\s]*$/;
+                if (!nameRegex.test(name.value)) {
+                    nameError.textContent = "Name must start with a capital letter and contain only alphabets.";
+                    hasErrors = true;
+                    return false;
+                }
+                nameError.textContent = "";
+                return true;
+            }
+
+            function validateUsername() {
+                if (username.value.trim() === "") {
+                    usernameError.textContent = "Username cannot be empty.";
+                    hasErrors = true;
+                    return false;
+                }
+                usernameError.textContent = "";
+                return true;
+            }
+
+            function validateAddress() {
+                const addressRegex = /^[a-zA-Z\s]*$/;
+                if (!addressRegex.test(address.value)) {
+                    addressError.textContent = "Address must contain only alphabets.";
+                    hasErrors = true;
+                    return false;
+                }
+                addressError.textContent = "";
+                return true;
+            }
+
+            function validatePhone() {
+                const phoneRegex = /^\d{10}$/;
+                const repeatedNumbersRegex = /(.)\1{5,}/;
+                if (!phoneRegex.test(phone.value) || repeatedNumbersRegex.test(phone.value)) {
+                    phoneError.textContent = "Phone must be 10 digits and not contain continuous repeated numbers.";
+                    hasErrors = true;
+                    return false;
+                }
+                phoneError.textContent = "";
+                return true;
+            }
+
+            function validateEmail() {
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
+                if (!emailRegex.test(email.value)) {
+                    emailError.textContent = "Email must be a valid @gmail.com address.";
+                    hasErrors = true;
+                    return false;
+                }
+                emailError.textContent = "";
+                return true;
+            }
+
+            form.addEventListener('submit', function (event) {
+                hasErrors = false; // Reset error flag
+                let valid = true;
+
+                if (!validateName()) valid = false;
+                if (!validateUsername()) valid = false;
+                if (!validateAddress()) valid = false;
+                if (!validatePhone()) valid = false;
+                if (!validateEmail()) valid = false;
+
+                if (!valid) {
+                    event.preventDefault();
+                    // Keep the update profile section visible
+                    const updateSection = document.getElementById('updateProfileSection');
+                    const servicesSection = document.getElementById('servicesSection');
+                    updateSection.style.display = 'block';
+                    servicesSection.style.opacity = '0.3';
+                    servicesSection.style.pointerEvents = 'none';
+                }
+            });
+
+            // Toggle update profile section
+            function toggleUpdateProfile() {
+                const updateSection = document.getElementById('updateProfileSection');
+                const viewSection = document.getElementById('viewProfileSection');
+                const servicesSection = document.getElementById('servicesSection');
+                
+                if (updateSection.style.display === 'none') {
+                    updateSection.style.display = 'block';
+                    viewSection.style.display = 'none';
+                    servicesSection.style.opacity = '0.3';
+                    servicesSection.style.pointerEvents = 'none';
+                } else {
+                    // Only hide if there are no validation errors
+                    const errorMessages = document.querySelectorAll('.error-message');
+                    let hasErrors = false;
+                    errorMessages.forEach(error => {
+                        if (error.textContent !== '') {
+                            hasErrors = true;
+                        }
+                    });
+
+                    if (!hasErrors) {
+                        updateSection.style.display = 'none';
+                        servicesSection.style.opacity = '1';
+                        servicesSection.style.pointerEvents = 'auto';
+                    }
+                }
+            }
+
+            // Toggle view profile section
+            window.toggleViewProfile = function() {
+                const updateSection = document.getElementById('updateProfileSection');
+                const viewSection = document.getElementById('viewProfileSection');
+                const servicesSection = document.getElementById('servicesSection');
+
+                if (viewSection.style.display === 'none') {
+                    viewSection.style.display = 'block';
+                    updateSection.style.display = 'none';
+                    servicesSection.style.opacity = '0.3';
+                    servicesSection.style.pointerEvents = 'none';
+                } else {
+                    viewSection.style.display = 'none';
+                    servicesSection.style.opacity = '1';
+                    servicesSection.style.pointerEvents = 'auto';
+                }
+            }
+        });
+    </script>
+        
 </body>
 </html>

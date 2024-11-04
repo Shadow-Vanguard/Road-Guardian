@@ -1,0 +1,267 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Payments - Road Guardian</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db; /* Main color */
+            --secondary-color: #2980b9; /* Darker shade */
+            --background-color: #ecf0f1; /* Light background */
+            --text-color: #34495e; /* Text color */
+            --shadow-color: rgba(0, 0, 0, 0.1); /* Shadow color */
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 20px;
+            background-color: var(--background-color);
+        }
+
+        header {
+            background-color: #ffffff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-name {
+            margin-right: 1rem;
+            color: var(--text-color);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-name {
+            margin-right: 1rem;
+            color: var(--text-color);
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-radius: 5px;
+            display: none;
+            width: 1100%;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+
+        .user-dropdown a:hover {
+            background-color: #f0f0f0;
+        }
+
+        .content {
+            margin-top: 10%; /* Space for fixed header */
+        }
+
+        h2 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--secondary-color);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        tr:hover {
+            background-color: #ddd;
+        }
+
+        footer {
+            background-color: #f0f0f0;
+            color: var(--text-color);
+            text-align: center;
+            padding: 2rem 0;
+            margin-top: 20%;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-around;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .footer-section {
+            text-align: left;
+        }
+
+        .footer-section h4 {
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                flex-direction: column;
+            }
+            .footer-section {
+                margin-bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>ROAD GUARDIAN</h1>
+        <div class="user-info">
+            <span class="user-name">{{ user.name }}</span>
+            <div class="user-menu">
+                <button class="user-menu-btn"><i class="fas fa-user"></i></button>
+                <div class="user-dropdown">
+                    <a href="{% url 'service_provider_dashboard' %}"><i class="fas fa-user"></i> Go to Dashboard</a>
+                    <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <a href="#" onclick="this.parentNode.submit()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="content">
+        <h2>Your Payments</h2>
+        {% if payments %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Service Type</th>
+                        <th>Charge</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                        <tr>
+                            <td>{{ payment.created_at }}</td>
+                            <td>{{ payment.service_type }}</td>
+                            <td>${{ payment.total_amount }}</td>
+                            <td>{{ payment.status }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No payments found.</p>
+        {% endif %}
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#">Home</a>
+                <a href="#">Services</a>
+                <a href="#">About Us</a>
+                <a href="#">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: road.guardian08@gmail.com</p>
+                <p>Phone: +1 234 567 890</p>
+            </div>
+            <div class="footer-section">
+                <h4>Follow Us</h4>
+                <a href="#"><i class="fab fa-facebook"></i> Facebook</a>
+                <a href="#"><i class="fab fa-twitter"></i> Twitter</a>
+                <a href="#"><i class="fab fa-instagram"></i> Instagram</a>
+                <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
+            </div>
+        </div>
+        <p>&copy; 2024 Road Guardian. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Toggle user dropdown menu
+        document.querySelector('.user-menu-btn').addEventListener('click', function() {
+            document.querySelector('.user-dropdown').style.display = 
+                document.querySelector('.user-dropdown').style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.user-menu')) {
+                document.querySelector('.user-dropdown').style.display = 'none';
+            }
+        });
+    </script>
+    
+</body>
+</html>

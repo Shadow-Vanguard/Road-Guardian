@@ -195,3 +195,11 @@ SOCIALACCOUNT_EMAIL_VERIFICATION = "none"
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1027267612516-lf0dtag0ccaa0e6773q6ufrq9aqiro15.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+
+
+# settings.py
+
+from decouple import config
+# Razorpay API credentials
+RAZORPAY_API_KEY = 'rzp_test_o8cawEIEiGsQ6C'  # Replace with your actual Razorpay API key
+RAZORPAY_SECRET_KEY = 'ITd8ronAQbSCUCqvlqkMlxYl'  # Replace with your actual Razorpay secret key

@@ -45,7 +45,11 @@ urlpatterns = [
     path('get-category-charge/', views.get_category_charge, name='get_category_charge'),#get category charge
 
     path('user-service-history/', views.user_service_history, name='user_service_history'),#user service history
+    path('payment-history/', views.payment_history, name='payment_history'),#payment history
+    path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill
     
+    path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill
+    path('payment-success/<int:bill_id>/', views.payment_success_view, name='payment_success'),  # New URL for payment success
     #serviceprovider Dashboard URL
     path('serviceprovider_dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
     path('update-profile/', views.update_profile, name='update_profile_service_provider'),
@@ -54,6 +58,7 @@ urlpatterns = [
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),#submit feedback
     path('get-bookings/', views.get_bookings, name='get_bookings'),#get bookings
     path('service-provider/view-feedback/', views.view_feedback, name='view_feedback'),#view feedback
+    path('payments/', views.view_payments, name='view_payment'),  # view payments
 
 
     path('view_requests/', views.view_requests, name='view_requests'),

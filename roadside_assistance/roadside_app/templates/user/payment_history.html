@@ -4,8 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service History - Road Guardian</title>
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY" async defer></script>
+    <title>Payment History - Road Guardian</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -16,18 +15,14 @@
             --text-color: #333333;
             --shadow-color: rgba(0,0,0,0.1);
         }
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body, html {
+        body {
             font-family: 'Poppins', sans-serif;
             line-height: 1.6;
-            color: var(--text-color);
-            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
             overflow-x: hidden;
-            background-color: var(--background-color);
+    
         }
         header {
             background-color: #ffffff;
@@ -102,108 +97,42 @@
             margin-right: 1rem;
             color: var(--text-color);
         }
-        .dashboard-container {
-            display: flex;
-            margin-top: 80px;
-            min-height: calc(100vh - 80px);
-        }
-        .sidebar {
-            width: 250px;
-            margin-top: 17px;
-            background-color: #f0f4f8;
-            padding: 2rem;
-            margin-bottom: 15px;
-            box-shadow: 2px 0 10px var(--shadow-color);
-        }
-        .sidebar button {
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 1rem;
-            font-size: 1rem;
-            border: none;
-            background-color: #ffffff;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 5px;
-            text-align: left;
-        }
-        .sidebar button:hover {
-            background-color: var(--primary-color);
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgba(76,175,80,0.2);
-        }
         .content {
-            flex-grow: 1;
-            background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px var(--shadow-color);
             padding: 2rem;
-            margin: 1rem;
-        }
-        .content h2 {
-            color: var(--primary-color);
-            margin-bottom: 1.5rem;
-            font-size: 2rem;
-            border-bottom: 2px solid var(--primary-color);
-            padding-bottom: 0.5rem;
-            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        }
-
-        /* Service History Table Styles */
-        .service-history-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: white;
+            background-color: #fff;
+            margin: 2rem auto;
+            max-width: 1000px;
+            margin-top: 8%;
+            border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        .service-history-table th,
-        .service-history-table td {
-            padding: 12px 15px;
+        h2 {
+            color: var(--primary-color);
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 0.5rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        th, td {
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-
-        .service-history-table th {
+        th {
             background-color: #4CAF50;
             color: white;
-            font-weight: 600;
         }
-
-        .service-history-table tr:hover {
+        tr:hover {
             background-color: #f5f5f5;
         }
-
-        .status-pending {
-            color: #ffa500;
-            font-weight: 600;
-        }
-
-        .status-completed {
-            color: #4CAF50;
-            font-weight: 600;
-        }
-
-        .status-cancelled {
-            color: #f44336;
-            font-weight: 600;
-        }
-
-        .no-services {
-            text-align: center;
-            padding: 20px;
-            font-style: italic;
-            color: #666;
-        }
-                /* Footer Styles */
         footer {
                 background-color: #333;
                 color: #fff;
                 padding: 2rem 0;
-                margin-top: auto;
+                margin-top: 17%;
         }
         .footer-content {
             max-width: 1200px;
@@ -239,19 +168,28 @@
             border-top: 1px solid #555;
             margin-top: 2rem;
         }
-        .map-button {
-            display: inline-block;
-            padding: 5px 15px;
-            background-color: var(--primary-color);
-            color: white;
-            text-decoration: none;
-            border-radius: 5px;
-            text-align: center;
-            transition: background-color 0.3s;
+        .btn {
+            background-color: var(--primary-color); /* Primary color */
+            color: white; /* Text color */
+            border: none; /* No border */
+            padding: 10px 20px; /* Padding for the button */
+            border-radius: 5px; /* Rounded corners */
+            cursor: pointer; /* Pointer cursor on hover */
+            font-size: 1rem; /* Font size */
+            transition: background-color 0.3s; /* Smooth transition for background color */
+            display: inline-block; /* Inline block for proper spacing */
+            text-align: center; /* Center text */
         }
 
+        .btn:hover {
+            background-color: var(--secondary-color); /* Change background on hover */
+        }
+
+        .btn:disabled {
+            background-color: #ccc; /* Gray background for disabled state */
+            cursor: not-allowed; /* Not allowed cursor */
+        }
     </style>
-    
 </head>
 <body>
     <header>
@@ -271,66 +209,45 @@
         </div>
     </header>
 
-    <div class="dashboard-container">
-        <!-- <div class="sidebar">
-            <button>
-                <i class="fas fa-home"></i> Dashboard
-            </button>
-            <button>
-                <i class="fas fa-wrench"></i> Request Service
-            </button>
-            <button>
-                <i class="fas fa-history"></i> View Service History
-            </button>
-            <button >
-                <i class="fas fa-user"></i> Profile
-            </button>
-            <button>
-                <i class="fas fa-comments"></i> Feedback
-            </button>
-        </div> -->
-
+    <div class="scrollable-container">
         <div class="content">
-            <h2>Service History</h2>
-            {% if service_history %}
-                <table class="service-history-table">
+            <h2>Payment History</h2>
+            {% if bills %}
+                <table>
                     <thead>
                         <tr>
                             <th>Date</th>
                             <th>Service Type</th>
-                            <th>Provider</th>
-                            <th>Location</th>
+                            <th>Service Provider</th>
                             <th>Status</th>
-                            <!-- <th>Total Amount</th> -->
+                            <th>Amount</th>
+                            <th>Pay Now</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for service in service_history %}
+                        {% for bill in bills %}
                         <tr>
-                            <td>{{ service.created_at|date:"M d, Y" }}</td>
-                            <td>{{ service.service_type_category.category_name }}</td>
-                            <td>{{ service.service_provider.user.name }}</td>
-                            
+                            <td>{{ bill.created_at|date:"F d, Y" }}</td>
+                            <td>{{ bill.service_type }}</td>
+                            <td>{{ bill.service_provider }}</td>
+                            <td>{{ bill.status }}</td>
+                            <td>₹{{ bill.total_amount }}</td>
                             <td>
-                                <a href="https://www.google.com/maps/search/?api=1&query={{ service.location }}" target="_blank" class="map-button">{{ service.location }}</a>
+                                {% if bill.status != 'paid' %}
+                                    <form action="{% url 'pay_bill' bill.id %}" method="post">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-primary" class="btn">Pay Now</button>
+                                    </form>
+                                {% else %}
+                                    <span>Already Paid</span>
+                                {% endif %}
                             </td>
-
-                            <td class="status-{{ service.status|lower }}">{{ service.status }}</td>
-                            <!-- <td>
-                                {% for bill in service.bills.all %}  
-                                    ₹{{ bill.total_amount }}
-                                {% empty %}
-                                    Not Available
-                                {% endfor %}
-                            </td> -->
                         </tr>
                         {% endfor %}
                     </tbody>
                 </table>
             {% else %}
-                <div class="no-services">
-                    <p>No service history found.</p>
-                </div>
+                <p>No payment history available.</p>
             {% endif %}
         </div>
     </div>
