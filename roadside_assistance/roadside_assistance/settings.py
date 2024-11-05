@@ -57,6 +57,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     # 'roadside_app.cache_control.CacheControlMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 ROOT_URLCONF = 'roadside_assistance.urls'
@@ -85,18 +86,31 @@ WSGI_APPLICATION = 'roadside_assistance.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'new_roadside_assistance',  # Replace with your actual database name
+#         'USER': 'root',  # Replace with your MySQL username (default is 'root')  
+#         'PASSWORD': '',  # Replace with your MySQL password (default is empty)
+#         'HOST': 'localhost',
+#         'PORT': '3306',
+#        'OPTIONS': {
+#              'charset': 'utf8',
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1",
+#         }
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'new_roadside_assistance',  # Replace with your actual database name
-        'USER': 'root',  # Replace with your MySQL username (default is 'root')  
-        'PASSWORD': '',  # Replace with your MySQL password (default is empty)
-        'HOST': 'localhost',
-        'PORT': '3306',
-       'OPTIONS': {
-             'charset': 'utf8',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1",
-        }
+        'NAME': 'newroadsideassistance_bornmaybe',
+        'USER': 'newroadsideassistance_bornmaybe',
+        'PASSWORD': 'a4f1a99a11b519244e7cc10aece82c3c02858472',
+        'HOST': '8t-wx.h.filess.io',
+        'PORT': '3307',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -203,3 +217,5 @@ from decouple import config
 # Razorpay API credentials
 RAZORPAY_API_KEY = 'rzp_test_o8cawEIEiGsQ6C'  # Replace with your actual Razorpay API key
 RAZORPAY_SECRET_KEY = 'ITd8ronAQbSCUCqvlqkMlxYl'  # Replace with your actual Razorpay secret key
+
+
