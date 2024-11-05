@@ -748,67 +748,113 @@ from django.views.decorators.cache import never_cache
 from .models import ServiceProvider, Booking 
 
 @never_cache
+def service_provider_dashboard(request):
+    """
+    Service provider dashboard view showing summary of requests and services
+    """
+    try:
+        service_provider = ServiceProvider.objects.select_related('service_type').get(user=request.user)
+        
+        # Get counts for different request statuses
+        pending_requests = Booking.objects.filter(
+            service_provider=service_provider,
+            status='pending'
+        ).count()
+        
+        ongoing_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='ongoing'
+        ).count()
+        
+        completed_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='completed'
+        ).count()
 
+        accepted_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='accepted'
+        ).count()
+
+        # Get recent requests
+        recent_requests = Booking.objects.filter(
+            service_provider=service_provider
+        ).order_by('-created_at')[:5]
+
+        context = {
+            'user': request.user,
+            'service_provider': service_provider,
+            'pending_requests_count': pending_requests,
+            'ongoing_services_count': ongoing_services,
+            'completed_services_count': completed_services,
+            'accepted_services_count': accepted_services,
+            'recent_requests': recent_requests
+        }
+        
+    except ServiceProvider.DoesNotExist:
+        messages.error(request, 'Service Provider profile not found.')
+        context = {
+            'user': request.user,
+            'pending_requests_count': 0,
+            'ongoing_services_count': 0,
+            'completed_services_count': 0,
+            'accepted_services_count': 0
+        }
+
+    return render(request, 'service_provider/serviceprovider_dashboard.html', context)    
 @never_cache
 def service_provider_dashboard(request):
     """
     Service provider dashboard view showing summary of requests and services
     """
-    # Check if the user is logged in
-    if 'user_id' in request.session:
-        try:
-            # Retrieve the service provider associated with the logged-in user
-            service_provider = ServiceProvider.objects.select_related('service_type').get(user=request.user)
-            
-            # Get counts for different request statuses
-            pending_requests = Booking.objects.filter(
-                service_provider=service_provider,
-                status='pending'
-            ).count()
-            
-            ongoing_services = Booking.objects.filter(
-                service_provider=service_provider,
-                status='ongoing'
-            ).count()
-            
-            completed_services = Booking.objects.filter(
-                service_provider=service_provider,
-                status='completed'
-            ).count()
+    try:
+        service_provider = ServiceProvider.objects.select_related('service_type').get(user=request.user)
+        
+        # Get counts for different request statuses
+        pending_requests = Booking.objects.filter(
+            service_provider=service_provider,
+            status='pending'
+        ).count()
+        
+        ongoing_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='ongoing'
+        ).count()
+        
+        completed_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='completed'
+        ).count()
 
-            accepted_services = Booking.objects.filter(
-                service_provider=service_provider,
-                status='accepted'
-            ).count()
+        accepted_services = Booking.objects.filter(
+            service_provider=service_provider,
+            status='accepted'
+        ).count()
 
-            # Get recent requests
-            recent_requests = Booking.objects.filter(
-                service_provider=service_provider
-            ).order_by('-created_at')[:5]
+        # Get recent requests
+        recent_requests = Booking.objects.filter(
+            service_provider=service_provider
+        ).order_by('-created_at')[:5]
 
-            context = {
-                'user': request.user,
-                'service_provider': service_provider,
-                'pending_requests_count': pending_requests,
-                'ongoing_services_count': ongoing_services,
-                'completed_services_count': completed_services,
-                'accepted_services_count': accepted_services,
-                'recent_requests': recent_requests
-            }
-            
-        except ServiceProvider.DoesNotExist:
-            messages.error(request, 'Service Provider profile not found.')
-            context = {
-                'user': request.user,
-                'pending_requests_count': 0,
-                'ongoing_services_count': 0,
-                'completed_services_count': 0,
-                'accepted_services_count': 0
-            }
-
-    else:
-        messages.error(request, "You need to log in to view this page.")
-        return redirect('login')  # Redirect to the login page if not logged in
+        context = {
+            'user': request.user,
+            'service_provider': service_provider,
+            'pending_requests_count': pending_requests,
+            'ongoing_services_count': ongoing_services,
+            'completed_services_count': completed_services,
+            'accepted_services_count': accepted_services,
+            'recent_requests': recent_requests
+        }
+        
+    except ServiceProvider.DoesNotExist:
+        messages.error(request, 'Service Provider profile not found.')
+        context = {
+            'user': request.user,
+            'pending_requests_count': 0,
+            'ongoing_services_count': 0,
+            'completed_services_count': 0,
+            'accepted_services_count': 0
+        }
 
     return render(request, 'service_provider/serviceprovider_dashboard.html', context)
 
