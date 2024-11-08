@@ -29,13 +29,60 @@
         }
     
         header {
-            background-color: var(--primary-color); /* Use the primary color variable */
-            color: white;
-            padding: 15px 25px;
+            background-color: #ffffff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+        header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+        }
+        .user-info {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .user-name {
+            margin-right: 1rem;
+            color: var(--text-color);
+        }
+        .user-menu {
+            position: relative;
+        }
+        .user-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-radius: 5px;
+            display: none;
+            z-index: 1001;
+            width: 200px;
+        }
+        .user-dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .user-dropdown a:hover {
+            background-color: #f0f0f0;
         }
     
         footer {
@@ -55,6 +102,7 @@
     
         .form-container {
             padding: 20px;
+            margin-top: 8%;
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
@@ -111,24 +159,26 @@
     <main>
         <div class="form-container">
             <h2 style="text-align: center;">BILL DETAILS</h2>
-            <form id="billForm" action="{% url 'submit_bill' booking.id %}" method="post">
+            <div id="error-message" style="color: red; display: none;"></div> <!-- Error message container -->
+            <form id="billForm" action="{% url 'submit_bill' booking.id %}" method="post" onsubmit="return validateKilometers();">
                 {% csrf_token %}
                 <p><b>Name Of User:</b> {{ booking.user.name }}</p>
                 <p><b>Name Of Service Provider:</b> {{ service_provider.user.name }}</p>
                 <p><b>Service Type:</b> {{ booking.service_type_category.category_name }}</p>
                 <p><b>Service Charge:</b> <span id="charge">{{ booking.service_type_category.charge }}</span></p>
-
+        
                 <label for="kilometers">Kilometers Run:</label>
                 <input type="number" id="kilometers" name="kilometers" value="0" oninput="calculateTotal()">
-
+        
                 <label for="additional_charge">Additional Charge:</label>
                 <input type="number" id="additional_charge" name="additional_charge" value="0" oninput="calculateTotal()">
-
+        
                 <label for="total_amount">Total Amount:</label>
                 <input type="number" id="total_amount" name="total_amount" value="0" readonly>
-
+        
                 <button type="submit">Submit Bill</button>
             </form>
+            
         </div>
     </main>
 
@@ -146,5 +196,32 @@
             document.getElementById('total_amount').value = total.toFixed(2);  // Update total amount
         }
     </script>
+        <script>
+            // Toggle user dropdown menu
+            document.querySelector('.user-menu-btn').addEventListener('click', function() {
+                document.querySelector('.user-dropdown').style.display = 
+                    document.querySelector('.user-dropdown').style.display === 'none' ? 'block' : 'none';
+            });
+    
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!event.target.closest('.user-menu')) {
+                    document.querySelector('.user-dropdown').style.display = 'none';
+                }
+            });
+            function validateKilometers() {
+                const kilometers = parseFloat(document.getElementById('kilometers').value);
+                const errorMessage = document.getElementById('error-message');
+
+                if (kilometers <= 0) {
+                    errorMessage.textContent = "Kilometers Run must be greater than 0.";
+                    errorMessage.style.display = "block"; // Show error message
+                    return false; // Prevent form submission
+                } else {
+                    errorMessage.style.display = "none"; // Hide error message
+                    return true; // Allow form submission
+                }
+            }
+        </script>
 </body>
 </html>

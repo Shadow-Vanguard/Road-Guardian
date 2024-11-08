@@ -647,6 +647,7 @@ from .models import ServiceType
 from .forms import ServiceTypeForm
 from django.contrib import messages
 
+@never_cache
 def manage_service_types(request):
     if request.method == 'POST':
         form = ServiceTypeForm(request.POST, request.FILES)

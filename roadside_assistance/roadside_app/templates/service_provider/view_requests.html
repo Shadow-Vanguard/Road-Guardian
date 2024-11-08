@@ -336,11 +336,11 @@
                             <tr>
                                 <td>{{ booking.user.name }}</td>
                                 <td>{{ booking.service_type_category.category_name }}</td>
-
+                        
                                 <td>
                                     <a href="https://www.google.com/maps/search/?api=1&query={{ booking.location }}" target="_blank" class="map-button">{{ booking.location }}</a>
                                 </td>
-
+                        
                                 <td>{{ booking.description }}</td>
                                 <td>{{ booking.created_at|date:"F d, Y H:i" }}</td>
                                 <td>{{ booking.get_status_display }}</td>
@@ -354,11 +354,15 @@
                                     {% elif booking.status == 'ongoing' %}
                                         <a href="{% url 'complete_service' booking.id %}?current_status={{ current_status }}" 
                                            class="action-link">Complete Service</a>
-                                        {% elif booking.status == 'completed' %}
+                                    {% elif booking.status == 'completed' %}
+                                        {% if booking.bill_sent %}
+                                            <span>Bill Sent</span> <!-- Change to text if bill is sent -->
+                                        {% else %}
                                             <a href="{% url 'submit_bill' booking.id %}" 
                                                 class="action-link send-bill" 
-                                                onclick="return confirm('Are you sure you want to send the bill for this service?');">Send Bill</a>
-                                       {% endif %}
+                                                onclick="return sendBill(event, '{{ booking.id }}', this);">Send Bill</a>
+                                        {% endif %}
+                                    {% endif %}
                                 </td>
                             </tr>
                             {% endfor %}
@@ -417,5 +421,6 @@
                 }
             });
     </script>
+    
 </body>
 </html>
