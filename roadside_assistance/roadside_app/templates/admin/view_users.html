@@ -7,6 +7,9 @@
     <title>Admin Dashboard - View Users</title>
     <link rel="stylesheet" href="{% static 'css/admin_dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         body {
             background-image: url("{% static 'images/home3.jpg' %}");
@@ -184,9 +187,9 @@ footer .quick-links a:hover, footer .social a:hover {
                     <button class="user-menu-btn"><i class="fas fa-user"></i></button>
                     <div class="user-dropdown">
                         <a href="{% url 'admin_dashboard' %}"><i class="fas fa-dashboard"></i> Go to Dashboard</a>
-                        <form action="{% url 'logout' %}" method="post" style="display: inline;">
+                        <form action="{% url 'logout' %}" method="post" style="display: inline;" id="logout-form">
                             {% csrf_token %}
-                            <a href="#" onclick="this.parentNode.submit()"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+                            <a href="#" onclick="confirmLogout(event)"><i class="fas fa-sign-out-alt"></i> Log Out</a>
                         </form>
                     </div>
                 </div>
@@ -230,12 +233,12 @@ footer .quick-links a:hover, footer .social a:hover {
                             <td>{{ user.role }}</td>
                             <td>{{ user.is_active }}</td>
                             <td>
-                                <form action="{% url 'toggle_active_status' user.id %}" method="post">
+                                <form action="{% url 'toggle_active_status' user.id %}" method="post" class="status-form">
                                     {% csrf_token %}
                                     {% if user.is_active %}
-                                        <button type="submit" name="status" value="deactivate" id="deactivate" class="btn-active">Deactivate</button>
+                                        <button type="button" class="btn-active" onclick="confirmAction('deactivate', '{{ user.name }}', this)">Deactivate</button>
                                     {% else %}
-                                        <button type="submit" name="status" value="activate" id="activate" class="btn-inactive">Activate</button>
+                                        <button type="button" class="btn-inactive" onclick="confirmAction('activate', '{{ user.name }}', this)">Activate</button>
                                     {% endif %}
                                 </form>
                             </td>
@@ -260,7 +263,7 @@ footer .quick-links a:hover, footer .social a:hover {
                             <th>Address</th>
                             <th>Role</th>
                             <th>Service Type</th>
-                            <th> Certificate</th>
+                            <th>Certificate</th>
                             <th>Active</th>
                             <th>Status</th>
                         </tr>
@@ -283,24 +286,32 @@ footer .quick-links a:hover, footer .social a:hover {
                                         {% endif %}
                                     </td>
                                     <td>
-                                        {% if user.serviceprovider.service_type %}
-                                        {{ user.serviceprovider.service_type.servicetype_name }}
+                                        {% if user.serviceprovider %}
+                                            {% if user.serviceprovider.certificate %}
+                                                {% if user.serviceprovider.certificate.url|slice:"-4:" == ".pdf" %}
+                                                    <a href="{{ user.serviceprovider.certificate.url }}" target="_blank" rel="noopener noreferrer">View Certificate (PDF)</a>
+                                                {% else %}
+                                                    <a href="{{ user.serviceprovider.certificate.url }}" target="_blank" rel="noopener noreferrer">
+                                                        <img src="{{ user.serviceprovider.certificate.url }}" alt="Certificate" style="max-width: 100px; max-height: 100px;">
+                                                    </a>
+                                                {% endif %}
+                                            {% else %}
+                                                No Certificate
+                                            {% endif %}
                                         {% else %}
                                             Not a service provider
                                         {% endif %}
                                     </td>
-
-        
             
                                     <td>{{ user.is_active }}</td>
                                     
                                     <td>
-                                        <form action="{% url 'toggle_active_status' user.id %}" method="post">
+                                        <form action="{% url 'toggle_active_status' user.id %}" method="post" class="status-form">
                                             {% csrf_token %}
                                             {% if user.is_active %}
-                                                <button type="submit" name="status" value="deactivate" class="btn-active">Deactivate</button>
+                                                <button type="button" class="btn-active" onclick="confirmAction('deactivate', '{{ user.name }}', this)">Deactivate</button>
                                             {% else %}
-                                                <button type="submit" name="status" value="activate" class="btn-inactive">Activate</button>
+                                                <button type="button" class="btn-inactive" onclick="confirmAction('activate', '{{ user.name }}', this)">Activate</button>
                                             {% endif %}
                                         </form>
                                     </td>
@@ -372,6 +383,56 @@ footer .quick-links a:hover, footer .social a:hover {
                     userDropdown.style.display = 'none';
                 }
             });
+    </script>
+    <script>
+        function confirmLogout(event) {
+            event.preventDefault(); // Prevent the default link behavior
+            Swal.fire({
+                title: "Are you sure?",
+                text: "You will be logged out of your account!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Log Out",
+                cancelButtonText: "Cancel",
+                reverseButtons: true,
+                dangerMode: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('logout-form').submit(); // Submit the logout form
+                }
+                // If canceled, do nothing and stay logged in
+            });
+        }
+    </script>
+    <script>
+        function confirmAction(action, username, button) {
+            const actionText = action === 'deactivate' ? 'deactivate' : 'activate';
+            const confirmationText = action === 'deactivate' 
+            ? `Are you sure you want to deactivate the user ${username}?` 
+            : `Are you sure you want to activate the user ${username}?`;
+
+    
+            Swal.fire({
+                title: 'Confirmation',
+                text: confirmationText,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, proceed',
+                cancelButtonText: 'Cancel',
+                reverseButtons: true
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // If confirmed, submit the form
+                    const form = button.closest('.status-form');
+                    const statusInput = document.createElement('input');
+                    statusInput.type = 'hidden';
+                    statusInput.name = 'status';
+                    statusInput.value = action;
+                    form.appendChild(statusInput);
+                    form.submit();
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -105,26 +105,39 @@
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 2rem;
         }
+
         .service-card {
             background-color: #fff;
+            border: 2px solid yellowgreen; /* Border color */
             border-radius: 10px;
             padding: 2rem;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-decoration: none; /* Remove underline */
+            color: #333; /* Text color */
         }
+
         .service-card:hover {
             transform: translateY(-15px);
             box-shadow: 0 8px 20px cadetblue;
         }
+
         .service-card i {
             font-size: 3rem;
-            color: #4CAF50;
+            color: #4CAF50; /* Icon color */
             margin-bottom: 1rem;
-        }   
+        }
+
         .service-card h3 {
             font-size: 1.5rem;
             margin-bottom: 1rem;
+            font-weight: bold; /* Bold text */
+        }
+
+        .service-card p {
+            font-size: 1rem;
+            color: #666; /* Description color */
         }
         /* Contact Section */
         .contact {
@@ -167,7 +180,7 @@
         .contact h2::after {
             content: '';
             display: block;
-            width: 50px;
+            width: 100px;
             height: 3px;
             background-color: #4CAF50;
             margin: 1rem auto 0;
@@ -230,17 +243,6 @@
             overflow: hidden;
         }
 
-        /* footer::before {
-            content: '';
-            position: absolute;
-            top: 4px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 60px;
-            background-color: #4CAF50;
-            clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-        } */
 
         .footer-content {
             display: flex;
@@ -430,59 +432,56 @@
     <section id="services" class="services">
         <h2>Our Services</h2>
         <div class="services-grid">
-            <div class="service-card">
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-truck-pickup"></i>
                 <h3>Towing</h3>
                 <p>24/7 towing services to help you get your vehicle to a safe location.</p>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-car-battery"></i>
                 <h3>Jump Start</h3>
                 <p>Our experts can jump start your vehicle if you run into battery issues.</p>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-wrench"></i>
                 <h3>Tire Change</h3>
                 <p>We offer tire change services to get you back on the road quickly.</p>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-ambulance"></i>
                 <h3>Ambulance Services</h3>
                 <p>We offer ambulance services to get you to the hospital quickly.</p>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-gas-pump"></i>
                 <h3>Fuel Delivery</h3>
                 <p>We offer fuel delivery services to help you reach your destination.</p>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-key"></i>
                 <h3>Lockout Service</h3>
                 <p>Locked out of your vehicle? Our experts can help you regain access quickly and safely.</p>
-            </div>
-            
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-tools"></i>
                 <h3>On-Site Repairs</h3>
                 <p>For minor issues, our technicians can perform on-site repairs to get you back on the road.</p>
-            </div>
-            
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-map-marked-alt"></i>
                 <h3>GPS Tracking</h3>
                 <p>Track our service vehicles in real-time to know exactly when help will arrive.</p>
-            </div>
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-snowplow"></i>
                 <h3>Winter Assistance</h3>
                 <p>Stuck in snow or ice? Our winter assistance service helps you navigate through harsh weather conditions safely.</p>
-            </div>
-            
-            <div class="service-card">
+            </a>
+            <a href="{% url 'login' %}" class="service-card">
                 <i class="fas fa-car-crash"></i>
                 <h3>Accident Recovery</h3>
                 <p>In case of an accident, we provide swift recovery services to ensure your safety and manage the situation professionally.</p>
-            </div>
+            </a>
         </div>
     </section>
 
@@ -499,7 +498,9 @@
             </div>
             <div class="contact-item">
                 <i class="fas fa-map-marker-alt"></i>
-                <span>123 Road Guardian St, City, Country</span>
+                <a href="https://www.google.com/maps/search/?api=1&query=123+Road+Guardian+St,+City,+Country" target="_blank">
+                    123 Road Guardian St, City, Country
+                </a>
             </div>
         </div>
     </section>

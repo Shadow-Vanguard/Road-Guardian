@@ -81,8 +81,8 @@ def login_view(request):
                 try:
                     user = CustomUser.objects.get(username=username)
                     if not user.is_active:
-                        messages.error(request, "Your account has been deactivated. Please contact support.")
-                    else:
+                        messages.error(request, "Your account has been deactivated. Please contact admin.")
+                    else: 
                         messages.error(request, 'Invalid username or password.')
                 except CustomUser.DoesNotExist:
                     messages.error(request, 'Invalid username or password.')
@@ -91,16 +91,7 @@ def login_view(request):
 
     return render(request, 'login.html', {'form': form})
 
-from django.contrib.auth import logout as auth_logout
-from django.http import HttpResponseRedirect
 
-def logout_view(request):
-    # Log the user out and clear session
-    auth_logout(request)
-    request.session.flush()  # Clear all session data
-    
-    # Redirect to the login page or home page
-    return HttpResponseRedirect('/')
 
 #Registration
 from django.shortcuts import render, redirect, get_object_or_404
@@ -162,11 +153,15 @@ from django.shortcuts import redirect
 from django.contrib.auth import logout
 from django.contrib import messages
 
+from django.contrib.auth import logout as auth_logout
+from django.shortcuts import redirect
+from django.contrib import messages
+
 def logout_view(request):
-    logout(request)
-    request.session.flush()  # This deletes the session
+    auth_logout(request)  # Log the user out
+    request.session.flush()  # Clear all session data
     messages.success(request, "You have successfully logged out.")
-    return redirect('home')  # Redirect to login page after logout
+    return redirect('login')  # Redirect to the login page
 
 
 
@@ -235,6 +230,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
 @never_cache
+@login_required
 def user_dashboard(request):
     if 'user_id' in request.session:
         try:
@@ -274,43 +270,54 @@ def user_dashboard(request):
     else:
         return redirect('login')
 
-def update_profile(request):
-    return render(request, 'user/update_profile.html')
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+
+@never_cache
+@login_required
+def user_profile_view(request):
+    return render(request, 'user/user_profile_view.html', {'user': request.user})
 
     
 #update_profile
+from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import render, redirect
+from .forms import CustomUserUpdateForm  # Ensure you have this form defined
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+
+@never_cache
 @login_required
-def user_update_profile(request):
+def user_profile_edit(request):
     user = request.user  # Get the current logged-in user
     if request.method == 'POST':
-        form = CustomUserUpdateForm(request.POST, instance=user)
+        form = CustomUserUpdateForm(request.POST, instance=user)  # Bind the form with the POST data
         if form.is_valid():
             form.save()  # Save the updated user information
-            messages.success(request, 'Your changes have been saved.')
-            return redirect('user_dashboard')  # Redirect to the dashboard
+            messages.success(request, 'Your profile has been updated.')  # Success message
+            # Redirect based on user role
+            if user.role == 'service_provider':
+                return redirect('service_provider_dashboard')  # Updated to match URL pattern name
+            else:
+                return redirect('user_dashboard')
         else:
-            messages.error(request, 'Please correct the errors below.')
+            messages.error(request, 'Please correct the errors below.')  # Error message
     else:
         form = CustomUserUpdateForm(instance=user)  # Load the current user data into the form
 
-    return render(request, 'user/user_dashboard.html', {'form': form})
+    return render(request, 'user/user_profile_edit.html', {'form': form})  # Render the edit profile template
 
-@login_required
-def view_profile(request):
-    user = request.user
-    context = {
-        'user': user,
-    }
-    return render(request, 'view_profile.html', context)
-
-from django.shortcuts import render
-from .models import ServiceType, ServiceProvider
 
 # Request_Assistance
 
 from django.shortcuts import render
 from .models import ServiceType, ServiceProvider
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
+@login_required
 def request_assistance(request):
     # Fetch all service types
     service_types = ServiceType.objects.all()
@@ -327,7 +334,11 @@ def request_assistance(request):
 
 from django.shortcuts import render
 from .models import ServiceType
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
+@login_required
 def request_assistance(request):
     service_types = ServiceType.objects.all()
     return render(request, 'user/request_assistance.html', {'service_types': service_types})
@@ -335,7 +346,11 @@ def request_assistance(request):
 #showing service_providers_list
 from django.shortcuts import render, get_object_or_404
 from .models import ServiceType, ServiceProvider
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
+@login_required
 def service_providers_list(request, service_type_id):
     service_type = get_object_or_404(ServiceType, servicetype_id=service_type_id)
     service_providers = ServiceProvider.objects.filter(service_type=service_type)
@@ -348,7 +363,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import ServiceProvider, ServiceTypeCategory
 from .forms import BookAssistanceForm
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
+@login_required
 def book_assistance(request, provider_id):
     service_provider = get_object_or_404(ServiceProvider, pk=provider_id)
     
@@ -374,7 +393,11 @@ def book_assistance(request, provider_id):
     
 from django.http import JsonResponse
 from .models import ServiceTypeCategory
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
+@login_required
 def get_category_charge(request):
     category_id = request.GET.get('category_id')
     try:
@@ -389,7 +412,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from .models import Feedback, ServiceProvider, Booking
 from .forms import FeedbackForm
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
 @login_required
 def submit_feedback(request):
     if request.method == 'POST':
@@ -407,6 +433,9 @@ def submit_feedback(request):
     
     return render(request, 'user/feedback.html', {'form': form})
 
+
+
+@never_cache
 @login_required
 def get_bookings(request):
     service_provider_id = request.GET.get('service_provider_id')
@@ -418,6 +447,8 @@ def get_bookings(request):
     return JsonResponse(list(bookings), safe=False)
 
 
+
+@never_cache
 @login_required
 def user_service_history(request):
     # Fetch user's service history with related service provider and service type category
@@ -436,9 +467,11 @@ def user_service_history(request):
     return render(request, 'user/user_service_history.html', context)
 
 from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
 from .models import Bill
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
 @login_required
 def payment_history(request):
     # Fetch the bills for the logged-in user
@@ -448,7 +481,10 @@ def payment_history(request):
 # Add this import at the top of your views.py file
 from django.shortcuts import get_object_or_404, redirect
 from .models import Bill
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
 
+@never_cache
 @login_required
 def pay_bill_view(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id, user=request.user.name)  # Ensure the bill belongs to the current user
@@ -467,6 +503,8 @@ from .models import Bill
 # Initialize Razorpay client
 razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_SECRET_KEY))
 
+
+@never_cache
 @login_required
 def pay_bill_view(request, bill_id):
     bill = get_object_or_404(Bill, id=bill_id, user=request.user.name)  # Ensure the bill belongs to the current user
@@ -495,6 +533,9 @@ def pay_bill_view(request, bill_id):
 
     return redirect('payment_history')  # Redirect if not a POST request
 
+
+
+@never_cache
 @login_required
 def payment_success_view(request, bill_id):
     if request.method == 'POST':
@@ -553,7 +594,7 @@ def view_users(request):
         return redirect('login')  # Redirect to login if session does not exist
 
 
- # View Profile of admin
+# View Profile of admin
 def view_profile(request):
     user = request.user
     if user.superuser:  # Custom superuser check
@@ -584,6 +625,9 @@ def admin_dashboard(request):
 
 
 from .forms import AdminProfileUpdateForm
+from django.views.decorators.cache import never_cache
+
+@never_cache
 @login_required
 def admin_profile_update(request):
     user = request.user  # Get the currently logged-in user
@@ -601,37 +645,51 @@ def admin_profile_update(request):
     return render(request, 'admin/admin_dashboard.html', {'form': form})
 
 #view users by admin
+from django.views.decorators.cache import never_cache
+
+@never_cache
 @login_required
 def view_users(request):
     users = CustomUser.objects.all()  # Fetch all users
     return render(request, 'admin/view_users.html', {'users': users})
 
-from django.shortcuts import redirect, get_object_or_404
-from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 from .models import CustomUser
+from .utils import send_activation_email  # Import the email function
+from django.views.decorators.cache import never_cache
 
+@never_cache
 def toggle_active_status(request, user_id):
     user = get_object_or_404(CustomUser, id=user_id)
     
     if request.method == 'POST':
-        
         status = request.POST.get('status')
         current_table = request.POST.get('current_table')  # Get the current table (users or service providers)
         
         if status == 'deactivate':
             user.is_active = False
+            action = 'deactivated'
         elif status == 'activate':
             user.is_active = True
+            action = 'activated'
+        
         user.save()
+        
+        # Send email notification
+        send_activation_email(user, action)
 
         # Redirect back to the same page with the correct table
         if current_table == 'users':
-            return HttpResponseRedirect('/admin_dashboard?show=users')
+            return redirect('/admin_dashboard?show=users')
         elif current_table == 'service_providers':
-            return HttpResponseRedirect('/admin_dashboard? show=service_providers')
+            return redirect('/admin_dashboard?show=service_providers')
     
     return redirect('view_users')  # Fallback if something goes wrong
 
+from django.views.decorators.cache import never_cache
+
+@never_cache
 def service_provider_list(request):
     # Fetch all service providers along with their related service type
     users = CustomUser.objects.prefetch_related('serviceprovider_set__service_type').all()
@@ -646,6 +704,7 @@ from django.shortcuts import render, redirect
 from .models import ServiceType
 from .forms import ServiceTypeForm
 from django.contrib import messages
+from django.views.decorators.cache import never_cache
 
 @never_cache
 def manage_service_types(request):
@@ -664,7 +723,9 @@ def manage_service_types(request):
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import ServiceType
 from .forms import ServiceTypeForm
+from django.views.decorators.cache import never_cache
 
+@never_cache
 def edit_service_type(request, servicetype_id):
     service_type = get_object_or_404(ServiceType, servicetype_id=servicetype_id)
     if request.method == 'POST':
@@ -677,10 +738,14 @@ def edit_service_type(request, servicetype_id):
         form = ServiceTypeForm(instance=service_type)
     return render(request, 'admin/manage_service_types.html', {'form': form, 'service_type': service_type})
 
+from django.views.decorators.cache import never_cache
+
+@never_cache
 def delete_service_type(request, servicetype_id):
     service_type = get_object_or_404(ServiceType, servicetype_id=servicetype_id)
     if request.method == 'POST':
         service_type.delete()
+        messages.success(request, f'Service type "{service_type.servicetype_name}" deleted successfully.')
         return redirect('manage_service_types')
     return redirect('manage_service_types')
 
@@ -691,7 +756,9 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .forms import ServiceTypeCategoryForm
 from .models import ServiceTypeCategory, ServiceType
+from django.views.decorators.cache import never_cache
 
+@never_cache
 def manage_service_categories(request):
     if request.method == 'POST':
         form = ServiceTypeCategoryForm(request.POST)
@@ -711,6 +778,9 @@ def manage_service_categories(request):
         'service_types': service_types
     })
 
+from django.views.decorators.cache import never_cache
+
+@never_cache
 def edit_service_category(request, category_id):
     category = get_object_or_404(ServiceTypeCategory, category_id=category_id)
     if request.method == 'POST':
@@ -721,13 +791,15 @@ def edit_service_category(request, category_id):
             return redirect('manage_service_categories')
     return redirect('manage_service_categories')
 
+from django.views.decorators.cache import never_cache
+
+@never_cache
 def delete_service_category(request, category_id):
     category = get_object_or_404(ServiceTypeCategory, category_id=category_id)
     if request.method == 'POST':
         category.delete()
         messages.success(request, 'Service category deleted successfully.')
     return redirect('manage_service_categories')
-
 
 
 
@@ -1000,29 +1072,6 @@ def start_service(request, booking_id):
 def complete_service(request, booking_id):
     return booking_status_update(request, booking_id, 'completed')
 
-# @login_required
-# def view_service_history(request):
-#     """
-#     View to display completed service history
-#     """
-#     try:
-#         service_provider = ServiceProvider.objects.get(user=request.user)
-#         service_history = Booking.objects.filter(
-#             service_provider=service_provider,
-#             status='completed'
-#         ).order_by('-created_at')
-        
-#         context = {
-#             'service_history': service_history,
-#             'user': request.user,
-#             'service_provider': service_provider
-#         }
-        
-#     except ServiceProvider.DoesNotExist:
-#         messages.error(request, 'Service Provider profile not found.')
-#         return redirect('service_provider_dashboard')
-        
-    return render(request, 'service_provider/service_history.html', context)
 
 #view service history
 from django.shortcuts import render
@@ -1146,3 +1195,326 @@ def get_bill_details(request, booking_id):
         'total_amount': bill.total_amount,
     }
     return JsonResponse(data)
+
+
+
+
+
+
+
+###########################################################################################################
+#ML 
+
+from django.http import JsonResponse
+import re
+import json
+import random
+from django.http import JsonResponse
+import re
+import json
+import random
+
+def chatbot_response(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            user_message = data.get('message', '').lower()
+
+            # Vehicle knowledge base
+            responses = {
+                # Engine Systems
+                r'engine.*start': {
+                    'responses': [
+                        "Based on your description, here are possible reasons why your engine won't start:\n"
+                        "1. Dead battery (most common)\n"
+                        "2. Faulty starter motor\n"
+                        "3. Fuel system issues\n"
+                        "4. Ignition switch problems\n\n"
+                        "Do you hear any specific sound when trying to start?",
+                        
+                        "Let's diagnose your engine start problem:\n"
+                        "• If you hear clicking: Likely battery issue\n"
+                        "• If there's no sound: Could be ignition switch\n"
+                        "• If engine cranks but won't start: Possibly fuel system\n\n"
+                        "Which symptom matches your situation?"
+                    ]
+                },
+                # Battery Issues
+                r'battery|jump.*start': {
+                    'responses': [
+                        "Here's how to safely jump-start your car:\n"
+                        "1. Position cars close, both turned off\n"
+                        "2. Connect RED cable to POSITIVE (+) of dead battery\n"
+                        "3. Connect other RED end to POSITIVE (+) of good battery\n"
+                        "4. Connect BLACK cable to NEGATIVE (-) of good battery\n"
+                        "5. Connect other BLACK end to unpainted metal in dead car\n"
+                        "6. Start working car, wait 2 minutes\n"
+                        "7. Try starting dead car\n\n"
+                        "Need more specific instructions?",
+                    ]
+                },
+                # Transmission Problems
+                r'transmission|gear|shift': {
+                    'responses': [
+                        "Common transmission problems include:\n"
+                        "1. Delayed/rough shifting\n"
+                        "2. Grinding or shaking\n"
+                        "3. Burning smell\n"
+                        "4. Transmission fluid leaks\n\n"
+                        "Which symptoms are you experiencing?",
+                    ]
+                },
+                # Brake System
+                r'brake|stop': {
+                    'responses': [
+                        "Brake system warning signs:\n"
+                        "1. Squealing/squeaking: Worn brake pads\n"
+                        "2. Grinding: Metal-on-metal contact\n"
+                        "3. Vibration: Warped rotors\n"
+                        "4. Soft pedal: Possible fluid leak\n\n"
+                        "Which symptom are you experiencing?",
+                    ]
+                },
+                # Tire Issues
+                r'tire|flat|pressure': {
+                    'responses': [
+                        "Tire maintenance guide:\n"
+                        "• Correct pressure: Check when cold\n"
+                        "• Rotation: Every 5,000-8,000 miles\n"
+                        "• Alignment: If pulling to one side\n"
+                        "• Tread depth: Use penny test\n\n"
+                        "Need specific instructions for any of these?",
+                    ]
+                },
+                # Maintenance
+                r'maintenance|service': {
+                    'responses': [
+                        "Regular maintenance schedule:\n"
+                        "• Oil & filter: 3,000-7,500 miles\n"
+                        "• Tire rotation: 5,000-8,000 miles\n"
+                        "• Air filter: 15,000-30,000 miles\n"
+                        "• Brake fluid: Every 2 years\n"
+                        "• Coolant: Every 30,000 miles\n\n"
+                        "Need specific service details?",
+                    ]
+                },
+                # Check Engine Light
+                r'check.*engine|warning.*light': {
+                    'responses': [
+                        "Common check engine light causes:\n"
+                        "1. Loose gas cap\n"
+                        "2. Oxygen sensor failure\n"
+                        "3. Catalytic converter issues\n"
+                        "4. Spark plug/wire problems\n\n"
+                        "Would you like to know how to check the error code?",
+                    ]
+                },
+                # Fluid Leaks
+                r'leak|fluid|oil': {
+                    'responses': [
+                        "Identify fluid leaks by color:\n"
+                        "• Red: Transmission fluid\n"
+                        "• Brown/black: Engine oil\n"
+                        "• Green/orange: Coolant\n"
+                        "• Clear/brown: Brake fluid\n"
+                        "• Clear: Water (likely AC)\n\n"
+                        "What color is the leak you're seeing?",
+                    ]
+                }
+            }
+
+            # Follow-up responses
+            follow_up_responses = {
+                'engine': [
+                    "To check the battery, look for corrosion on terminals and ensure connections are tight.",
+                    "If you suspect a starter issue, try tapping it gently while someone turns the key.",
+                    
+                ],
+                'battery': [
+                    "For jump-starting, ensure both cars are off before connecting cables.",
+                    "If the battery is old, consider replacing it after jump-starting."
+                ],
+                'transmission': [
+                    "Check the transmission fluid level and color; it should be red and not smell burnt.",
+                    "If you hear grinding noises, it may indicate a serious issue that needs immediate attention."
+                ],
+                'brake': [
+                    "Check the brake fluid level; it should be between the minimum and maximum marks.",
+                    "If you hear squeaking, it might be time to replace the brake pads."
+                ],
+                'tire': [
+                    "To check tire pressure, use a gauge; it should match the recommended PSI in your manual.",
+                    "For a flat tire, ensure you have a spare and the necessary tools before starting."
+                ],
+                'maintenance': [
+                    "For oil changes, check your manual for the recommended interval based on your driving habits.",
+                    "Make sure to rotate your tires regularly to ensure even wear."
+                ],
+                'check_engine': [
+                    "You can get the error code read at most auto parts stores for free.",
+                    "If the light is flashing, it indicates a serious issue; consider stopping the vehicle."
+                ],
+                'leak': [
+                    "If you see red fluid, it's likely transmission fluid; check for leaks under the vehicle.",
+                    "For brown fluid, it could be engine oil; monitor the level and consider a mechanic."
+                ]
+            }
+
+
+            # Check for gratitude messages
+            gratitude_phrases = [
+                "thanks", "thank you", "ok thanks", "well it worked", 
+                "thanks bud", "thanks buddy", "thank you so much", 
+                "appreciate it", "cheers", "thanks a lot","it worked"
+                "Much obliged","Many thanks","Thanks heaps",
+                "Thanks a ton",
+                "Big thanks",
+                "Thanks kindly",
+                "Thanks a million",
+                "I'm grateful",
+                "Grateful for your help",
+                "Deeply appreciated",
+                "Thanks indeed",
+                "Thanks for that",
+                "Ta",
+                "Thanks a bunch",
+                "You’re the best",
+                "Kudos",
+                "Thanks so very much",
+                "Thanks for your support",
+                "Hats off to you",
+                "Many, many thanks",
+               "Couldn’t have done it without you",
+                "You’re a lifesaver",
+                "Thank you kindly",
+            ]
+
+            # Check if the user message contains any gratitude phrases
+            if any(phrase in user_message for phrase in gratitude_phrases):
+                return JsonResponse({
+                    'response': "You're welcome! 😊 Let me know if you have more questions or need further help. Good luck! 🚀"
+                })
+            
+            # Check for matches and return random response from matching category
+            for pattern, response_data in responses.items():
+                if re.search(pattern, user_message):
+                    return JsonResponse({
+                        'response': random.choice(response_data['responses'])
+                    })
+
+            # Check for follow-up queries
+            if 'yes' in user_message or 'need more' in user_message:
+                # Determine the context from the previous question
+                # This should be dynamically set based on previous context
+                last_topic = 'engine'  # This should be dynamically set based on previous context
+                if last_topic in follow_up_responses:
+                    return JsonResponse({
+                        'response': random.choice(follow_up_responses[last_topic])
+                    })
+
+            # Default response for unmatched queries
+            default_responses = [
+                "I'm not sure about that. Could you ask about specific vehicle issues? I can help with:\n"
+                "• Engine problems\n"
+                "• Battery issues\n"
+                "• Transmission concerns\n"
+                "• Brake problems\n"
+                "• Tire maintenance",
+
+                "I specialize in vehicle-related questions. Please ask about:\n"
+                "• Warning lights\n"
+                "• Strange noises\n"
+                "• Maintenance schedules\n"
+                "• Fluid leaks\n"
+                "• General car care",
+
+                "I'm your vehicle assistant. Try asking about:\n"
+                "• Starting problems\n"
+                "• Performance issues\n"
+                "• Regular maintenance\n"
+                "• Safety concerns\n"
+                "• Basic repairs"
+            ]
+
+            return JsonResponse({
+                'response': random.choice(default_responses)
+            })
+
+        except json.JSONDecodeError:
+            return JsonResponse({
+                'response': "Sorry, I couldn't process that request. Please try again."
+            })
+        except Exception as e:
+            return JsonResponse({
+                'response': "An error occurred. Please try again later."
+            })
+
+    return JsonResponse({
+        'error': 'Invalid request method'
+    })
+
+
+# views.py
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import VehicleForm
+
+@login_required  # Ensure the user is logged in
+def add_vehicle(request):
+    if request.method == 'POST':
+        form = VehicleForm(request.POST, request.FILES)  # Include request.FILES to handle file uploads
+        if form.is_valid():
+            vehicle = form.save(commit=False)  # Create a Vehicle instance but don't save it yet
+            vehicle.user = request.user  # Set the user field to the currently logged-in user
+            vehicle.save()  # Save the form data and uploaded files to the database
+            return redirect('vehicle_list')  # Redirect to the vehicle list or another page
+    else:
+        form = VehicleForm()
+    
+    return render(request, 'user/add_vehicle.html', {'form': form})
+            
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from .forms import VehicleForm
+from .models import Vehicle
+
+@login_required
+def vehicle_list(request):
+       vehicles = Vehicle.objects.filter(user=request.user)
+       return render(request, 'user/vehicle_list.html', {'vehicles': vehicles})
+
+
+
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Vehicle
+from .forms import VehicleForm
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def edit_vehicle(request, id):
+    vehicle = get_object_or_404(Vehicle, id=id)  # Get the vehicle object or return 404
+    if request.method == 'POST':
+        form = VehicleForm(request.POST, request.FILES, instance=vehicle)
+        if form.is_valid():
+            form.save()
+            return redirect('vehicle_list')  # Redirect to the vehicle list after saving
+    else:
+        form = VehicleForm(instance=vehicle)  # Pre-fill the form with the vehicle's current data
+    return render(request, 'user/edit_vehicle.html', {'form': form, 'vehicle': vehicle})
+
+
+# views.py
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from .models import Vehicle
+
+@login_required
+def delete_vehicle(request, id):
+    vehicle = get_object_or_404(Vehicle, id=id)  # Get the vehicle object or return 404
+    if request.method == 'POST':
+        vehicle.delete()  # Delete the vehicle
+        return redirect('vehicle_list')  # Redirect to the vehicle list after deletion
+    return render(request, 'user/confirm_delete.html', {'vehicle': vehicle})  # Render a confirmation page

@@ -168,3 +168,25 @@ class Bill(models.Model):
 
     def __str__(self):
         return f"Bill for {self.user} - {self.service_type}"
+    
+
+
+# roadside_assistance/roadside_app/models.py
+from django.db import models
+from django.contrib.auth import get_user_model
+
+User = get_user_model()  # Get the custom user model
+
+class Vehicle(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    registration_number = models.CharField(max_length=20)
+    model = models.CharField(max_length=50)
+    road_tax_document = models.FileField(upload_to='documents/tax/', null=True, blank=True)
+    insurance_document = models.FileField(upload_to='documents/insurance/', null=True, blank=True)
+    pollution_certificate_document = models.FileField(upload_to='documents/pollution/', null=True, blank=True)
+    tax_expiry_date = models.DateField(null=True, blank=True)
+    insurance_expiry_date = models.DateField(null=True, blank=True)
+    pollution_expiry_date = models.DateField(null=True, blank=True)
+
+    def __str__(self):
+        return f"{self.registration_number} - {self.model}"

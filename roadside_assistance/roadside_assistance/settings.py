@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
+from decouple import config
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'roadside_app',   
     'social_django',  
-  
 ]
 
 MIDDLEWARE = [
@@ -58,6 +58,7 @@ MIDDLEWARE = [
     # 'roadside_app.cache_control.CacheControlMiddleware',
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'roadside_app.middleware.AuthMiddleware',  # Add your middleware here
 ]
 
 ROOT_URLCONF = 'roadside_assistance.urls'
@@ -84,33 +85,36 @@ WSGI_APPLICATION = 'roadside_assistance.wsgi.application'
 
 
 # Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/5.1/ref/settings/
+
+#databases
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'new_roadside_assistance',  # Replace with your actual database name
-        'USER': 'root',  # Replace with your MySQL username (default is 'root')  
-        'PASSWORD': '',  # Replace with your MySQL password (default is empty)
+        'NAME': 'new_roadside_assistance',
+        'USER': 'root',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
-       'OPTIONS': {
-             'charset': 'utf8',
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1",
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1, character_set_server=utf8mb4, collation_server=utf8mb4_unicode_ci",
         }
     }
 }
+
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'newroadsideassistance_bornmaybe',
 #         'USER': 'newroadsideassistance_bornmaybe',
 #         'PASSWORD': 'a4f1a99a11b519244e7cc10aece82c3c02858472',
-#         'HOST': '8t-wx.h.filess.io',
+#         'HOST': 'szo9r.h.filess.io',
 #         'PORT': '3307',
 #         'OPTIONS': {
 #             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
-#         },
+#         }
 #     }
 # }
 
@@ -215,7 +219,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 from decouple import config
 # Razorpay API credentials
-RAZORPAY_API_KEY = 'rzp_test_o8cawEIEiGsQ6C'  # Replace with your actual Razorpay API key
-RAZORPAY_SECRET_KEY = 'ITd8ronAQbSCUCqvlqkMlxYl'  # Replace with your actual Razorpay secret key
+RAZORPAY_API_KEY = 'rzp_test_o8cawEIEiGsQ6C'
+RAZORPAY_SECRET_KEY = 'ITd8ronAQbSCUCqvlqkMlxYl'
 
 

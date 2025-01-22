@@ -7,6 +7,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Service Categories</title>
     <link rel="stylesheet" href="{% static 'css/request_assistance.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
    
     <style>
         body {
@@ -30,6 +36,9 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
+            overflow-x: hidden;
+            margin-bottom:5.5%;
+
         }
 
         h2, h3 {
@@ -111,6 +120,45 @@
 
         header nav a:hover {
             color: #3498db;
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        .user-name {
+            margin-right: 1rem;
+            color: var(--text-color);
+        }
+        .user-menu {
+            position: relative;
+        }
+        .user-menu-btn {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-radius: 5px;
+            display: none;
+            z-index: 1001;
+            width: 200px;
+        }
+        .user-dropdown a {
+            display: block;
+            padding: 10px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .user-dropdown a:hover {
+            background-color: #f0f0f0;
         }
 
         /* Footer Styles */
@@ -217,10 +265,12 @@
             transition: opacity 0.5s ease-in-out;
         }
 
-        .success { background-color: #28a745; }
-        .error { background-color: #dc3545; }
-        .warning { background-color: #ffc107; color: #333; }
-        .info { background-color: #17a2b8; }
+        /* New CSS for different message types */
+        .success { background-color: #28a745; } /* Green for success messages */
+        .error { background-color: #dc3545; }   /* Red for error messages */
+        .warning { background-color: #ffc107; color: #333; } /* Yellow for warnings */
+        .info { background-color: #17a2b8; }    /* Blue for informational messages */
+
 
         .hide {
             opacity: 0;
@@ -315,18 +365,19 @@
 </head>
 <body>
     <header>
-        <h1>ROAD GUARDIAN</h1>
-        <nav>
-            <a href="{% url 'manage_service_types' %}" class="dashboard">Manage Service Types</a>
-            <a href="{% url 'admin_dashboard' %}" class="logout">Go To Dashboard</a>
-        </nav>
+        <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
+        <div class="user-info">
+            <span class="user-name">{{ user.name }}</span>
+            <div class="user-menu">
+                <button class="user-menu-btn" onclick="toggleDropdown()"><i class="fas fa-user"></i></button>
+                <div class="user-dropdown" id="userDropdown">
+                    <a href="{% url 'manage_service_types' %}"><i class="fas fa-tools"></i> Go to Service Type</a>
+                    <a href="{% url 'admin_dashboard' %}"><i class="fas fa-dashboard"></i> Go to Dashboard</a>
+                </div>
+            </div>
+        </div>
     </header>
 
-    {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-success">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
@@ -344,6 +395,13 @@
 
     <div class="container">
         <h2>Add New Service Category</h2>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+
         <form method="post">
             {% csrf_token %}
             {{ form.as_p }}
@@ -356,7 +414,7 @@
                 <tr>
                     <th>Service Type</th>
                     <th>Category Name</th>
-                    <th>Charge (Rs/km) Or(Rs/Lt)</th>
+                    <th>Charge (Rs/km) Or (Rs/Lt)</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -367,10 +425,10 @@
                     <td>{{ category.category_name }}</td>
                     <td>{{ category.charge }}</td>
                     <td>
-                        <button onclick="showEditForm({{ category.category_id }})" class="btn-edit">Edit</button>
-                        <form method="post" action="{% url 'delete_service_category' category.category_id %}" style="display:inline;">
+                        <button onclick="showEditForm('{{ category.category_id }}')" class="btn-edit">Edit</button>
+                        <form method="post" action="{% url 'delete_service_category' category.category_id %}" style="display:inline;" id="delete-form-{{ category.category_id }}">
                             {% csrf_token %}
-                            <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
+                            <button type="button" class="btn-delete" onclick="confirmDelete('{{ category.category_id }}')">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -406,6 +464,34 @@
     </footer>
 
     <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successMessages = document.querySelectorAll('.alert-success');
+            successMessages.forEach(function(message) {
+                setTimeout(function () {
+                    message.classList.add('fade-out');
+                    setTimeout(function () {
+                        message.style.display = 'none';
+                    }, 1000); // Remove from DOM after fade out
+                }, 3000); // Start fading after 3 seconds
+            });
+        });
+         // User dropdown menu
+         const userMenuBtn = document.querySelector('.user-menu-btn');
+            const userDropdown = document.querySelector('.user-dropdown');
+            userMenuBtn.addEventListener('click', function(event) {
+                event.stopPropagation();
+                userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(event) {
+                if (!userMenuBtn.contains(event.target) && !userDropdown.contains(event.target)) {
+                    userDropdown.style.display = 'none';
+                }
+            });
+    </script>
+
+    <script>
 
         function showEditForm(categoryId) {
             var editForm = document.getElementById('edit-form-' + categoryId);
@@ -414,6 +500,24 @@
             } else {
                 editForm.style.display = 'none';
             }
+        }
+    </script>
+    <script>
+        function confirmDelete(categoryId) {
+            Swal.fire({
+                title: "Are you sure?",
+                text: "Once deleted, you will not be able to recover this category!",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonText: "Delete",
+                cancelButtonText: "Cancel",
+                reverseButtons: true,
+                dangerMode: true,
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    document.getElementById('delete-form-' + categoryId).submit();
+                }
+            });
         }
     </script>
 </body>

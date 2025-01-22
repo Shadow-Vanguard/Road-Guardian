@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Vehicle Details</title>
+    <script src="https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+</head>
+<body>
+    <h1>Add Vehicle Details</h1>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <table>
+            <tr>
+                <td>Registration number:</td>
+                <td>{{ form.registration_number }}</td>
+            </tr>
+            <tr>
+                <td>Model:</td>
+                <td>{{ form.model }}</td>
+            </tr>
+            <tr>
+                <td>Road tax document:</td>
+                <td>
+                    <input type="file" id="roadTaxInput" name="road_tax_document" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                    <button type="button" onclick="document.getElementById('roadTaxInput').click()">Scan Road Tax Document</button>
+                    <input type="text" id="id_tax_expiry_date" name="tax_expiry_date" placeholder="Tax Expiry Date" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>Insurance document:</td>
+                <td>
+                    <input type="file" id="insuranceInput" name="insurance_document" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                    <button type="button" onclick="document.getElementById('insuranceInput').click()">Scan Insurance Document</button>
+                    <input type="text" id="id_insurance_expiry_date" name="insurance_expiry_date" placeholder="Insurance Expiry Date" readonly>
+                </td>
+            </tr>
+            <tr>
+                <td>Pollution certificate document:</td>
+                <td>
+                    <input type="file" id="pollutionInput" name="pollution_certificate_document" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
+                    <button type="button" onclick="document.getElementById('pollutionInput').click()">Scan Pollution Certificate</button>
+                    <input type="text" id="id_pollution_expiry_date" name="pollution_expiry_date" placeholder="Pollution Expiry Date" readonly>
+                </td>
+            </tr>
+        </table>
+        <button type="submit">Save Vehicle Details</button>
+    </form>
+
+    <script>
+        async function handleFileUpload(inputId, expiryFieldId) {
+            const fileInput = document.getElementById(inputId);
+            const expiryField = document.getElementById(expiryFieldId);
+            const file = fileInput.files[0];
+            if (!file) return;
+
+            if (file.type.startsWith('image/')) {
+                // Handle image files
+                const imageUrl = URL.createObjectURL(file);
+                await processImage(imageUrl, expiryField);
+            } else if (file.type === 'application/pdf') {
+                // Handle PDF files
+                const pdfUrl = URL.createObjectURL(file);
+                await processPDF(pdfUrl, expiryField);
+            } else {
+                expiryField.value = "Only image and PDF files are supported.";  // Handle unsupported file type
+            }
+        }
+
+        async function processImage(imageUrl, expiryField) {
+            try {
+                expiryField.value = "Processing... Please wait.";
+                const result = await Tesseract.recognize(imageUrl, 'eng', { logger: m => console.log(m) });
+                extractExpiryDate(result, expiryField);
+            } catch (error) {
+                expiryField.value = "Error processing the image: " + error.message;  // Handle error
+            }
+        }
+
+        async function processPDF(pdfUrl, expiryField) {
+            const pdfjsLib = window['pdfjs-dist/build/pdf'];
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+
+            const loadingTask = pdfjsLib.getDocument(pdfUrl);
+            loadingTask.promise.then(async (pdf) => {
+                const page = await pdf.getPage(1);  // Get the first page
+                const viewport = page.getViewport({ scale: 1 });
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: viewport
+                };
+                await page.render(renderContext).promise;
+
+                // Convert canvas to image URL
+                const imageUrl = canvas.toDataURL();
+                await processImage(imageUrl, expiryField);  // Process the image extracted from the PDF
+            }).catch((error) => {
+                expiryField.value = "Error processing the PDF: " + error.message;  // Handle error
+            });
+        }
+
+        function extractExpiryDate(result, expiryField) {
+            const datePattern = /\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}/g; // Adjusted to match various formats
+            const dates = result.data.text.match(datePattern);
+            if (dates && dates.length > 0) {
+                const expiryDate = dates[dates.length - 1]; // Get the last date found
+                expiryField.value = expiryDate;  // Set the expiry date in the corresponding form field
+            } else {
+                expiryField.value = "No date found in the document.";  // Handle no date found
+            }
+        }
+
+        // Event listeners for file inputs
+        document.getElementById('roadTaxInput').addEventListener('change', () => handleFileUpload('roadTaxInput', 'id_tax_expiry_date'));
+        document.getElementById('insuranceInput').addEventListener('change', () => handleFileUpload('insuranceInput', 'id_insurance_expiry_date'));
+        document.getElementById('pollutionInput').addEventListener('change', () => handleFileUpload('pollutionInput', 'id_pollution_expiry_date'));
+    </script>
+</body>
+</html>

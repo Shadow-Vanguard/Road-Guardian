@@ -37,7 +37,9 @@ urlpatterns = [
 
     # User Dashboard URL
     path('user-dashboard/', views.user_dashboard, name='user_dashboard'), 
-    path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
+    # path('user_update_profile/', views.user_update_profile, name='user_update_profile'),
+    path('profile/view/', views.user_profile_view, name='user_profile_view'),  # URL for viewing profile
+    path('profile/edit/', views.user_profile_edit, name='user_profile_edit'),  # URL for editing profile
 
     path('request-assistance/', views.request_assistance, name='request_assistance'),#request assistance
     path('service-providers/<int:service_type_id>/', views.service_providers_list, name='service_providers_list'),#service providers list
@@ -51,7 +53,7 @@ urlpatterns = [
     path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill
     path('payment-success/<int:bill_id>/', views.payment_success_view, name='payment_success'),  # New URL for payment success
     #serviceprovider Dashboard URL
-    path('serviceprovider_dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
+    path('service-provider/dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
     path('update-profile/', views.update_profile, name='update_profile_service_provider'),
     
     path('service-provider/service-history/', views.view_service_history, name='view_service_history'),#view service history
@@ -94,6 +96,22 @@ urlpatterns = [
     path('edit-service-category/<int:category_id>/', views.edit_service_category, name='edit_service_category'),
     path('delete-service-category/<int:category_id>/', views.delete_service_category, name='delete_service_category'),
 
+
+
+    path('add-vehicle/', views.add_vehicle, name='add_vehicle'),  # URL for adding a vehicle
+    path('vehicle-list/', views.vehicle_list, name='vehicle_list'),  # URL for listing vehicles
+    path('edit-vehicle/<int:id>/', views.edit_vehicle, name='edit_vehicle'),  # URL for editing a vehicle
+    path('delete-vehicle/<int:id>/', views.delete_vehicle, name='delete_vehicle'),  # URL for deleting a vehicle
+
+
+
+
+
+
+
+    ########################################################################################################################
+
+    path('api/chatbot/', views.chatbot_response, name='chatbot_response'),
   
 
 

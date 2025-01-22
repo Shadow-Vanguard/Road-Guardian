@@ -67,18 +67,21 @@ import re
 
 # Get the user model (custom or default)
 CustomUser = get_user_model()
+import re
+from django import forms
+from .models import CustomUser  # Adjust according to your user model
 
 class CustomUserUpdateForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['username', 'name', 'phone', 'address', 'email']
+        fields = ['username', 'name', 'phone', 'address']
         widgets = {
             'username': forms.TextInput(attrs={'placeholder': 'Enter your username'}),
             'name': forms.TextInput(attrs={'placeholder': 'Enter your full name'}),
             'phone': forms.TextInput(attrs={'placeholder': 'Enter your phone number'}),
-            'address': forms.TextInput(attrs={'placeholder': 'Enter your address'}),
-            'email': forms.EmailInput(attrs={'readonly': 'readonly'}),
+            'address': forms.TextInput(attrs={'placeholder': 'Enter your address'}),      
         }
+
     def clean_name(self):
         name = self.cleaned_data.get('name')
         if not re.match(r'^[A-Z][a-zA-Z\s]*$', name):
@@ -106,17 +109,10 @@ class CustomUserUpdateForm(forms.ModelForm):
             raise forms.ValidationError("Email must be a valid @gmail.com address.")
         return email
 
-    def clean_password(self):
-        password = self.cleaned_data.get('password')
-        if not re.match(r'^(?=.*[A-Z])(?=.*[@#$%^&+=]).{6,}$', password):
-            raise forms.ValidationError("Password must contain a capital letter, a special character, and be at least 6 characters long.")
-        return password
-
     def clean_username(self):
         username = self.cleaned_data.get('username')
         if len(username) < 3:
             raise forms.ValidationError("Username must be at least 3 characters long.")
-        # Add more username validations if needed
         return username
     
 from .models import ServiceProvider 
@@ -259,3 +255,28 @@ class FeedbackForm(forms.ModelForm):
         if user:
             self.fields['service_provider'].queryset = ServiceProvider.objects.filter(booking__user=user, booking__status='completed').distinct()
             self.fields['booking'].queryset = Booking.objects.filter(user=user, status='completed')
+
+
+
+# roadside_assistance/roadside_app/forms.py
+from django import forms
+from .models import Vehicle
+
+class VehicleForm(forms.ModelForm):
+    class Meta:
+        model = Vehicle
+        fields = [
+            'registration_number',
+            'model',
+            'road_tax_document',
+            'insurance_document',
+            'pollution_certificate_document',
+            'tax_expiry_date',
+            'insurance_expiry_date',
+            'pollution_expiry_date',
+        ]
+        widgets = {
+            'tax_expiry_date': forms.DateInput(attrs={'type': 'date'}),
+            'insurance_expiry_date': forms.DateInput(attrs={'type': 'date'}),
+            'pollution_expiry_date': forms.DateInput(attrs={'type': 'date'}),
+        }
