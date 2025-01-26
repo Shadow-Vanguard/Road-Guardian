@@ -47,11 +47,15 @@ urlpatterns = [
     path('get-category-charge/', views.get_category_charge, name='get_category_charge'),#get category charge
 
     path('user-service-history/', views.user_service_history, name='user_service_history'),#user service history
+    path('report-incident/', views.report_incident, name='report_incident'),#report incident
+
     path('payment-history/', views.payment_history, name='payment_history'),#payment history
     path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill
     
     path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill
     path('payment-success/<int:bill_id>/', views.payment_success_view, name='payment_success'),  # New URL for payment success
+
+
     #serviceprovider Dashboard URL
     path('service-provider/dashboard/', views.service_provider_dashboard, name='service_provider_dashboard'),
     path('update-profile/', views.update_profile, name='update_profile_service_provider'),
@@ -97,12 +101,10 @@ urlpatterns = [
     path('delete-service-category/<int:category_id>/', views.delete_service_category, name='delete_service_category'),
 
 
-
-    path('add-vehicle/', views.add_vehicle, name='add_vehicle'),  # URL for adding a vehicle
-    path('vehicle-list/', views.vehicle_list, name='vehicle_list'),  # URL for listing vehicles
-    path('edit-vehicle/<int:id>/', views.edit_vehicle, name='edit_vehicle'),  # URL for editing a vehicle
-    path('delete-vehicle/<int:id>/', views.delete_vehicle, name='delete_vehicle'),  # URL for deleting a vehicle
-
+    path('vehicles/', views.vehicle_list, name='vehicle_list'),
+    path('vehicles/add/', views.add_vehicle, name='add_vehicle'),
+    path('vehicles/edit/<int:vehicle_id>/',views.edit_vehicle,name='edit_vehicle'),
+    path('vehicles/delete/<int:vehicle_id>/', views.delete_vehicle, name='delete_vehicle'),
 
 
 
@@ -113,6 +115,11 @@ urlpatterns = [
 
     path('api/chatbot/', views.chatbot_response, name='chatbot_response'),
   
+
+
+    path('bill/', views.bill_view, name='bill_view'),
+    path('submit-bill/', views.submit_bill, name='submit_bill'),
+    path('send-payment-request/', views.send_payment_request, name='send_payment_request'),
 
 
 ]

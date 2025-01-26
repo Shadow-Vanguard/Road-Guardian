@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Edit Vehicle</title>
+
+        <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+        <style>
+            /* General Styles */
+            body {
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f4; /* Light background for contrast */
+                margin: 0;
+                padding: 20px; /* Padding around the body */
+            }
+
+            /* Header Styles */
+            h1 {
+                color: #333; /* Dark color for headers */
+                margin-bottom: 20px; /* Space below the header */
+            }
+
+            /* Link Styles */
+            a {
+                color: #007bff; /* Bootstrap primary color */
+                text-decoration: none; /* Remove underline */
+                transition: color 0.3s ease; /* Smooth color transition */
+            }
+
+            a:hover {
+                color: #0056b3; /* Darker blue on hover */
+            }
+
+            /* Button Styles */
+            button {
+                background-color: #28a745; /* Green for buttons */
+                color: white; /* White text */
+                border: none; /* No border */
+                padding: 10px 15px; /* Padding for buttons */
+                text-align: center; /* Center text */
+                text-decoration: none; /* Remove underline */
+                display: inline-block; /* Inline block for button layout */
+                font-size: 14px; /* Font size */
+                margin: 4px 2px; /* Margin around buttons */
+                cursor: pointer; /* Pointer cursor on hover */
+                border-radius: 5px; /* Rounded corners */
+                transition: background-color 0.3s ease, transform 0.2s ease; /* Transition effects */
+            }
+
+            button:hover {
+                background-color: #218838; /* Darker green on hover */
+                transform: scale(1.05); /* Slightly enlarge button on hover */
+            }
+
+            /* Form Styles */
+            form {
+                background-color: #fff; /* White background for forms */
+                padding: 20px; /* Padding inside the form */
+                border-radius: 5px; /* Rounded corners */
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+                margin-bottom: 20px; /* Space below the form */
+            }
+
+            /* Input Styles */
+            input[type="text"], input[type="date"], select {
+                width: 100%; /* Full width inputs */
+                padding: 10px; /* Padding for inputs */
+                margin: 8px 0; /* Margin around inputs */
+                border: 1px solid #ccc; /* Light border */
+                border-radius: 4px; /* Rounded corners */
+                box-sizing: border-box; /* Include padding in width */
+                transition: border-color 0.3s ease; /* Transition for border color */
+            }
+
+            input[type="text"]:focus, input[type="date"]:focus, select:focus {
+                border-color: #007bff; /* Change border color on focus */
+                outline: none; /* Remove default outline */
+            }
+
+            /* Footer Styles */
+            footer {
+                background-color: #e1dcdc; /* Light footer background */
+                padding: 2rem 0; /* Padding for footer */
+                margin-top: 15%; /* Space above footer */
+                border-top: 1px solid #dee2e6; /* Top border */
+                bottom: 0; /* Stick to bottom */
+            }
+
+            .footer-section {
+                flex: 1; /* Flex for footer sections */
+                margin: 0 38%; /* Margin for footer sections */
+            }
+        </style>
+    </head>
+<body>
+    <header>
+        <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
+        <div class="user-info">
+            <span class="user-name">{{ user.name }}</span>
+        </div>
+    </header>
+  
+    <h2>Edit Vehicle: {{ vehicle.registration_number }}</h2>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }} 
+        <button type="submit">Update Vehicle</button>
+    </form>
+
+    <footer>
+        <div class="footer-content">  
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: road.guardian08@gmail.com</p>
+                <p>Phone: +1 234 567 890</p>
+            </div>
+        </div>
+        <p>&copy; 2024 Road Guardian. All rights reserved.</p>
+    </footer>
+
+</body>
+</html> 

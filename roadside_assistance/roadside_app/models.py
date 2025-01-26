@@ -125,6 +125,7 @@ class Booking(models.Model):
     service_provider = models.ForeignKey(ServiceProvider, on_delete=models.CASCADE)
     service_type_category = models.ForeignKey(ServiceTypeCategory, on_delete=models.CASCADE)
     location = models.CharField(max_length=255)
+    service_provider_location = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -170,12 +171,11 @@ class Bill(models.Model):
         return f"Bill for {self.user} - {self.service_type}"
     
 
-
-# roadside_assistance/roadside_app/models.py
+#Add Vehicle
 from django.db import models
 from django.contrib.auth import get_user_model
 
-User = get_user_model()  # Get the custom user model
+User = get_user_model()
 
 class Vehicle(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -184,9 +184,33 @@ class Vehicle(models.Model):
     road_tax_document = models.FileField(upload_to='documents/tax/', null=True, blank=True)
     insurance_document = models.FileField(upload_to='documents/insurance/', null=True, blank=True)
     pollution_certificate_document = models.FileField(upload_to='documents/pollution/', null=True, blank=True)
-    tax_expiry_date = models.DateField(null=True, blank=True)
+    tax_expiry_date = models.DateField(null=True, blank=True)  # Ensure these fields are defined
     insurance_expiry_date = models.DateField(null=True, blank=True)
     pollution_expiry_date = models.DateField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.registration_number} - {self.model}"
+    
+
+#Add Incident
+from django.db import models
+from django.conf import settings
+from django.contrib.auth.models import User
+
+class Incident(models.Model):
+    INCIDENT_TYPES = [
+        ('accident', 'Accident'),
+        ('theft', 'Theft'),
+        ('damage', 'Damage'),
+        ('other', 'Other'),
+    ]
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    incident_type = models.CharField(max_length=20, choices=INCIDENT_TYPES)
+    location = models.CharField(max_length=255)
+    description = models.TextField()
+    image = models.ImageField(upload_to='incident_images/', blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.incident_type} reported by {self.user.username} on {self.created_at}"

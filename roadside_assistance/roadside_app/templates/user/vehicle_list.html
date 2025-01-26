@@ -1,279 +1,408 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Vehicles</title>
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script> <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 -->
+
 
     <style>
         /* General Styles */
         body {
-            font-family: 'Poppins', sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background-color: #f9f9f9;
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
             margin: 0;
-            padding: 0;
-            overflow-y: hidden;
-            overflow-x: hidden;
+            padding: 20px;
+            overflow: hidden;
         }
 
         /* Header Styles */
-        header {
-            background-color: #4CAF50;
-            color: white;
-            padding: 1rem;
-            text-align: center;
-            font-family:  Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        h2 {
+            color: #333;
+            margin-top: 7%;
+            margin-bottom: 20px;
         }
 
-        /* Content Styles */
-        .content {
-            padding: 2rem;
-            background-color: white;
-            margin: 1rem auto;
-            max-width: 1300px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        /* Link Styles */
+        a {
+            color: #4CAF50; /* Bootstrap primary color */
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
 
-        /* Form Group Styles */
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        /* Input Styles */
-        .form-control {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
-
-        /* Footer Styles */
-        footer {
-            text-align: center;
-            padding: 1rem;
-            background-color: #4CAF50;
-            color: white;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            font-family:  Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
-        }
-
-        /* Message Styles */
-        .message {
-            padding: 1rem;
-            margin: 1rem 0;
-            border-radius: 5px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            font-family:  Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        a:hover {
+            color: #04ff0c; /* Darker blue on hover */
         }
 
         /* Table Styles */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 1.5rem;
+            margin: 20px 0;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px; /* Rounded corners */
+            overflow: hidden; /* Ensures rounded corners are visible */
         }
 
         th, td {
-            padding: 1rem;
+            padding: 12px;
             text-align: left;
-            border: 1px solid #ddd;
-            font-family:  Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            border-bottom: 1px solid #ddd;
         }
 
         th {
-            background-color: #f2f2f2;
-            color: #333;
+            background-color: #4CAF50; /* Bootstrap primary color */
+            color: white;
+            font-weight: bold;
         }
 
         tr:hover {
             background-color: #f1f1f1; /* Highlight row on hover */
         }
 
-        /* Action Buttons Container */
-        .action-buttons {
-            display: flex; /* Use flexbox for alignment */
-            gap: 10px; /* Space between buttons */
+        /* Button Styles */
+        button {
+            background-color: #28a745; /* Green for other buttons */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for hover effect */
         }
 
-        /* Edit Button Styles */
+        button:hover {
+            background-color: #218838; /* Darker green on hover */
+            transform: scale(1.05); /* Slightly enlarge button on hover */
+        }
+
+        /* Specific styles for the edit button */
         .edit-button {
-            background-color: #4CAF50; /* Green background */
-            color: white; /* White text */
-            padding: 3px 15px; /* Padding for the button */
-            border: none; /* No border */
-            border-radius: 5px; /* Rounded corners */
-            text-decoration: none; /* Remove underline from link */
-            font-size: 1rem; /* Font size */
-            display: inline-block; /* Make it behave like a button */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
-            font-family:  Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            background-color: #007bff; /* Bootstrap primary color */
         }
 
         .edit-button:hover {
-            background-color: #0afa168f; /* Darker green on hover */
+            background-color: #0056b3; /* Darker blue on hover */
         }
 
-        /* Delete Button Styles */
-        .del-button {
-            background-color: #fa0a0a; /* Red background */
-            color: white; /* White text */
-            padding: 0.5rem 1rem; /* Padding for the button */
+        /* Specific styles for the delete button */
+        .delete-button {
+            background-color: #dc3545; /* Red color */
+        }
+
+        .delete-button:hover {
+            background-color: #c82333; /* Darker red on hover */
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px; /* Smaller font on mobile */
+            }
+
+            button {
+                width: 100%; /* Full width buttons on mobile */
+            }
+
+            th, td {
+                padding: 8px; /* Smaller padding on mobile */
+            }
+        }
+
+        /* Additional Styles for Better UX */
+        input[type="text"], input[type="date"], select {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding is included in width */
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus, input[type="date"]:focus, select:focus {
+            border-color: #007bff; /* Change border color on focus */
+            outline: none; /* Remove default outline */
+        }
+
+        /* Loading Spinner Styles */
+        #loading {
+            display: none; /* Hidden by default */
+            position: fixed;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000; /* Ensure it appears above other content */
+        }
+
+        /* Spinner Animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .spinner {
+            border: 8px solid #f3f3f3; /* Light grey */
+            border-top: 8px solid #3498db; /* Blue */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite; /* Spin animation */
+        }
+        /* Footer Styles */
+        footer {
+            background-color: #e1dcdc;
+            padding: 2rem 0;
+            margin-top: 15%;
+            border-top: 1px solid #dee2e6;
+            bottom: 0;
+        }
+        .footer-section {
+            flex: 1;
+            margin: 0 38%;
+        }
+
+
+
+        footer > p {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #dee2e6;
+            color: #666;
+        }
+        header {
+            background-color: #ffffff;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 10px var(--shadow-color);
+        }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-name {
+            color: var(--text-color);
+            font-weight: 500;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px var(--shadow-color);
+            border-radius: 5px;
+            display: none;
+            min-width: 230px;
+            z-index: 1001;
+        }
+
+        .user-dropdown a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .user-dropdown a:hover {
+            background-color: #f5f5f5;
+            color: var(--primary-color);
+        }
+
+        .user-dropdown i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        /* User Menu Button Styles */
+        .user-menu-btn {
+            background-color: white; /* Transparent background */
             border: none; /* No border */
-            border-radius: 5px; /* Rounded corners */
+            color:#4CAF50; /* Bootstrap primary color */
+            font-size: 1.5rem; /* Increase font size for better visibility */
             cursor: pointer; /* Pointer cursor on hover */
-            font-size: 1rem; /* Font size */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
-            font-family:  Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+            padding: 10px; /* Padding for better click area */
+            transition: color 0.3s ease, transform 0.2s ease; /* Smooth transition for hover effects */
         }
 
-        .del-button:hover {
-            background-color: #ff7300b7; /* Darker red on hover */
+        .user-menu-btn:hover {
+            color: #11e622; /* Darker blue on hover */
+            transform: scale(1.1); /* Slightly enlarge button on hover */
         }
-        /* Add Another Vehicle Button Styles */
-        .add-vehicle{
-            display: inline-block; /* Make it behave like a button */
-            background-color: violet; /* Green background */
-            color: white; /* White text */
-            padding: 0.5rem 1rem; /* Padding for the button */
-            border: none; /* No border */
-            border-radius: 5px; /* Rounded corners */
-            text-decoration: none; /* Remove underline from link */
-            font-size: 1rem; /* Font size */
-            transition: background-color 0.3s; /* Smooth transition for hover effect */
-            margin-top: 1rem; /* Space above the button */
-            font-family:  Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;
+        /* Scrollable Table Container */
+        .table-container {
+            max-height: 400px; /* Set a maximum height for the container */
+            overflow: hidden; /* Hide overflow for the container */
+            margin: 20px 0; /* Add some margin for spacing */
+            border: 1px solid #ddd; /* Optional: Add a border around the container */
+            border-radius: 5px; /* Optional: Rounded corners */
+            background-color: #fff; /* Background color for the container */
         }
 
-        .add-vehicle:hover {
-            background-color: #45a049; /* Darker green on hover */
-        }
-        a {
-            background-color: #4CAF50; /* Green background */
-            color: white; /* White text */
-            padding: .2rem; /* Padding for the button */
-            border: none; /* No border */
-            border-radius: 5px; /* Rounded corners */
-            text-decoration: none; /* Remove underline from link */
-            display: inline-block; /* Make it behave like a button */
+        /* Scrollable Tbody */
+        .scrollable-tbody {
+            display: block; /* Make the tbody a block element */
+            max-height: 300px; /* Set a maximum height for the tbody */
+            overflow-y: auto; /* Enable vertical scrolling */
         }
 
-        a:hover {
-            background-color: #45a049; /* Darker green on hover */
-        }
+
+
     </style>
 </head>
 <body>
     <header>
-        <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">Your Vehicle Details</h1>
-        <a href="{% url 'user_dashboard' %}"><i class="fas fa-dashboard"></i> Go to Dashboard</a>
+        <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">ROAD GUARDIAN</h1>
+        <div class="user-info">
+            <span class="user-name">{{ user.name }}</span>
+            <div class="user-menu"></div>
+                <button class="user-menu-btn"><i class="fas fa-user"></i></button>
+                <div class="user-dropdown">
+                    <a href="{% url 'user_dashboard' %}"><i class="fas fa-dashboard"></i> Go to Dashboard</a>
+        
+                </div>
+            </div>
+        </div>
     </header>
+    <h2>Your Vehicles</h2>
+    <a href="{% url 'add_vehicle' %}">Add Vehicle</a>
 
-    <div class="content">
-        <h2 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;">List of Vehicles</h2>
-        
-        {% if vehicles %}
-            <table>
-                <thead>
-                    <tr>
-                        <th>Registration Number</th>
-                        <th>Model</th>
-                        <th>Road Tax Document</th>
-                        <th>Insurance Document</th>
-                        <th>Pollution Certificate Document</th>
-                        <th>Tax Expiry Date</th>
-                        <th>Insurance Expiry Date</th>
-                        <th>Pollution Expiry Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
 
-        
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Registration Number</th>
+                    <th>Model</th>
+                    <th>Road Tax Document</th>
+                    <th>Insurance Document</th>
+                    <th>Pollution Certificate Document</th>
+                    <th>Tax Expiry Date</th>
+                    <th>Insurance Expiry Date</th>
+                    <th>Pollution Expiry Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <div class="scrollable-tbody">
                     {% for vehicle in vehicles %}
                     <tr>
                         <td>{{ vehicle.registration_number }}</td>
                         <td>{{ vehicle.model }}</td>
                         <td>
                             {% if vehicle.road_tax_document %}
-                                <a href="{{ vehicle.road_tax_document.url }}" target="_blank">View Document</a>
+                                <a href="{{ vehicle.road_tax_document.url }}" target="_blank">View</a>
                             {% else %}
-                                Not Uploaded
+                                Not provided
                             {% endif %}
                         </td>
                         <td>
                             {% if vehicle.insurance_document %}
-                                <a href="{{ vehicle.insurance_document.url }}" target="_blank">View Document</a>
+                                <a href="{{ vehicle.insurance_document.url }}" target="_blank">View</a>
                             {% else %}
-                                Not Uploaded
+                                Not provided
                             {% endif %}
                         </td>
                         <td>
                             {% if vehicle.pollution_certificate_document %}
-                                <a href="{{ vehicle.pollution_certificate_document.url }}" target="_blank">View Document</a>
+                                <a href="{{ vehicle.pollution_certificate_document.url }}" target="_blank">View</a>
                             {% else %}
-                                Not Uploaded
+                                Not provided
                             {% endif %}
                         </td>
-                        <td>{{ vehicle.tax_expiry_date }}</td>
-                        <td>{{ vehicle.insurance_expiry_date }}</td>
-                        <td>{{ vehicle.pollution_expiry_date }}</td>
+                        <td>{{ vehicle.tax_expiry_date|date:"Y-m-d" }}</td>
+                        <td>{{ vehicle.insurance_expiry_date|date:"Y-m-d" }}</td>
+                        <td>{{ vehicle.pollution_expiry_date|date:"Y-m-d" }}</td>
                         <td>
-                            <div class="action-buttons">
-                                <a href="{% url 'edit_vehicle' vehicle.id %}" class="edit-button"><i class="fas fa-edit"></i></a>
-                                <form action="{% url 'delete_vehicle' vehicle.id %}" method="post" style="display:inline;">
-                                    {% csrf_token %}
-                                    <button type="submit" onclick="confirmDelete(event)" class="del-button"><i class="fas fa-trash"></i></button>
-                                </form>
-                            </div>
+                            <button onclick="window.location.href='{% url 'edit_vehicle' vehicle.id %}'" class="edit-button">Edit</button>
+                            <button class="delete-button" onclick="confirmDelete({{ vehicle.id }})">Delete</button>
                         </td>
                     </tr>
                     {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No vehicles found. Please add a vehicle.</p>
-        {% endif %}
-        <a href="{% url 'add_vehicle' %}" class="add-vehicle">Add Another Vehicle</a>
+                </div>
+            </tbody>
+        </table>
     </div>
 
-    <footer>
-        <p>&copy; 2024 Road Guardian. All rights reserved.</p>
-    </footer>
     <script>
-        function confirmDelete(event) {
-            event.preventDefault();
+    function confirmDelete(vehicleId) {
+        if (confirm("Are you sure you want to delete this vehicle?")) {
+            window.location.href = "{% url 'delete_vehicle' 0 %}".replace('0', vehicleId);
+        }
+    }
+    </script>
+    <script>
+        
+                // Existing message auto-hide code...
             
+                // Dropdown functionality
+                document.addEventListener('DOMContentLoaded', function() {
+                    const userMenuBtn = document.querySelector('.user-menu-btn');
+                    const userDropdown = document.querySelector('.user-dropdown');
+                    
+                    // Toggle dropdown when clicking the button
+                    userMenuBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        userDropdown.style.display = userDropdown.style.display === 'block' ? 'none' : 'block';
+                    });
+            
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!userDropdown.contains(e.target) && !userMenuBtn.contains(e.target)) {
+                            userDropdown.style.display = 'none';
+                        }
+                    });
+            
+                    // Prevent dropdown from closing when clicking inside it
+                    userDropdown.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                    });
+                });
+            
+    </script>
+    <script>
+        function confirmDelete(vehicleId) {
             Swal.fire({
                 title: 'Are you sure?',
-                text: "You will permanently delete this vehicle.",
+                text: "You won't be able to revert this!",
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'Cancel'
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Yes, delete it!'
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Submit the form to delete the vehicle
-                    event.target.closest('form').submit();
+                    // Redirect to the delete URL
+                    window.location.href = "{% url 'delete_vehicle' 0 %}".replace('0', vehicleId);
                 }
             });
         }
-    
-        // Show success message if there is one
+
+
         {% if messages %}
             {% for message in messages %}
                 {% if message.tags == 'success' %}
@@ -288,6 +417,18 @@
             {% endfor %}
         {% endif %}
 
+
     </script>
+     <footer>
+        <div class="footer-content">  
+            <div class="footer-section">
+                <h4>Contact Us</h4>
+                <p>Email: road.guardian08@gmail.com</p>
+                <p>Phone: +1 234 567 890</p>
+            </div>
+        </div>
+        <p>&copy; 2024 Road Guardian. All rights reserved.</p>
+    </footer>
+
 </body>
-</html>                     
+</html>

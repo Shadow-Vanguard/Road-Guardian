@@ -3,123 +3,381 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Vehicle Details</title>
-    <script src="https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <title>Add Vehicle</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for easier DOM manipulation -->
+    <script src='https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 -->
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+        }
+    
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    
+        form {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+    
+        div {
+            margin-bottom: 15px;
+        }
+    
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #555;
+        }
+    
+        input[type="text"],
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+    
+        input[type="text"]:focus,
+        input[type="file"]:focus {
+            border-color: #4CAF50;
+            outline: none;
+        }
+    
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+    
+        button:hover {
+            background-color: #45a049;
+        }
+    
+        #loading {
+            text-align: center;
+            font-size: 16px;
+            color: #666;
+            margin-top: 20px;
+        }
+    
+        #preview {
+            max-width: 100%;
+            margin-top: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    
+        .result-area {
+            width: 100%;
+            min-height: 150px;
+            margin-top: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+            line-height: 1.5;
+            background-color: #f9f9f9;
+        }
+    
+        .file-info {
+            margin-top: 10px;
+            color: #666;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-    <h1>Add Vehicle Details</h1>
+    <h2>Add Vehicle</h2>
     <form method="post" enctype="multipart/form-data">
+        <a href="{% url 'vehicle_list' %}"><i class="fas fa-car"></i> Vehicle Details</a>
+        <a href="{% url 'user_dashboard' %}"><i class="fas fa-car"></i> Dashboard</a>
         {% csrf_token %}
-        <table>
-            <tr>
-                <td>Registration number:</td>
-                <td>{{ form.registration_number }}</td>
-            </tr>
-            <tr>
-                <td>Model:</td>
-                <td>{{ form.model }}</td>
-            </tr>
-            <tr>
-                <td>Road tax document:</td>
-                <td>
-                    <input type="file" id="roadTaxInput" name="road_tax_document" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-                    <button type="button" onclick="document.getElementById('roadTaxInput').click()">Scan Road Tax Document</button>
-                    <input type="text" id="id_tax_expiry_date" name="tax_expiry_date" placeholder="Tax Expiry Date" readonly>
-                </td>
-            </tr>
-            <tr>
-                <td>Insurance document:</td>
-                <td>
-                    <input type="file" id="insuranceInput" name="insurance_document" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-                    <button type="button" onclick="document.getElementById('insuranceInput').click()">Scan Insurance Document</button>
-                    <input type="text" id="id_insurance_expiry_date" name="insurance_expiry_date" placeholder="Insurance Expiry Date" readonly>
-                </td>
-            </tr>
-            <tr>
-                <td>Pollution certificate document:</td>
-                <td>
-                    <input type="file" id="pollutionInput" name="pollution_certificate_document" accept=".pdf,.jpg,.jpeg,.png" style="display: none;">
-                    <button type="button" onclick="document.getElementById('pollutionInput').click()">Scan Pollution Certificate</button>
-                    <input type="text" id="id_pollution_expiry_date" name="pollution_expiry_date" placeholder="Pollution Expiry Date" readonly>
-                </td>
-            </tr>
-        </table>
-        <button type="submit">Save Vehicle Details</button>
+        <div>
+            <label for="registration_number">Registration Number:</label>
+            <input type="text" id="registration_number" name="registration_number"required>
+        </div>
+        <div>
+            <label for="model">Model:</label>
+            <input type="text" id="model" name="model"required>
+        </div>
+        <div>
+            <label for="road_tax_document">Road Tax Document:</label>
+            <input type="file" id="road_tax_document" name="road_tax_document" accept=".pdf,.jpg,.jpeg,.png">
+        </div>
+        <div>
+            <label for="insurance_document">Insurance Document:</label>
+            <input type="file" id="insurance_document" name="insurance_document" accept=".pdf,.jpg,.jpeg,.png">
+        </div>
+        <div>
+            <label for="pollution_certificate_document">Pollution Certificate Document:</label>
+            <input type="file" id="pollution_certificate_document" name="pollution_certificate_document" accept=".pdf,.jpg,.jpeg,.png">
+        </div>
+        <div>
+            <label for="tax_expiry_date">Tax Expiry Date:</label>
+            <input type="text" id="tax_expiry_date" name="tax_expiry_date" readonly>
+        </div>
+        <div>
+            <label for="insurance_expiry_date">Insurance Expiry Date:</label>
+            <input type="text" id="insurance_expiry_date" name="insurance_expiry_date" readonly>
+        </div>
+        <div>
+            <label for="pollution_expiry_date">Pollution Expiry Date:</label>
+            <input type="text" id="pollution_expiry_date" name="pollution_expiry_date" readonly>
+        </div>
+        <button type="submit">Add Vehicle</button>
     </form>
 
+    <div id="loading" style="display:none;">Processing document...</div>
+    <img id="preview" style="display:none; max-width:100%; margin-top:20px; border-radius:4px;">
+    <textarea id="resultArea" style="display:none;" readonly></textarea>
+
     <script>
-        async function handleFileUpload(inputId, expiryFieldId) {
-            const fileInput = document.getElementById(inputId);
-            const expiryField = document.getElementById(expiryFieldId);
-            const file = fileInput.files[0];
-            if (!file) return;
+        // Initialize PDF.js worker
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
 
-            if (file.type.startsWith('image/')) {
-                // Handle image files
-                const imageUrl = URL.createObjectURL(file);
-                await processImage(imageUrl, expiryField);
-            } else if (file.type === 'application/pdf') {
-                // Handle PDF files
-                const pdfUrl = URL.createObjectURL(file);
-                await processPDF(pdfUrl, expiryField);
-            } else {
-                expiryField.value = "Only image and PDF files are supported.";  // Handle unsupported file type
-            }
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
         }
 
-        async function processImage(imageUrl, expiryField) {
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+
+        function formatDate(dateStr) {
             try {
-                expiryField.value = "Processing... Please wait.";
-                const result = await Tesseract.recognize(imageUrl, 'eng', { logger: m => console.log(m) });
-                extractExpiryDate(result, expiryField);
+                const dateParts = dateStr.split(/[-\/]/); // Split the date by '-' or '/'
+                if (dateParts.length !== 3) throw new Error("Invalid date format");
+                let day, month, year;
+
+                if (dateParts[0].length === 4) {
+                    // If the first part is the year
+                    year = dateParts[0];
+                    month = dateParts[1];
+                    day = dateParts[2];
+                } else {
+                    // If the first part is the day
+                    day = dateParts[0];
+                    month = dateParts[1];
+                    year = dateParts[2];
+                }
+
+                // Return the date in YYYY-MM-DD format
+                return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+            } catch {
+                return dateStr; // Return the original string if there's an error
+            }
+        }
+
+        async function extractDates(text) {
+            const datePatterns = [
+                /\b(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}\b/g,
+                /\b\d{4}[\/\-](0?[1-9]|1[012])[\/\-](0?[1-9]|[12][0-9]|3[01])\b/g,
+                /\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]* \d{1,2},? \d{4}\b/gi,
+                /\b(0?[1-9]|[12][0-9]|3[01])\-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\-\d{4}\b/gi,
+                /\b(0?[1-9]|[12][0-9]|3[01])\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}\b/gi
+            ];
+
+            const expiryKeywords = [
+                'valid up to',
+                'valid until',
+                'expiry date',
+                'valid till',
+                'expires on',
+                'expiration date',
+                'pollution check valid till',
+                'valid through',
+                'next due date',
+                'valid date',
+                'validity',
+                'valid upto'
+            ];
+
+            let foundDate = null;
+            let foundText = '';
+            const lowerText = text.toLowerCase();
+
+            for (const keyword of expiryKeywords) {
+                const keywordIndex = lowerText.indexOf(keyword);
+                if (keywordIndex !== -1) {
+                    const searchText = text.substr(Math.max(0, keywordIndex - 20), 70);
+                    for (const pattern of datePatterns) {
+                        pattern.lastIndex = 0;
+                        const matches = searchText.match(pattern);
+                        if (matches) {
+                            foundDate = matches[0];
+                            foundText = `Found expiry date: ${formatDate(foundDate)}`;
+                            break;
+                        }
+                    }
+                }
+                if (foundDate) break;
+            }
+
+            if (!foundDate) {
+                for (const pattern of datePatterns) {
+                    pattern.lastIndex = 0;
+                    const matches = text.match(pattern);
+                    if (matches) {
+                        foundDate = matches[matches.length - 1];
+                        foundText = `Possible expiry date found: ${formatDate(foundDate)}`;
+                        break;
+                    }
+                }
+            }
+
+            return { date: foundDate, text: foundText };
+        }
+
+
+        async function processPDF(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            let fullText = '';
+
+            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                const page = await pdf.getPage(pageNum);
+                const textContent = await page.getTextContent();
+                const pageText = textContent.items.map(item => item.str).join(' ');
+                fullText += pageText + '\n';
+            }
+
+            return await extractDates(fullText);
+        }
+
+        async function processImage(file) {
+            const imageUrl = URL.createObjectURL(file);
+            const result = await Tesseract.recognize(imageUrl, 'eng', { logger: m => console.log(m) });
+            return await extractDates(result.data.text);
+        }
+
+        async function handlePollutionCertificate(file) {
+            showLoading();
+            try {
+                let result;
+                if (file.type === 'application/pdf') {
+                    result = await processPDF(file);
+                } else if (file.type.startsWith('image/')) {
+                    result = await processImage(file);
+                } else {
+                    alert("Unsupported file type. Please use PDF or image files (JPG, PNG).");
+                    return;
+                }
+
+                if (result.date) {
+                    // Format the date before setting it to the input field
+                    document.getElementById('pollution_expiry_date').value = formatDate(result.date);
+                } else {
+                    alert("No valid expiry date found in the document.");
+                }
             } catch (error) {
-                expiryField.value = "Error processing the image: " + error.message;  // Handle error
+                console.error("Error processing the document:", error);
+                alert("Error processing the document: " + error.message);
+            } finally {
+                hideLoading();
             }
         }
 
-        async function processPDF(pdfUrl, expiryField) {
-            const pdfjsLib = window['pdfjs-dist/build/pdf'];
-            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+        document.getElementById('pollution_certificate_document').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                handlePollutionCertificate(file);
+            }
+        });
+            // Add event listener for the road tax document
+        document.getElementById('road_tax_document').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                handleRoadTaxDocument(file); // Create this function to handle the road tax document
+            }
+        });
 
-            const loadingTask = pdfjsLib.getDocument(pdfUrl);
-            loadingTask.promise.then(async (pdf) => {
-                const page = await pdf.getPage(1);  // Get the first page
-                const viewport = page.getViewport({ scale: 1 });
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+        // Add event listener for the insurance document
+        document.getElementById('insurance_document').addEventListener('change', (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                handleInsuranceDocument(file); // Create this function to handle the insurance document
+            }
+        });
 
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-                await page.render(renderContext).promise;
+        // Function to handle the road tax document processing
+        async function handleRoadTaxDocument(file) {
+            showLoading();
+            try {
+                let result;
+                if (file.type === 'application/pdf') {
+                    result = await processPDF(file);
+                } else if (file.type.startsWith('image/')) {
+                    result = await processImage(file);
+                } else {
+                    alert("Unsupported file type. Please use PDF or image files (JPG, PNG).");
+                    return;
+                }
 
-                // Convert canvas to image URL
-                const imageUrl = canvas.toDataURL();
-                await processImage(imageUrl, expiryField);  // Process the image extracted from the PDF
-            }).catch((error) => {
-                expiryField.value = "Error processing the PDF: " + error.message;  // Handle error
-            });
-        }
-
-        function extractExpiryDate(result, expiryField) {
-            const datePattern = /\d{1,2}[-/.]\d{1,2}[-/.]\d{2,4}/g; // Adjusted to match various formats
-            const dates = result.data.text.match(datePattern);
-            if (dates && dates.length > 0) {
-                const expiryDate = dates[dates.length - 1]; // Get the last date found
-                expiryField.value = expiryDate;  // Set the expiry date in the corresponding form field
-            } else {
-                expiryField.value = "No date found in the document.";  // Handle no date found
+                if (result.date) {
+                    // Format the date before setting it to the input field
+                    document.getElementById('tax_expiry_date').value = formatDate(result.date);
+                } else {
+                    alert("No valid expiry date found in the road tax document.");
+                }
+            } catch (error) {
+                console.error("Error processing the road tax document:", error);
+                alert("Error processing the road tax document: " + error.message);
+            } finally {
+                hideLoading();
             }
         }
 
-        // Event listeners for file inputs
-        document.getElementById('roadTaxInput').addEventListener('change', () => handleFileUpload('roadTaxInput', 'id_tax_expiry_date'));
-        document.getElementById('insuranceInput').addEventListener('change', () => handleFileUpload('insuranceInput', 'id_insurance_expiry_date'));
-        document.getElementById('pollutionInput').addEventListener('change', () => handleFileUpload('pollutionInput', 'id_pollution_expiry_date'));
+        // Function to handle the insurance document processing
+        async function handleInsuranceDocument(file) {
+            showLoading();
+            try {
+                let result;
+                if (file.type === 'application/pdf') {
+                    result = await processPDF(file);
+                } else if (file.type.startsWith('image/')) {
+                    result = await processImage(file);
+                } else {
+                    alert("Unsupported file type. Please use PDF or image files (JPG, PNG).");
+                    return;
+                }
+
+                if (result.date) {
+                    // Format the date before setting it to the input field
+                    document.getElementById('insurance_expiry_date').value = formatDate(result.date);
+                } else {
+                    alert("No valid expiry date found in the insurance document.");
+                }
+            } catch (error) {
+                console.error("Error processing the insurance document:", error);
+                alert("Error processing the insurance document: " + error.message);
+            } finally {
+                hideLoading();
+            }
+        }
     </script>
 </body>
 </html>

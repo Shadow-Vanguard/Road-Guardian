@@ -282,12 +282,13 @@
 
         /* Footer Styles */
         footer {
-            background-color: var(--footer-bg);
+            background-color:var(--sidebar-bg);
             color: var(--footer-text);
             padding: 2rem 0;
             margin-top: auto;
             width: 100%;
             transition: background-color 0.3s ease;
+            border-radius: 5%;
         }
 
         .footer-content {
@@ -308,15 +309,23 @@
             font-size: 1.2rem;
             margin-bottom: 1rem;
             font-weight: bold;
+            text-align: center;
         }
 
-        .footer-section a, 
-        .footer-section p {
+        .footer-section a {
             color: var(--text-color);
             text-decoration: none;
             display: block;
             margin-bottom: 0.8rem;
             transition: color 0.3s ease;
+            text-align: center;
+        }
+
+        .footer-copyright {
+            text-align: center; /* Center the text */
+            margin-top: 20px; /* Optional: Add some space above */
+            color: #333; /* Optional: Change text color */
+            color: var(--text-color);
         }
 
         .footer-section a:hover {
@@ -538,6 +547,61 @@
             outline: none;
             box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.5);
         }
+        .incident-images-container {
+            display: flex; /* Flexbox for layout */
+            flex-direction: column; /* Stack items vertically */
+            gap: 20px; /* Space between incident details */
+            max-height: 600px; /* Set a maximum height */
+            overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+            
+        }
+
+        .incident-details-container {
+            display: flex; /* Use flexbox for layout */
+            background-color: #f9f9f9; /* Light background for the container */
+            border-radius: 10px; /* Rounded corners */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            margin: 20px 0; /* Space above and below the container */
+            overflow: hidden; /* Hide overflow for rounded corners */
+            
+        }
+
+        .incident-image {
+            background-color: rgb(255, 255, 255); /* Blue background for the image area */
+            border-radius: 10px 0 0 10px; /* Rounded corners on the left */
+            width: 50%; /* Set width for the image area */
+            height: 300px; /* Set a fixed height for the image area */
+            display: flex; /* Center the image */
+            justify-content: center; /* Center the image horizontally */
+            align-items: center; /* Center the image vertically */
+            overflow: hidden; /* Hide overflow for rounded corners */
+            
+        }
+
+        .incident-image img {
+            max-width: 200%; /* Ensure the image does not exceed the container's width */
+            max-height: 200%; /* Ensure the image does not exceed the container's height */
+            object-fit: contain; /* Scale the image to fit within the container while maintaining aspect ratio */
+            border-radius: 10px 10px 10px 10px; /* Rounded corners on the left */
+        }
+
+        .incident-info {
+            background-color: rgb(255, 255, 255); /* Yellow background for the details area */
+            border-radius: 0 10px 10px 0; /* Rounded corners on the right */
+            padding: 20px; /* Padding inside the details area */
+            width: 50%; /* Set width for the details area */
+        }
+
+        .incident-info h3 {
+            margin-bottom: 10px; /* Space below the heading */
+            color: #333; /* Dark color for the heading */
+        }
+
+        .incident-info p {
+            margin: 5px 0; /* Space between paragraphs */
+            color: #555; /* Darker gray for text */
+            font-size: 1rem; /* Font size for details */
+        }
     </style>
 </head>
 <body>
@@ -571,6 +635,8 @@
             <button onclick=window.location.href='{% url 'user_service_history' %}'><i class="fas fa-history"></i> View Service History</button>
             <button onclick=window.location.href='{% url 'payment_history' %}'><i class="fas fa-money-bill"></i> View Payment History</button>
             <button onclick=window.location.href='{% url 'submit_feedback' %}'><i class="fas fa-comment-alt"></i> Send Feedback</button>
+            <button onclick=window.location.href='{% url 'report_incident' %}'><i class="fas fa-car-crash"></i> Report Incident</button>
+
         </div>
 
         <div class="content">
@@ -581,7 +647,7 @@
                 {% endfor %}
             {% endif %} -->
 
-            <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><i class="fas fa-hands-helping"></i>Request An Assistance</h1>         <!-- Replace the existing services-section with this new one -->
+        <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><i class="fas fa-hands-helping"></i>Request An Assistance</h1>         <!-- Replace the existing services-section with this new one -->
         <div class="services-section" id="servicesSection">
             <div class="service-type-container">
                 {% for service_type in service_types %}
@@ -595,9 +661,23 @@
                     <p>{{ service_type.description }}</p>
                 </div>
                 {% endfor %}
+            </div>
+        </div>
+
+        <h1 style="font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;"><i class="fas fa-car-crash"></i>Incident Reported</h1>         <!-- Replace the existing services-section with this new one -->
+        <div class="incident-images-container">
+            <div class="incident-details-container" id="incidentDetails">
+                <div class="incident-image" id="incidentImage">
+                    <img src="{{ incidents.0.image.url }}" alt="Incident Image" id="currentImage">
+                </div>
+                <div class="incident-info" id="incidentInfo">
+                    <h3>Incident Details</h3>
+                    <p><strong>Location:</strong> <span id="incidentLocation">{{ incidents.0.location }}</span></p>
+                    <p><strong>Description:</strong> <span id="incidentDescription">{{ incidents.0.description }}</span></p>
+                    <p><strong>Date:</strong> <span id="incidentDate">{{ incidents.0.created_at|date:"Y-M-d H:i" }}</span></p>
                 </div>
             </div>
-
+        </div>
 
     <footer>
         <div class="footer-content">
@@ -621,8 +701,41 @@
                 <a href="#"><i class="fab fa-linkedin"></i> LinkedIn</a>
             </div>
         </div>
-        <p>&copy; 2024 Road Guardian. All rights reserved.</p>
+        <p class="footer-copyright">&copy; 2024 Road Guardian. All rights reserved.</p>
     </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const incidents = [
+                {% for incident in incidents %}
+                {
+                    image: "{{ incident.image.url }}",
+                    location: "{{ incident.location }}",
+                    description: "{{ incident.description }}",
+                    date: "{{ incident.created_at|date:'Y-m-d H:i' }}"
+                },
+                {% endfor %}
+            ];
+    
+            let currentIndex = 0;
+    
+            function updateIncidentDetails() {
+                const currentIncident = incidents[currentIndex];
+                document.getElementById('currentImage').src = currentIncident.image;
+                document.getElementById('incidentLocation').textContent = currentIncident.location;
+                document.getElementById('incidentDescription').textContent = currentIncident.description;
+                document.getElementById('incidentDate').textContent = currentIncident.date;
+    
+                currentIndex = (currentIndex + 1) % incidents.length; // Loop back to the start
+            }
+    
+            // Initial update
+            updateIncidentDetails();
+    
+            // Change every 5 seconds
+            setInterval(updateIncidentDetails, 5000);
+        });
+    </script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {

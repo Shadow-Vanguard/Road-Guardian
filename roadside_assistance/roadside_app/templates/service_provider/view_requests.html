@@ -347,7 +347,7 @@
                                 <td>
                                     {% if booking.status == 'pending' %}
                                         <a href="{% url 'accept_booking' booking.id %}?current_status={{ current_status }}" 
-                                           class="action-link">Accept</a>
+                                        class="action-link" onclick="fetchServiceProviderLocation({{ booking.id }})">Accept</a>
                                     {% elif booking.status == 'accepted' %}
                                         <a href="{% url 'start_service' booking.id %}?current_status={{ current_status }}" 
                                            class="action-link">Start Service</a>
@@ -421,6 +421,73 @@
                 }
             });
     </script>
-    
+    <script>
+        function fetchServiceProviderLocation(bookingId) {
+            showLoadingSpinner();
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+
+                        // Prepare the live location string
+                        const liveLocation = `${lat}, ${lng}`;
+
+                        // Send the live location to the server
+                        try {
+                            const response = await fetch(`{% url 'accept_booking' 0 %}`.replace('0', bookingId), {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/x-www-form-urlencoded',
+                                    'X-CSRFToken': '{{ csrf_token }}'  // Include CSRF token
+                                },
+                                body: `live_location=${liveLocation}`
+                            });
+
+                            const data = await response.json();
+                            if (data.status === 'success') {
+                                alert('Booking accepted and location updated successfully!');
+                                location.reload();  // Optionally reload the page to see updated status
+                            } else {
+                                alert(data.message);
+                            }
+                        } catch (error) {
+                            console.error('Error sending location:', error);
+                            alert('Failed to send location to the server.');
+                        }
+
+                        hideLoadingSpinner();
+                    },
+                    function(error) {
+                        hideLoadingSpinner();
+                        let errorMessage = 'Error getting location: ';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                errorMessage += 'Location permission denied';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                errorMessage += 'Location information unavailable';
+                                break;
+                            case error.TIMEOUT:
+                                errorMessage += 'Location request timed out';
+                                break;
+                            default:
+                                errorMessage += 'Unknown error occurred';
+                        }
+                        alert(errorMessage);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                hideLoadingSpinner();
+                alert('Geolocation is not supported by this browser.');
+            }
+        }
+    </script>
 </body>
 </html>

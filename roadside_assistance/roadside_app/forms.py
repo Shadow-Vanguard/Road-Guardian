@@ -257,26 +257,51 @@ class FeedbackForm(forms.ModelForm):
             self.fields['booking'].queryset = Booking.objects.filter(user=user, status='completed')
 
 
+            
 
-# roadside_assistance/roadside_app/forms.py
 from django import forms
 from .models import Vehicle
+from django.core.exceptions import ValidationError
+from datetime import datetime
 
 class VehicleForm(forms.ModelForm):
+       class Meta:
+           model = Vehicle
+           fields = [
+               'registration_number',
+               'model',
+               'road_tax_document',
+               'insurance_document',
+               'pollution_certificate_document',
+               'tax_expiry_date',
+               'insurance_expiry_date',
+               'pollution_expiry_date'
+           ]
+           widgets = {
+               'tax_expiry_date': forms.DateInput(attrs={'type': 'text'}),
+               'insurance_expiry_date': forms.DateInput(attrs={'type': 'text'}),
+               'pollution_expiry_date': forms.DateInput(attrs={'type': 'text'}),
+           }
+
+def clean_pollution_expiry_date(self):
+            date_str = self.cleaned_data.get('pollution_expiry_date')
+            if date_str:
+                try:
+                    # Convert from DD/MM/YYYY to YYYY-MM-DD
+                    return datetime.strptime(date_str, '%d/%m/%Y').date()
+                except ValueError:
+                    raise ValidationError("Date must be in DD/MM/YYYY format.")
+            return None  # Return None if the date is empty
+
+
+#Incidengt Form
+from django import forms
+from .models import Incident
+
+class IncidentForm(forms.ModelForm):
     class Meta:
-        model = Vehicle
-        fields = [
-            'registration_number',
-            'model',
-            'road_tax_document',
-            'insurance_document',
-            'pollution_certificate_document',
-            'tax_expiry_date',
-            'insurance_expiry_date',
-            'pollution_expiry_date',
-        ]
+        model = Incident
+        fields = ['incident_type', 'location', 'description', 'image']
         widgets = {
-            'tax_expiry_date': forms.DateInput(attrs={'type': 'date'}),
-            'insurance_expiry_date': forms.DateInput(attrs={'type': 'date'}),
-            'pollution_expiry_date': forms.DateInput(attrs={'type': 'date'}),
+            'description': forms.Textarea(attrs={'rows': 4}),
         }

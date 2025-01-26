@@ -7,6 +7,8 @@
     <title>Bill - Road Guardian</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+
     <style>
         :root {
             --primary-color: #3498db; /* Primary color */
@@ -142,7 +144,7 @@
     <header>
         <h1>ROAD GUARDIAN</h1>
         <div class="user-info">
-            <span class="user-name">{{ user.name }}</span>
+            <span class="user-name"> {{ service_provider.user.name }}</span>
             <div class="user-menu">
                 <button class="user-menu-btn"><i class="fas fa-user"></i></button>
                 <div class="user-dropdown">
@@ -166,6 +168,7 @@
                 <p><b>Name Of Service Provider:</b> {{ service_provider.user.name }}</p>
                 <p><b>Service Type:</b> {{ booking.service_type_category.category_name }}</p>
                 <p><b>Service Charge:</b> <span id="charge">{{ booking.service_type_category.charge }}</span></p>
+                <p><b>Ph No Of User:</b> {{ booking.user.phone }}</p>
         
                 <label for="kilometers">Kilometers Run:</label>
                 <input type="number" id="kilometers" name="kilometers" value="0" oninput="calculateTotal()">
@@ -175,9 +178,45 @@
         
                 <label for="total_amount">Total Amount:</label>
                 <input type="number" id="total_amount" name="total_amount" value="0" readonly>
-        
+                
                 <button type="submit">Submit Bill</button>
             </form>
+        
+            <script>
+                document.getElementById('sendPaymentRequest').addEventListener('click', function() {
+                const userPhone = document.getElementById('user_phone').value;
+                const serviceProviderUPI = document.getElementById('service_provider_upi').value;
+                const serviceProviderName = document.getElementById('service_provider_name').value;
+                const amount = document.getElementById('amount').value; // Amount in INR
+
+                // Send payment request to the server
+                fetch('/send-payment-request/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}' // Include CSRF token for security
+                    },
+                    body: JSON.stringify({
+                        user_phone: userPhone,
+                        service_provider_upi: serviceProviderUPI,
+                        service_provider_name: serviceProviderName,
+                        amount: amount
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Payment request sent successfully!');
+                    } else {
+                        alert('Error sending payment request: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+                });
+            </script>
+            
             
         </div>
     </main>
@@ -222,6 +261,17 @@
                     return true; // Allow form submission
                 }
             }
+            document.getElementById('sendPaymentRequest').addEventListener('click', function() {
+            const totalAmount = document.getElementById('total_amount').value;
+            const serviceProviderUPI = "{{ service_provider.user.upi_id }}"; // Ensure this is available in your context
+            const serviceProviderName = "{{ service_provider.user.name }}"; // Ensure this is available in your context
+
+            // Create UPI payment link
+            const paymentLink = `upi://pay?pa=${serviceProviderUPI}&pn=${encodeURIComponent(serviceProviderName)}&am=${totalAmount}&cu=INR`;
+
+            // Display the payment link to the user
+            alert(`Payment request sent! Please pay using this link: ${paymentLink}`);
+        });
         </script>
 </body>
 </html>

@@ -220,24 +220,22 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 
 
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
 from django.contrib import messages
-from .forms import CustomUserUpdateForm
-from .models import CustomUser
-from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect
 from django.views.decorators.cache import never_cache
+from django.contrib.auth.decorators import login_required
+from .models import CustomUser, ServiceType, Incident
+from .forms import CustomUserUpdateForm
 
 @never_cache
 @login_required
 def user_dashboard(request):
+    # Check if the user exists in the CustomUser model
     if 'user_id' in request.session:
         try:
-            # Try to get the CustomUser instance
             custom_user = CustomUser.objects.get(username=request.user.username)
         except CustomUser.DoesNotExist:
-            # If CustomUser doesn't exist, create one
+            # Create a new CustomUser if it doesn't exist
             custom_user = CustomUser.objects.create(
                 username=request.user.username,
                 email=request.user.email,
@@ -245,7 +243,7 @@ def user_dashboard(request):
                 role='user'
             )
 
-        # Handle form submission
+        # Handle form submission for user updates
         if request.method == 'POST':
             form = CustomUserUpdateForm(request.POST, instance=custom_user)
             if form.is_valid():
@@ -259,11 +257,15 @@ def user_dashboard(request):
         # Fetch service types
         service_types = ServiceType.objects.all()
 
+        # Fetch reported incidents for the logged-in user
+        incidents = Incident.objects.filter(user=request.user)
+
         # Combine all context data
         context = {
             'form': form,
             'user': custom_user,
             'service_types': service_types,
+            'incidents': incidents,
         }
         
         return render(request, 'user/user_dashboard.html', context)
@@ -553,6 +555,62 @@ def payment_success_view(request, bill_id):
         return redirect('payment_history')  # Redirect to payment history after success
 
     return redirect('payment_history')  # Redirect if not a POST request
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# views.py
+from django.shortcuts import render
+from django.http import JsonResponse
+from twilio.rest import Client
+import json
+
+def send_payment_request(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_phone = data.get('user_phone')  # User's phone number (WhatsApp)
+        service_provider_name = data.get('service_provider_name')  # Service provider's name
+        service_provider_upi = data.get('service_provider_upi')  # Service provider's UPI ID
+        amount = data.get('amount')  # Amount in INR
+
+        # Prepare the message to send
+        message = (
+            f"Payment Request from {service_provider_name}:\n"
+            f"Total Amount: {amount} INR\n"
+            f"Please pay using UPI ID: {service_provider_upi}"
+        )
+
+        # Twilio credentials (replace with your actual credentials)
+        TWILIO_ACCOUNT_SID = 'YOUR_TWILIO_ACCOUNT_SID'
+        TWILIO_AUTH_TOKEN = 'YOUR_TWILIO_AUTH_TOKEN'
+        TWILIO_WHATSAPP_NUMBER = 'whatsapp:+14155238886'  # Your Twilio WhatsApp number
+
+        # Create a Twilio client
+        client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+
+        try:
+            # Send WhatsApp message
+            client.messages.create(
+                body=message,
+                from_=TWILIO_WHATSAPP_NUMBER,
+                to=f'whatsapp:{user_phone}'  # User's WhatsApp number
+            )
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'message': str(e)})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request'})
 
 ########################################################################################################
 
@@ -931,6 +989,33 @@ def service_provider_dashboard(request):
 
     return render(request, 'service_provider/serviceprovider_dashboard.html', context)
 
+
+from django.http import JsonResponse
+
+@login_required
+def accept_booking(request, booking_id):
+    """
+    Accept a booking request and update the booking with the service provider's location
+    """
+    if request.method == 'POST':
+        try:
+            booking = Booking.objects.get(id=booking_id, service_provider__user=request.user)
+            booking.status = 'accepted'
+            
+            # Get the live location from the request
+            live_location = request.POST.get('live_location')
+            booking.service_provider_location = live_location  # Store the live location
+            booking.save()
+
+            messages.success(request, 'Booking accepted successfully!')
+
+            return JsonResponse({'status': 'success', 'message': 'Booking accepted successfully!'})
+
+        except Booking.DoesNotExist:
+            return JsonResponse({'status': 'error', 'message': 'Booking not found or you do not have permission to accept it.'})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request method.'})
+
 from django.shortcuts import render
 from django.contrib import messages
 from .models import ServiceProvider, Bill  # Ensure you import your Bill model
@@ -1201,7 +1286,6 @@ def get_bill_details(request, booking_id):
 
 
 
-
 ###########################################################################################################
 #ML 
 
@@ -1454,67 +1538,78 @@ def chatbot_response(request):
     })
 
 
-# views.py
+
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import VehicleForm
+from .models import Vehicle
+from .forms import VehicleForm  # Import the VehicleForm
 
-@login_required  # Ensure the user is logged in
+@login_required
 def add_vehicle(request):
     if request.method == 'POST':
-        form = VehicleForm(request.POST, request.FILES)  # Include request.FILES to handle file uploads
+        form = VehicleForm(request.POST, request.FILES)
         if form.is_valid():
-            vehicle = form.save(commit=False)  # Create a Vehicle instance but don't save it yet
-            vehicle.user = request.user  # Set the user field to the currently logged-in user
-            vehicle.save()  # Save the form data and uploaded files to the database
-            return redirect('vehicle_list')  # Redirect to the vehicle list or another page
-    else:
-        form = VehicleForm()
-    
-    return render(request, 'user/add_vehicle.html', {'form': form})
+            vehicle = form.save(commit=False)  # Create the Vehicle instance but don't save yet
+            vehicle.user = request.user  # Set the user
+            vehicle.save()  # Save the instance to the database
+
+            messages.success(request, 'Vehicle added successfully!')  # Success
             
+            return redirect('vehicle_list')  # Redirect to the vehicle list page
+        else:
+            print(request.POST)  # Check what values are being submitted
+    else:
+        form = VehicleForm()  # Create a new form instance
 
-
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from .forms import VehicleForm
-from .models import Vehicle
-
-@login_required
-def vehicle_list(request):
-       vehicles = Vehicle.objects.filter(user=request.user)
-       return render(request, 'user/vehicle_list.html', {'vehicles': vehicles})
+    return render(request, 'user/add_vehicle.html', {'form': form})  # Render the form
 
 
 
-# views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import Vehicle
-from .forms import VehicleForm
-from django.contrib.auth.decorators import login_required
+def delete_vehicle(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id, user=request.user)
+    vehicle.delete()
+    return redirect('vehicle_list')
 
-@login_required
-def edit_vehicle(request, id):
-    vehicle = get_object_or_404(Vehicle, id=id)  # Get the vehicle object or return 404
+
+def edit_vehicle(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id, user=request.user)
+    
     if request.method == 'POST':
         form = VehicleForm(request.POST, request.FILES, instance=vehicle)
         if form.is_valid():
             form.save()
-            return redirect('vehicle_list')  # Redirect to the vehicle list after saving
+            return redirect('vehicle_list')
     else:
-        form = VehicleForm(instance=vehicle)  # Pre-fill the form with the vehicle's current data
+        form = VehicleForm(instance=vehicle)
+    
     return render(request, 'user/edit_vehicle.html', {'form': form, 'vehicle': vehicle})
 
 
-# views.py
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from .models import Vehicle
+def vehicle_list(request):
+    vehicles = Vehicle.objects.filter(user=request.user)
+    return render(request, 'user/vehicle_list.html', {'vehicles': vehicles})
+
+
+
+
+
+#Report Incident View
+
+from django.shortcuts import render, redirect
+from .forms import IncidentForm
+from django.contrib import messages
 
 @login_required
-def delete_vehicle(request, id):
-    vehicle = get_object_or_404(Vehicle, id=id)  # Get the vehicle object or return 404
+def report_incident(request):
     if request.method == 'POST':
-        vehicle.delete()  # Delete the vehicle
-        return redirect('vehicle_list')  # Redirect to the vehicle list after deletion
-    return render(request, 'user/confirm_delete.html', {'vehicle': vehicle})  # Render a confirmation page
+        form = IncidentForm(request.POST, request.FILES)
+        if form.is_valid():
+            incident = form.save(commit=False)
+            incident.user = request.user  # Set the user
+            incident.save()  # Save the incident to the database
+            messages.success(request, 'Incident reported successfully!')
+            return redirect('user_dashboard')  # Redirect to the user dashboard
+    else:
+        form = IncidentForm()  # Create a new form instance
+
+    return render(request, 'user/report_incident.html', {'form': form})
