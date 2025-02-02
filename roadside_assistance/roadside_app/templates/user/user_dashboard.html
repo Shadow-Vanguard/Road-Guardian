@@ -672,6 +672,7 @@
                 </div>
                 <div class="incident-info" id="incidentInfo">
                     <h3>Incident Details</h3>
+                    <p><strong>Reported by:</strong> {{ incidents.0.user.name }}</p>
                     <p><strong>Location:</strong> <span id="incidentLocation">{{ incidents.0.location }}</span></p>
                     <p><strong>Description:</strong> <span id="incidentDescription">{{ incidents.0.description }}</span></p>
                     <p><strong>Date:</strong> <span id="incidentDate">{{ incidents.0.created_at|date:"Y-M-d H:i" }}</span></p>
@@ -1242,6 +1243,7 @@
         }
 
         // Get bot response
+
         async function getBotResponse(message) {
             const typingIndicator = showTypingIndicator();
             try {
@@ -1254,7 +1256,7 @@
                         'Content-Type': 'application/json',
                         'X-CSRFToken': getCookie('csrftoken')
                     },
-                    body: JSON.stringify({ message: message })
+                    body: JSON.stringify({ message: message }) // Ensure message is sent as JSON
                 });
 
                 const data = await response.json();
@@ -1266,6 +1268,7 @@
                 addMessage('Sorry, I encountered an error. Please try again later.', 'bot');
             }
         }
+        
 
         // Get CSRF token
         function getCookie(name) {

@@ -294,14 +294,16 @@ def clean_pollution_expiry_date(self):
             return None  # Return None if the date is empty
 
 
-#Incidengt Form
+
 from django import forms
 from .models import Incident
 
+# Incident Form
 class IncidentForm(forms.ModelForm):
     class Meta:
         model = Incident
-        fields = ['incident_type', 'location', 'description', 'image']
+        exclude = ['user']  # Exclude user field from form
+        fields = ['incident_type', 'location', 'description']  # Keep the 'image' field
         widgets = {
             'description': forms.Textarea(attrs={'rows': 4}),
-        }
+            }

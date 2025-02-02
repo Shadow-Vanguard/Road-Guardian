@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Vehicle</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- jQuery for easier DOM manipulation -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src='https://unpkg.com/tesseract.js@4.1.1/dist/tesseract.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         body {
@@ -16,13 +16,13 @@
             margin: 0;
             padding: 20px;
         }
-    
+
         h2 {
             text-align: center;
             color: #333;
             margin-bottom: 20px;
         }
-    
+
         form {
             background-color: #ffffff;
             border-radius: 8px;
@@ -30,19 +30,23 @@
             padding: 20px;
             max-width: 600px;
             margin: 0 auto;
+            margin-top: 1.8%;
+
+
         }
-    
+
         div {
+            margin-top: 2%;
             margin-bottom: 15px;
         }
-    
+
         label {
             display: block;
             font-weight: bold;
             margin-bottom: 5px;
             color: #555;
         }
-    
+
         input[type="text"],
         input[type="file"] {
             width: 100%;
@@ -52,13 +56,13 @@
             box-sizing: border-box;
             transition: border-color 0.3s;
         }
-    
+
         input[type="text"]:focus,
         input[type="file"]:focus {
             border-color: #4CAF50;
             outline: none;
         }
-    
+
         button {
             background-color: #4CAF50;
             color: white;
@@ -70,25 +74,25 @@
             width: 100%;
             transition: background-color 0.3s;
         }
-    
+
         button:hover {
             background-color: #45a049;
         }
-    
+
         #loading {
             text-align: center;
             font-size: 16px;
             color: #666;
             margin-top: 20px;
         }
-    
+
         #preview {
             max-width: 100%;
             margin-top: 20px;
             border-radius: 4px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-    
+
         .result-area {
             width: 100%;
             min-height: 150px;
@@ -101,28 +105,70 @@
             line-height: 1.5;
             background-color: #f9f9f9;
         }
-    
+
         .file-info {
             margin-top: 10px;
             color: #666;
             font-size: 14px;
             text-align: center;
         }
+
+        /* Header and Footer Styles */
+        header {
+            background-color: white;
+            color: #4CAF50;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+
+        nav ul li a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px 0;
+            background-color: #f0f4f8;
+            color: #666;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
-    <h2>Add Vehicle</h2>
+    <header>
+        <h1>Roadside Assistance</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'vehicle_list' %}">Vehicle List</a></li>
+                <li><a href="{% url 'user_dashboard' %}">Dashboard</a></li>
+            </ul>
+        </nav>
+    </header>
+
     <form method="post" enctype="multipart/form-data">
-        <a href="{% url 'vehicle_list' %}"><i class="fas fa-car"></i> Vehicle Details</a>
-        <a href="{% url 'user_dashboard' %}"><i class="fas fa-car"></i> Dashboard</a>
         {% csrf_token %}
         <div>
             <label for="registration_number">Registration Number:</label>
-            <input type="text" id="registration_number" name="registration_number"required>
+            <input type="text" id="registration_number" name="registration_number" required>
         </div>
         <div>
             <label for="model">Model:</label>
-            <input type="text" id="model" name="model"required>
+            <input type="text" id="model" name="model" required>
         </div>
         <div>
             <label for="road_tax_document">Road Tax Document:</label>
@@ -154,6 +200,10 @@
     <div id="loading" style="display:none;">Processing document...</div>
     <img id="preview" style="display:none; max-width:100%; margin-top:20px; border-radius:4px;">
     <textarea id="resultArea" style="display:none;" readonly></textarea>
+
+    <footer>
+        <p>&copy; {{ current_year }} Roadside Assistance. All rights reserved.</p>
+    </footer>
 
     <script>
         // Initialize PDF.js worker

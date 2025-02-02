@@ -103,7 +103,7 @@ urlpatterns = [
 
     path('vehicles/', views.vehicle_list, name='vehicle_list'),
     path('vehicles/add/', views.add_vehicle, name='add_vehicle'),
-    path('vehicles/edit/<int:vehicle_id>/',views.edit_vehicle,name='edit_vehicle'),
+    path('vehicles/edit/<int:vehicle_id>/', views.edit_vehicle, name='edit_vehicle'),
     path('vehicles/delete/<int:vehicle_id>/', views.delete_vehicle, name='delete_vehicle'),
 
 
@@ -120,6 +120,18 @@ urlpatterns = [
     path('bill/', views.bill_view, name='bill_view'),
     path('submit-bill/', views.submit_bill, name='submit_bill'),
     path('send-payment-request/', views.send_payment_request, name='send_payment_request'),
+
+    path('process-image/', views.process_image, name='process_image'),
+
+    path('api/chatbot/', views.chatbot_response, name='chatbot_response'),
+
+
+
+
+
+    
+
+
 
 
 ]
