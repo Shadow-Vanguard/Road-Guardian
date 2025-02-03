@@ -1581,7 +1581,21 @@ ALLOWED_KEYWORDS = [
     "vibration", "noise", "leak", "smoke", "jerking", "hesitation", "rough idle",
     "hi", "hello", "mercedes", "audi", "bmw", "toyota", "honda", "ford", "chevrolet",
     "nissan", "hyundai", "kia", "volkswagen", "subaru", "mazda", "jeep", "dodge",
-    "lexus", "infiniti", "acura", "volvo", "jaguar", "land rover", "porsche", "tesla"
+    "lexus", "infiniti", "acura", "volvo", "jaguar", "land rover", "porsche", "tesla",
+    "bike", "motorcycle", "scooter", "moped", "bicycle", "truck", "lorry", "bus",
+    "van", "minivan", "pickup", "SUV", "sedan", "convertible", "coupe", "hatchback",
+    "wagon", "limousine", "ambulance", "fire truck", "police car", "taxi", "cab",
+    "tractor", "trailer", "RV", "camper", "caravan", "forklift", "bulldozer",
+    "excavator", "crane", "cement mixer", "garbage truck", "tow truck", "delivery van"
+    "honda", "yamaha", "suzuki", "kawasaki", "ducati", "harley-davidson",
+    "bmw", "ktm", "triumph", "aprilia", "royal enfield", "bajaj", "hero",
+    "tvs", "mahindra", "indian", "husqvarna", "benelli", "mv agusta",
+    "vespa", "piaggio", "guzzi", "norton", "bimota", "cagiva", "laverda",
+    "moto morini", "kymco", "sym", "cfmoto", "zero", "energica", "lightning",
+    "alta", "brammo", "victory", "can-am", "polaris", "ural", "bsa", "jawa",
+    "aermacchi", "gilera", "derbi", "montesa", "ossa", "sherco", "gas gas",
+    "beta", "tm racing", "husaberg", "atala", "bultaco", "zundapp", "puch",
+    "sachs", "mz", "simson", "cz", "jawa", "tork", "revolt", "ather", "ola"
 ]
 
 @csrf_exempt
@@ -1686,32 +1700,35 @@ from .templatetags.image_detection import detect_ai_image
 
 @login_required  # Add login required decorator
 def report_incident(request):
+    error_message = None
+    success_message = None
+
     if request.method == 'POST':
         form = IncidentForm(request.POST, request.FILES)
         if form.is_valid():
-            # Create incident object but don't save to DB yet
             incident = form.save(commit=False)
-            incident.user = request.user  # Set the user before saving
+            incident.user = request.user
             
-            # Process the image using our AI detection
             image_file = request.FILES['image']
-            image_data = image_file.read()  # Read the image data
-            result = detect_ai_image(image_data)  # Use our AI detection function
+            image_data = image_file.read()
+            result = detect_ai_image(image_data)
 
             if result == 'AI-generated':
-                messages.error(request, 'The image appears to be AI-generated. Please upload a real photo.')
-                return render(request, 'user/report_incident.html', {'form': form})
-
-            # Save the incident if the image is accepted
-            incident.image = image_file  # Set the image
-            incident.save()
-            messages.success(request, 'Incident reported successfully!')
-            return redirect('user_dashboard')  # Redirect to dashboard after success
+                error_message = 'The image appears to be AI-generated. Please upload a real photo.'
+            else:
+                incident.image = image_file
+                incident.save()
+                success_message = 'Incident reported successfully!'
+                return redirect('user_dashboard')
 
     else:
         form = IncidentForm()
 
-    return render(request, 'user/report_incident.html', {'form': form})
+    return render(request, 'user/report_incident.html', {
+        'form': form,
+        'error_message': error_message,
+        'success_message': success_message
+    })
 
 @csrf_exempt
 def process_image(request):
