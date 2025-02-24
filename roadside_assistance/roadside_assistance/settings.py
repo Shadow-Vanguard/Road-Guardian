@@ -224,3 +224,6 @@ RAZORPAY_SECRET_KEY = 'ITd8ronAQbSCUCqvlqkMlxYl'
 
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 3 * 1024 * 1024  # 10 MB
+
+# import pymysql 
+# pymysql.install_as_MySQLdb()
