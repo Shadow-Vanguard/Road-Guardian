@@ -63,7 +63,7 @@ urlpatterns = [
     path('service-provider/service-history/', views.view_service_history, name='view_service_history'),#view service history
     path('submit-feedback/', views.submit_feedback, name='submit_feedback'),#submit feedback
     path('get-bookings/', views.get_bookings, name='get_bookings'),#get bookings
-    path('service-provider/view-feedback/', views.view_feedback, name='view_feedback'),#view feedback
+    # path('service-provider/view-feedback/', views.view_feedback, name='view_feedback'),#view feedback
     path('payments/', views.view_payments, name='view_payment'),  # view payments
 
 
@@ -130,6 +130,11 @@ urlpatterns = [
 
 
     
+
+
+
+
+    path('car-game/', views.car_game, name='car_game'),
 
 
 

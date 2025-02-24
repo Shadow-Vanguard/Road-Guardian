@@ -49,7 +49,7 @@ class LoginForm(forms.Form):
 
 #admin update profile
 from django import forms
-from .models import CustomUser
+from .models import CustomUser  
 
 
 class AdminProfileUpdateForm(forms.ModelForm):
@@ -303,7 +303,9 @@ class IncidentForm(forms.ModelForm):
     class Meta:
         model = Incident
         exclude = ['user']  # Exclude user field from form
-        fields = ['incident_type', 'location', 'description']  # Keep the 'image' field
+        fields = ['incident_type', 'location', 'description']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 4}),
-            }
+            'incident_type': forms.Select(attrs={'id': 'incident_type', 'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'id': 'location', 'class': 'form-control'}),
+            'description': forms.Textarea(attrs={'id': 'description', 'rows': 4, 'class': 'form-control'}),
+        }   

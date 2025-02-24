@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
 from pathlib import Path
-from decouple import config
+from decouple import config # type: ignore
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -107,11 +107,11 @@ DATABASES = {
 # DATABASES = {
 #     'default': {
 #         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'newroadsideassistance_bornmaybe',
-#         'USER': 'newroadsideassistance_bornmaybe',
-#         'PASSWORD': 'a4f1a99a11b519244e7cc10aece82c3c02858472',
-#         'HOST': 'szo9r.h.filess.io',
-#         'PORT': '3307',
+#         'NAME': 'roadside_gonewsall',
+#         'USER': 'roadside_gonewsall',
+#         'PASSWORD': '948e4c87ad8c1528f6d219762568028852935e70',
+#         'HOST': 'zbp4l.h.filess.io',
+#         'PORT': '3306',
 #         'OPTIONS': {
 #             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
 #         }
@@ -170,7 +170,7 @@ EMAIL_HOST = 'smtp.gmail.com'  # Correct SMTP host for Gmail
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'road.guardian08@gmail.com'
-EMAIL_HOST_PASSWORD = 'ebnr ihyf zflz trls'  # Fetch from environment variables
+EMAIL_HOST_PASSWORD = 'qwertyuiop'  # Fetch from environment variables
 
 
 # LOGOUT_REDIRECT_URL = '/'

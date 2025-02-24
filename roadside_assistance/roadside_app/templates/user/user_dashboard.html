@@ -616,11 +616,11 @@
            
             <span class="user-name">{{ user.name }}</span>
             <div class="user-menu">
-                <button class="user-menu-btn"><i class="fas fa-user"></i></button>
+                <button class="user-menu-btn"><i class="fas fa-user" id="button"></i></button>
                 <div class="user-dropdown">
                     <a href="{% url 'user_profile_view' %}"><i class="fas fa-user"></i> View Profile</a>
                     <a href="{% url 'user_profile_edit' %}"><i class="fas fa-edit"></i> Update Profile</a>
-                    <a href="{% url 'vehicle_list' %}"><i class="fas fa-car"></i> Vehicle Details</a>
+                    <a href="{% url 'vehicle_list' %}" id="vehicle"><i class="fas fa-car"></i> Vehicle Details</a>
                     <form action="{% url 'logout' %}" method="post" style="display: inline;" id="logoutForm">
                         {% csrf_token %}
                         <a href="#" onclick="confirmLogout(event)"><i class="fas fa-sign-out-alt"></i> Log Out</a>
@@ -635,8 +635,8 @@
             <button onclick=window.location.href='{% url 'user_service_history' %}'><i class="fas fa-history"></i> View Service History</button>
             <button onclick=window.location.href='{% url 'payment_history' %}'><i class="fas fa-money-bill"></i> View Payment History</button>
             <button onclick=window.location.href='{% url 'submit_feedback' %}'><i class="fas fa-comment-alt"></i> Send Feedback</button>
-            <button onclick=window.location.href='{% url 'report_incident' %}'><i class="fas fa-car-crash"></i> Report Incident</button>
-
+            <button onclick=window.location.href='{% url 'report_incident' %}'><i class="fas fa-car-crash" id="reportIncident"></i> Report Incident</button>
+            <button onclick=window.location.href='{% url 'car_game' %}'><i class="fas fa-gamepad"></i> Car Game</button>
         </div>
 
         <div class="content">

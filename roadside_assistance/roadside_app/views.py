@@ -1043,6 +1043,7 @@ def view_payments(request):
         }
 
     return render(request, 'service_provider/view_payment.html', context)
+    
 @never_cache
 @login_required
 def view_requests(request):
@@ -1177,23 +1178,6 @@ def view_service_history(request):
     return render(request, 'service_provider/service_history.html', context)
 
 
-from django.shortcuts import render
-from django.contrib.auth.decorators import login_required
-from .models import Feedback, ServiceProvider
-
-@login_required
-def view_feedback(request):
-    try:
-        service_provider = ServiceProvider.objects.get(user=request.user)
-        feedbacks = Feedback.objects.filter(service_provider=service_provider).order_by('-timestamp')
-        context = {
-            'feedbacks': feedbacks
-        }
-        return render(request, 'service_provider/view_feedback.html', context)
-    except ServiceProvider.DoesNotExist:
-        messages.error(request, "You are not registered as a service provider.")
-        return redirect('serviceprovider_dashboard')
-
 from django.shortcuts import render, redirect, get_object_or_404
 from .models import Booking, ServiceProvider  # Ensure you import the necessary models
 
@@ -1289,314 +1273,17 @@ def get_bill_details(request, booking_id):
 ###########################################################################################################
 
 
-# from django.http import JsonResponse
-# import re
-# import json
-# import random
-
-# def chatbot_response(request):
-#     if request.method == 'POST':
-#         try:
-#             data = json.loads(request.body)
-#             user_message = data.get('message', '').lower()
-            
-
-#             # Vehicle knowledge base responses
-#             responses = {
-#                 # Engine Systems
-#                 r'engine.*start': {
-#                     'responses': [
-#                         "Based on your description, here are possible reasons why your engine won't start:\n"
-#                         "1. Dead battery (most common)\n"
-#                         "2. Faulty starter motor\n"
-#                         "3. Fuel system issues\n"
-#                         "4. Ignition switch problems\n\n"
-#                         "Do you hear any specific sound when trying to start?",
-                        
-#                         "Let's diagnose your engine start problem:\n"
-#                         "1. If you hear clicking: Likely battery issue\n"
-#                         "2. If there's no sound: Could be ignition switch\n"
-#                         "3. If engine cranks but won't start: Possibly fuel system\n\n"
-#                         "Which symptom matches your situation? Please respond with the number."
-#                     ]
-#                 },
-#                 # Battery Issues
-#                 r'battery|jump.*start': {
-#                     'responses': [
-#                         "Here's how to safely jump-start your car:\n"
-#                         "1. Position cars close, both turned off\n"
-#                         "2. Connect RED cable to POSITIVE (+) of dead battery\n"
-#                         "3. Connect other RED end to POSITIVE (+) of good battery\n"
-#                         "4. Connect BLACK cable to NEGATIVE (-) of good battery\n"
-#                         "5. Connect other BLACK end to unpainted metal in dead car\n"
-#                         "6. Start working car, wait 2 minutes\n"
-#                         "7. Try starting dead car\n\n"
-#                         "Need more specific instructions? Please respond with the number.",
-#                     ]
-#                 },
-#                 # Transmission Problems
-#                 r'transmission|gear|shift': {
-#                     'responses': [
-#                         "Common transmission problems include:\n"
-#                         "1. Delayed/rough shifting\n"
-#                         "2. Grinding or shaking\n"
-#                         "3. Burning smell\n"
-#                         "4. Transmission fluid leaks\n\n"
-#                         "Which symptoms are you experiencing? Please respond with the number.",
-#                     ]
-#                 },
-#                 # Brake System
-#                 r'brake|stop': {
-#                     'responses': [
-#                         "Brake system warning signs:\n"
-#                         "1. Squealing/squeaking: Worn brake pads\n"
-#                         "2. Grinding: Metal-on-metal contact\n"
-#                         "3. Vibration: Warped rotors\n"
-#                         "4. Soft pedal: Possible fluid leak\n\n"
-#                         "Which symptom are you experiencing? Please respond with the number.",
-#                     ]
-#                 },
-#                 # Tire Issues
-#                 r'tire|flat|pressure': {
-#                     'responses': [
-#                         "Tire maintenance guide:\n"
-#                         "1. Correct pressure: Check when cold\n"
-#                         "2. Rotation: Every 5,000-8,000 miles\n"
-#                         "3. Alignment: If pulling to one side\n"
-#                         "4. Tread depth: Use penny test\n\n"
-#                         "Need specific instructions for any of these? Please respond with the number.",
-#                     ]
-#                 },
-#                 # Maintenance
-#                 r'maintenance|service': {
-#                     'responses': [
-#                         "Regular maintenance schedule:\n"
-#                         "1. Oil & filter: 3,000-7,500 miles\n"
-#                         "2. Tire rotation: 5,000-8,000 miles\n"
-#                         "3. Air filter: 15,000-30,000 miles\n"
-#                         "4. Brake fluid: Every 2 years\n"
-#                         "5. Coolant: Every 30,000 miles\n\n"
-#                         "Need specific service details? Please respond with the number.",
-#                     ]
-#                 },
-#                 # Check Engine Light
-#                 r'check.*engine|warning.*light': {
-#                     'responses': [
-#                         "Common check engine light causes:\n"
-#                         "1. Loose gas cap\n"
-#                         "2. Oxygen sensor failure\n"
-#                         "3. Catalytic converter issues\n"
-#                         "4. Spark plug/wire problems\n\n"
-#                         "Which one do you think it might be? Please respond with the number.",
-#                     ]
-#                 },
-#                 # Fluid Leaks
-#                 r'leak|fluid|oil': {
-#                     'responses': [
-#                         "Identify fluid leaks by color:\n"
-#                         "1. Red: Transmission fluid\n"
-#                         "2. Brown/black: Engine oil\n"
-#                         "3. Green/orange: Coolant\n"
-#                         "4. Clear/brown: Brake fluid\n"
-#                         "5. Clear: Water (likely AC)\n\n"
-#                         "What color is the leak you're seeing? Please respond with the number.",
-#                     ]
-#                 }
-#             }
-
-#             # Follow-up responses for specific issues
-#             follow_up_responses = {
-#                 'engine': [
-#                     "To check the battery, look for corrosion on terminals and ensure connections are tight.",
-#                     "If you suspect a starter issue, try tapping it gently while someone turns the key.",
-#                     "If fuel system issues are suspected, check for fuel leaks or listen for the fuel pump.",
-#                     "For ignition switch problems, try turning the key to the 'on' position and see if the dashboard lights come on."
-#                 ],
-#                 'battery': [
-#                     "For jump-starting, ensure both cars are off before connecting cables.",
-#                     "If the battery is old, consider replacing it after jump-starting."
-#                 ],
-#                 'transmission': [
-#                     "Check the transmission fluid level and color; it should be red and not smell burnt.",
-#                     "If you hear grinding noises, it may indicate a serious issue that needs immediate attention."
-#                 ],
-#                 'brake': [
-#                     "Check the brake fluid level; it should be between the minimum and maximum marks.",
-#                     "If you hear squeaking, it might be time to replace the brake pads."
-#                 ],
-#                 'tire': [
-#                     "To check tire pressure, use a gauge; it should match the recommended PSI in your manual.",
-#                     "For a flat tire, ensure you have a spare and the necessary tools before starting."
-#                 ],
-#                 'maintenance': [
-#                     "For oil changes, check your manual for the recommended interval based on your driving habits.",
-#                     "Make sure to rotate your tires regularly to ensure even wear."
-#                 ],
-#                 'check_engine': [
-#                     "You can get the error code read at most auto parts stores for free.",
-#                     "If the light is flashing, it indicates a serious issue; consider stopping the vehicle."
-#                 ],
-#                 'leak': [
-#                     "If you see red fluid, it's likely transmission fluid; check for leaks under the vehicle.",
-#                     "For brown fluid, it could be engine oil; monitor the level and consider a mechanic."
-#                 ]
-#             }
-
-#             # Check for gratitude messages
-#             gratitude_phrases = [
-#                 "thanks", "thank you", "ok thanks", "well it worked", 
-#                 "thanks bud", "thanks buddy", "thank you so much", 
-#                 "appreciate it", "cheers", "thanks a lot", "it worked",
-#                 "Much obliged", "Many thanks", "Thanks heaps",
-#                 "Thanks a ton", "Big thanks", "Thanks kindly",
-#                 "Thanks a million", "I'm grateful", "Grateful for your help",
-#                 "Deeply appreciated", "Thanks indeed", "Thanks for that",
-#                 "Ta", "Thanks a bunch", "You're the best", "Kudos",
-#                 "Thanks so very much", "Thanks for your support",
-#                 "Hats off to you", "Many, many thanks",
-#                 "Couldn't have done it without you", "You're a lifesaver",
-#                 "Thank you kindly",
-#             ]
-
-#             # Check if the user message contains any gratitude phrases
-#             if any(phrase in user_message for phrase in gratitude_phrases):
-#                 return JsonResponse({
-#                     'response': "You're welcome! 😊 Let me know if you have more questions or need further help. Good luck! 🚀"
-#                 })
-            
-#             # Check for matches and return random response from matching category
-#             for pattern, response_data in responses.items():
-#                 if re.search(pattern, user_message):
-#                     return JsonResponse({
-#                         'response': random.choice(response_data['responses'])
-#                     })
-
-#             # Check for follow-up queries
-#             if user_message.isdigit():
-#                 user_input = int(user_message)
-#                 # Determine the context from the previous question
-#                 if 'check engine' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['check_engine'][user_input - 1] if user_input in [1, 2, 3, 4] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-#                 elif 'engine' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['engine'][user_input - 1] if user_input in [1, 2, 3, 4] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-#                 elif 'battery' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['battery'][user_input - 1] if user_input in [1, 2] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-#                 elif 'transmission' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['transmission'][user_input - 1] if user_input in [1, 2] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-#                 elif 'brake' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['brake'][user_input - 1] if user_input in [1, 2] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-#                 elif 'tire' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['tire'][user_input - 1] if user_input in [1, 2] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-#                 elif 'maintenance' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['maintenance'][user_input - 1] if user_input in [1, 2] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-#                 elif 'leak' in user_message:
-#                     return JsonResponse({
-#                         'response': follow_up_responses['leak'][user_input - 1] if user_input in [1, 2] else "For more information and to solve the issue, it's best to call a mechanic. What would you like to do next?"
-#                     })
-
-#             # Default response for unmatched queries
-#             default_responses = [
-#                 "I'm not sure about that. Could you ask about specific vehicle issues? I can help with:\n"
-#                 "• Engine problems\n"
-#                 "• Battery issues\n"
-#                 "• Transmission concerns\n"
-#                 "• Brake problems\n"
-#                 "• Tire maintenance",
-
-#                 "I specialize in vehicle-related questions. Please ask about:\n"
-#                 "• Warning lights\n"
-#                 "• Strange noises\n"
-#                 "• Maintenance schedules\n"
-#                 "• Fluid leaks\n"
-#                 "• General car care",
-
-#                 "I'm your vehicle assistant. Try asking about:\n"
-#                 "• Starting problems\n"
-#                 "• Performance issues\n"
-#                 "• Regular maintenance\n"
-#                 "• Safety concerns\n"
-#                 "• Basic repairs"
-#             ]
-
-#             return JsonResponse({
-#                 'response': random.choice(default_responses)
-#             })
-
-#         except json.JSONDecodeError:
-#             return JsonResponse({
-#                 'response': "Sorry, I couldn't process that request. Please try again."
-#             })
-#         except Exception as e:
-#             return JsonResponse({
-#                 'response': "An error occurred. Please try again later."
-#             })
-
-#     return JsonResponse({
-#         'error': 'Invalid request method'
-#     })
-
-
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-import logging
-import google.generativeai as genai
-import json
+from .templatetags.image_detection import detect_ai_image
 
-# Configure logging
-logger = logging.getLogger(__name__)
-
-# Set your Gemini API Key
-API_KEY = "AIzaSyDeGoQyD0YL2T9nCb33tzOKv0YzzbXStUw"
-
-# Configure the Generative AI client
-genai.configure(api_key=API_KEY)
-
-# Define allowed keywords related to vehicle issues
-ALLOWED_KEYWORDS = [
-    "engine", "battery", "transmission", "brake", "tire", "maintenance",
-    "check engine", "warning light", "fluid leak", "oil", "vehicle", "car",
-    "alternator", "radiator", "spark plug", "fuel pump", "exhaust", "coolant",
-    "air filter", "timing belt", "clutch", "suspension", "shock absorber",
-    "steering", "alignment", "wheel", "axle", "differential", "catalytic converter",
-    "muffler", "headlight", "taillight", "windshield", "wiper", "dashboard",
-    "odometer", "speedometer", "gearbox", "ignition", "starter", "fan belt",
-    "brake pad", "rotor", "caliper", "master cylinder", "power steering",
-    "fuel injector", "turbocharger", "supercharger", "thermostat", "heater",
-    "air conditioning", "AC", "defroster", "emission", "diagnostic", "OBD",
-    "tune-up", "service", "inspection", "repair", "overheating", "stalling",
-    "vibration", "noise", "leak", "smoke", "jerking", "hesitation", "rough idle",
-    "hi", "hello", "mercedes", "audi", "bmw", "toyota", "honda", "ford", "chevrolet",
-    "nissan", "hyundai", "kia", "volkswagen", "subaru", "mazda", "jeep", "dodge",
-    "lexus", "infiniti", "acura", "volvo", "jaguar", "land rover", "porsche", "tesla",
-    "bike", "motorcycle", "scooter", "moped", "bicycle", "truck", "lorry", "bus",
-    "van", "minivan", "pickup", "SUV", "sedan", "convertible", "coupe", "hatchback",
-    "wagon", "limousine", "ambulance", "fire truck", "police car", "taxi", "cab",
-    "tractor", "trailer", "RV", "camper", "caravan", "forklift", "bulldozer",
-    "excavator", "crane", "cement mixer", "garbage truck", "tow truck", "delivery van"
-    "honda", "yamaha", "suzuki", "kawasaki", "ducati", "harley-davidson",
-    "bmw", "ktm", "triumph", "aprilia", "royal enfield", "bajaj", "hero",
-    "tvs", "mahindra", "indian", "husqvarna", "benelli", "mv agusta",
-    "vespa", "piaggio", "guzzi", "norton", "bimota", "cagiva", "laverda",
-    "moto morini", "kymco", "sym", "cfmoto", "zero", "energica", "lightning",
-    "alta", "brammo", "victory", "can-am", "polaris", "ural", "bsa", "jawa",
-    "aermacchi", "gilera", "derbi", "montesa", "ossa", "sherco", "gas gas",
-    "beta", "tm racing", "husaberg", "atala", "bultaco", "zundapp", "puch",
-    "sachs", "mz", "simson", "cz", "jawa", "tork", "revolt", "ather", "ola"
-]
+@csrf_exempt
+def process_image(request):
+    if request.method == 'POST':
+        image_data = request.body
+        result = detect_ai_image(image_data)
+        return JsonResponse({'classification': result})
+    return JsonResponse({'error': 'Invalid request method'})
 
 @csrf_exempt
 def chatbot_response(request):
@@ -1737,3 +1424,8 @@ def process_image(request):
         result = detect_ai_image(image_data)
         return JsonResponse({'classification': result})
     return JsonResponse({'error': 'Invalid request method'})
+
+
+def car_game(request):
+    return render(request, 'user/car_game.html')
+

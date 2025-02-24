@@ -405,9 +405,9 @@
             function validateEmail() {
                 const email = emailField.value.trim();
                 const emailError = document.getElementById('emailError');
-                const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$+@mca.ajce.in$/;
+                const emailRegex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|mca\.ajce\.in)$/;
                 if (!emailRegex.test(email)) {
-                    showError(emailError, "Email must be a valid @gmail.com address.");
+                    showError(emailError, "Email must be a valid @gmail.com or @mca.ajce.in address.");
                     return false;
                 }
                 emailError.textContent = "";
