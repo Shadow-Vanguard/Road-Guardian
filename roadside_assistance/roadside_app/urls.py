@@ -47,7 +47,9 @@ urlpatterns = [
     path('get-category-charge/', views.get_category_charge, name='get_category_charge'),#get category charge
 
     path('user-service-history/', views.user_service_history, name='user_service_history'),#user service history
-    path('report-incident/', views.report_incident, name='report_incident'),#report incident
+
+    
+    # path('report-incident/', views.report_incident, name='report_incident'),#report incident
 
     path('payment-history/', views.payment_history, name='payment_history'),#payment history
     path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill

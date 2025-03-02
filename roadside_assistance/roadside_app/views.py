@@ -1375,55 +1375,55 @@ def vehicle_list(request):
 
 
 
-#Report Incident View
+# #Report Incident View
 
-from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib import messages
-from .forms import IncidentForm
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-from .templatetags.image_detection import detect_ai_image
+# from django.http import JsonResponse
+# from django.shortcuts import render, redirect
+# from django.contrib import messages
+# from .forms import IncidentForm
+# from django.contrib.auth.decorators import login_required
+# from django.views.decorators.csrf import csrf_exempt
+# from .templatetags.image_detection import detect_ai_image
 
-@login_required  # Add login required decorator
-def report_incident(request):
-    error_message = None
-    success_message = None
+# @login_required  # Add login required decorator
+# def report_incident(request):
+#     error_message = None
+#     success_message = None
 
-    if request.method == 'POST':
-        form = IncidentForm(request.POST, request.FILES)
-        if form.is_valid():
-            incident = form.save(commit=False)
-            incident.user = request.user
+#     if request.method == 'POST':
+#         form = IncidentForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             incident = form.save(commit=False)
+#             incident.user = request.user
             
-            image_file = request.FILES['image']
-            image_data = image_file.read()
-            result = detect_ai_image(image_data)
+#             image_file = request.FILES['image']
+#             image_data = image_file.read()
+#             result = detect_ai_image(image_data)
 
-            if result == 'AI-generated':
-                error_message = 'The image appears to be AI-generated. Please upload a real photo.'
-            else:
-                incident.image = image_file
-                incident.save()
-                success_message = 'Incident reported successfully!'
-                return redirect('user_dashboard')
+#             if result == 'AI-generated':
+#                 error_message = 'The image appears to be AI-generated. Please upload a real photo.'
+#             else:
+#                 incident.image = image_file
+#                 incident.save()
+#                 success_message = 'Incident reported successfully!'
+#                 return redirect('user_dashboard')
 
-    else:
-        form = IncidentForm()
+#     else:
+#         form = IncidentForm()
 
-    return render(request, 'user/report_incident.html', {
-        'form': form,
-        'error_message': error_message,
-        'success_message': success_message
-    })
+#     return render(request, 'user/report_incident.html', {
+#         'form': form,
+#         'error_message': error_message,
+#         'success_message': success_message
+#     })
 
-@csrf_exempt
-def process_image(request):
-    if request.method == 'POST':
-        image_data = request.body
-        result = detect_ai_image(image_data)
-        return JsonResponse({'classification': result})
-    return JsonResponse({'error': 'Invalid request method'})
+# @csrf_exempt
+# def process_image(request):
+#     if request.method == 'POST':
+#         image_data = request.body
+#         result = detect_ai_image(image_data)
+#         return JsonResponse({'classification': result})
+#     return JsonResponse({'error': 'Invalid request method'})
 
 
 def car_game(request):
