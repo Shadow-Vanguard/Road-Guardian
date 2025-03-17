@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config # type: ignore
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -26,8 +27,21 @@ SECRET_KEY = 'django-insecure-1ldg4t@)k#6@#&lf9xqyhaf7@iz2#o*yv%gd@-x_l(2w#168k-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    'a6a9-136-232-57-110.ngrok-free.app'
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
+    "https://a6a9-136-232-57-110.ngrok-free.app"
+]
+
+# Get additional trusted origins from environment variable
+if os.environ.get('CSRF_TRUSTED_ORIGINS'):
+    CSRF_TRUSTED_ORIGINS.extend(os.environ.get('CSRF_TRUSTED_ORIGINS').split(','))
 
 # Application definition
 
@@ -41,13 +55,15 @@ INSTALLED_APPS = [
     'django_extensions',
     'roadside_app',   
     'social_django',  
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware', 
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -172,10 +188,6 @@ EMAIL_HOST_PASSWORD = 'qwertyuiop'  # Fetch from environment variables
 # LOGOUT_REDIRECT_URL = '/'
 
 
-import os
-
-# ... other settings ...
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -225,3 +237,11 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 3 * 1024 * 1024  # 10 MB
 
 # import pymysql 
 # pymysql.install_as_MySQLdb()
+
+# Add these settings
+CORS_ALLOW_ALL_ORIGINS = True  # For development only
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SAMESITE = 'None'
+SESSION_COOKIE_SAMESITE = 'None'
