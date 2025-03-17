@@ -85,34 +85,34 @@ WSGI_APPLICATION = 'roadside_assistance.wsgi.application'
 
 #databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'new_roadside_assistance',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#         'OPTIONS': {
-#             'charset': 'utf8mb4',
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1, character_set_server=utf8mb4, collation_server=utf8mb4_unicode_ci",
-#         }
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'roadside_supplymany',
-        'USER': 'roadside_supplymany',
-        'PASSWORD': 'f719dde48b162c42612de645efacf3572aabbfdf',
-        'HOST': 'h2ch9.h.filess.io',
-        'PORT': '3307',
+        'NAME': 'new_roadside_assistance',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1, character_set_server=utf8mb4, collation_server=utf8mb4_unicode_ci",
         }
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'roadside_supplymany',
+#         'USER': 'roadside_supplymany',
+#         'PASSWORD': 'f719dde48b162c42612de645efacf3572aabbfdf',
+#         'HOST': 'h2ch9.h.filess.io',
+#         'PORT': '3307',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         }
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
