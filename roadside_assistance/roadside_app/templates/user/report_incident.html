@@ -396,7 +396,7 @@
                 <div class="form-group location-picker">
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     <div class="location-container">
-                        {{ field }}
+                        <input type="text" id="id_location" name="location" />
                         <button type="button" class="map-toggle" onclick="getCurrentLocation()">
                             <i class="fas fa-map-marker-alt"></i>
                             <span class="loading-spinner">
@@ -509,13 +509,13 @@
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async function(position) {
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
+                        const lat = position.coords.latitude.toFixed(6);
+                        const lng = position.coords.longitude.toFixed(6);
 
                         try {
                             const address = await getAddressFromCoordinates(lat, lng);
                             const locationInput = document.getElementById('id_location');
-                            locationInput.value = address || `${lat}, ${lng}`;
+                            locationInput.value = `${lat}, ${lng}`;
                             document.getElementById('coordinates').innerHTML = 
                                 `Current Location: ${address || `${lat}, ${lng}`}`;
                         } catch (error) {

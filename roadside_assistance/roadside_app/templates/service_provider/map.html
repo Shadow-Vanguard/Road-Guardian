@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Location Map</title>
+
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+
+    <style>
+        #map { height: 500px; width: 100%; }
+        .controls { margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+    <h2>Live Location Map</h2>
+    <div id="map"></div>
+    <div class="controls">
+        <button onclick="recalculateRoute()">Recalculate Route</button>
+        <button onclick="findAlternativeRoute(serviceProviderLatLng, userLatLng)">Alternative Route</button>
+    </div>
+
+    <script>
+        var selectedLocation = "{{ selected_location|default:'' }}";
+        var isServiceProvider = {{ is_service_provider|lower }};
+        var map = L.map('map').setView([9.52600093, 76.81444186], 15);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        var redIcon = L.icon({
+            iconUrl: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png',
+            iconSize: [32, 32], 
+            iconAnchor: [16, 32], 
+            popupAnchor: [0, -32]
+        });
+
+        var serviceProviderLatLng = [9.528941, 76.823450];
+        var serviceProviderMarker = L.marker(serviceProviderLatLng, { draggable: false }).addTo(map)
+            .bindPopup("<b>Service Provider Location</b>").openPopup();
+
+        var userMarker = null;
+        var routingControl = null;
+        var incidentMarkers = [];
+        var userLatLng = selectedLocation ? selectedLocation.split(",").map(parseFloat) : null;
+
+        function calculateRoute(start, end, via = []) {
+            if (routingControl) {
+                map.removeControl(routingControl);
+            }
+
+            routingControl = L.Routing.control({
+                waypoints: [
+                    L.latLng(start[0], start[1]),
+                    ...via.map(v => L.latLng(v[0], v[1])),
+                    L.latLng(end[0], end[1])
+                ],
+                routeWhileDragging: false,
+                addWaypoints: false,
+                draggableWaypoints: false
+            }).addTo(map);
+
+            routingControl.on('routesfound', function(e) {
+                var isBlocked = checkRouteForIncidents(e.routes[0].coordinates);
+                if (isBlocked) {
+                    alert("Incident detected! Finding an alternative route...");
+                    findAlternativeRoute(start, end);
+                }
+            });
+        }
+
+        function recalculateRoute() {
+            calculateRoute(serviceProviderLatLng, userLatLng);
+        }
+
+        function findAlternativeRoute(start, end) {
+            let detour = findDetourWaypoint(start, end);
+            if (detour) {
+                calculateRoute(start, end, [detour]);
+            } else {
+                alert("No alternative route found!");
+            }
+        }
+
+        function checkRouteForIncidents(routeCoordinates) {
+            for (let routePoint of routeCoordinates) {
+                for (let incidentMarker of incidentMarkers) {
+                    let incidentPoint = incidentMarker.getLatLng();
+                    if (map.distance(routePoint, incidentPoint) < 50) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        function findDetourWaypoint(start, end) {
+            let midpoint = [(start[0] + end[0]) / 2, (start[1] + end[1]) / 2];
+
+            for (let incidentMarker of incidentMarkers) {
+                let incidentPoint = incidentMarker.getLatLng();
+                if (map.distance(midpoint, incidentPoint) < 50) {
+                    return [midpoint[0] + 0.002, midpoint[1] + 0.002];
+                }
+            }
+            return null;
+        }
+
+        if (userLatLng) {
+            userMarker = L.marker(userLatLng, { draggable: false }).addTo(map)
+                .bindPopup("<b>User Location</b>").openPopup();
+            calculateRoute(serviceProviderLatLng, userLatLng);
+        }
+
+        const mediaBaseUrl = "/media/";  
+        fetch('/api/incidents/')
+            .then(response => response.json())
+            .then(data => {
+                data.forEach(incident => {
+                    let incidentLocation = incident.location.split(",").map(parseFloat);
+                    if (!isNaN(incidentLocation[0]) && !isNaN(incidentLocation[1])) {
+                        let imageUrl = incident.image ? mediaBaseUrl + incident.image : "";
+                        let popupContent = `<p>${incident.description}</p>
+                                            <small>Reported on: ${incident.created_at}</small>`;
+                        if (imageUrl) {
+                            popupContent += `<br><img src="${imageUrl}" width="150" height="100">`;
+                        }
+                        let incidentMarker = L.marker(incidentLocation, { icon: redIcon, draggable: false })
+                            .addTo(map)
+                            .bindPopup(popupContent);
+                        incidentMarkers.push(incidentMarker);
+                    }
+                });
+            })
+            .catch(error => console.error("Error loading incidents:", error));
+
+    </script>
+
+</body>
+</html>

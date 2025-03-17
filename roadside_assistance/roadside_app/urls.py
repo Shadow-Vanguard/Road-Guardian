@@ -49,13 +49,16 @@ urlpatterns = [
     path('user-service-history/', views.user_service_history, name='user_service_history'),#user service history
 
     
-    # path('report-incident/', views.report_incident, name='report_incident'),#report incident
+    path('report-incident/', views.report_incident, name='report_incident'),#report incident
 
     path('payment-history/', views.payment_history, name='payment_history'),#payment history
     path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill
     
     path('pay-bill/<int:bill_id>/', views.pay_bill_view, name='pay_bill'),  # New URL for paying a bill
     path('payment-success/<int:bill_id>/', views.payment_success_view, name='payment_success'),  # New URL for payment success
+
+    path('submit-bill/', views.submit_bill, name='submit_bill'),
+    path('send-payment-request/', views.send_payment_request, name='send_payment_request'),
 
 
     #serviceprovider Dashboard URL
@@ -120,23 +123,58 @@ urlpatterns = [
 
 
     path('bill/', views.bill_view, name='bill_view'),
-    path('submit-bill/', views.submit_bill, name='submit_bill'),
-    path('send-payment-request/', views.send_payment_request, name='send_payment_request'),
+
 
     path('process-image/', views.process_image, name='process_image'),
 
     path('api/chatbot/', views.chatbot_response, name='chatbot_response'),
 
 
-
-
-
-    
-
-
-
-
     path('car-game/', views.car_game, name='car_game'),
+
+    # path('accident-map/', views.accident_map, name='accident_map'), Google map 
+    
+    # path('accident-map/', views.accident_map, name='accident_map'),
+
+    path('map/', views.map, name='map'),
+    path('update_live_location/', views.update_live_location, name='update_live_location'),
+    path("api/incidents/", views.get_incidents, name="get_incidents"),
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # path('map/', views.map_view, name='map_view'),
+    # path('get_user_location/', views.get_user_location, name='get_user_location'),
+    # path('get_incidents/', views.get_incidents, name='get_incidents'),
+
+
+
+
+
+    # path('accident-map/', views.accident_map_view, name='accident_map'),
+    # path('api/accidents/', views.get_accident_data, name='get_accident_data'),
+
+
+
+
+    # path('get-accidents/', views.get_accidents, name='get_accidents'),
+
+    # path('optimize-route/', views.optimize_route, name='optimize_route'),
+
+    # path('api/incidents/', views.get_incidents, name='get_incidents'),
+
+    # path('map/', views.map_view, name='map_page'),
+
+
 
 
 

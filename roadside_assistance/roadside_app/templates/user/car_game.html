@@ -53,23 +53,21 @@
             width: 100%;
             height: 100%;
         }
-        .opponent {
+        .opponent, .coin {
             position: absolute;
             width: 40px;
             height: 80px;
             top: -100px;
         }
-        .opponent img {
+        .opponent img, .coin img {
             width: 100%;
             height: 100%;
         }
         .coin {
-            position: absolute;
             width: 20px;
             height: 20px;
             background: url('/static/images/coin.png') no-repeat center;
             background-size: cover;
-            top: -50px;
         }
         #score, #coins {
             position: absolute;
@@ -110,6 +108,18 @@
             border: none;
             cursor: pointer;
         }
+        #countdown {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: yellow;
+            font-size: 36px;
+            font-weight: bold;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -124,6 +134,7 @@
         <div id="coins">Coins: 0</div>
         <div id="game-over">GAME OVER</div>
         <button id="restart">Restart</button>
+        <div id="countdown">3</div>
     </div>
 
     <audio id="coin-sound" src="/static/sounds/coin.mp3"></audio>
@@ -136,23 +147,36 @@
         let coinDisplay = document.getElementById("coins");
         let gameOverText = document.getElementById("game-over");
         let restartButton = document.getElementById("restart");
+        let countdownDisplay = document.getElementById("countdown");
         let coinSound = document.getElementById("coin-sound");
         let crashSound = document.getElementById("crash-sound");
 
         const lanes = [85, 165]; 
         let carLane = 0;
-        let gameRunning = true;
+        let gameRunning = false;
         let score = 0;
-        let coins = 0;
         let speed = 5;
+
+        function countdown() {
+            let count = 3;
+            countdownDisplay.innerText = count;
+            let timer = setInterval(() => {
+                count--;
+                countdownDisplay.innerText = count > 0 ? count : "Start!";
+                if (count < 0) {
+                    clearInterval(timer);
+                    countdownDisplay.style.display = "none";
+                    gameRunning = true;
+                    startGame();
+                }
+            }, 1000);
+        }
 
         document.addEventListener("keydown", function(event) {
             if (!gameRunning) return;
-            if (event.key === "ArrowLeft" && carLane > 0) {
-                carLane--;
-            } else if (event.key === "ArrowRight" && carLane < 1) {
-                carLane++;
-            }
+            if (event.key === "ArrowLeft" && carLane > 0) carLane--;
+            else if (event.key === "ArrowRight" && carLane < 1) carLane++;
+
             car.style.left = `${lanes[carLane]}px`;
         });
 
@@ -160,20 +184,14 @@
             if (!gameRunning) return;
             let opponent = document.createElement("div");
             opponent.classList.add("opponent");
-            opponent.innerHTML = `<img src='/static/images/oppocar${Math.floor(Math.random() * 4) + 1}.png'>`;
+            opponent.innerHTML = `<img src='/static/images/oppocar1.png'>`;
             gameContainer.appendChild(opponent);
 
             let randomLane = lanes[Math.floor(Math.random() * lanes.length)];
             opponent.style.left = `${randomLane}px`;
-            opponent.style.top = "-80px";
 
             let moveInterval = setInterval(() => {
-                if (!gameRunning) {
-                    clearInterval(moveInterval);
-                    opponent.remove();
-                    return;
-                }
-
+                if (!gameRunning) return clearInterval(moveInterval);
                 let opponentTop = parseInt(window.getComputedStyle(opponent).top);
                 if (opponentTop > 600) {
                     clearInterval(moveInterval);
@@ -185,35 +203,60 @@
             }, 50);
         }
 
+        function checkCollision(opponent) {
+            let carRect = car.getBoundingClientRect();
+            let opponentRect = opponent.getBoundingClientRect();
+
+            if (
+                carRect.left < opponentRect.right &&
+                carRect.right > opponentRect.left &&
+                carRect.top < opponentRect.bottom &&
+                carRect.bottom > opponentRect.top
+            ) {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            gameRunning = false;
+            gameOverText.style.display = "block";
+            restartButton.style.display = "block";
+            crashSound.play();
+        }
+
+        restartButton.addEventListener("click", function() {
+            location.reload();
+        });
+
+        function startGame() {
+            setInterval(createOpponent, 2000);
+            setInterval(() => { if (gameRunning) { score++; scoreDisplay.innerText = `Score: ${score}`; }}, 1000);
+        }
+
         function createCoin() {
             if (!gameRunning) return;
             let coin = document.createElement("div");
             coin.classList.add("coin");
+            coin.innerHTML = "<img src='/static/images/coin.png'>";
             gameContainer.appendChild(coin);
 
             let randomLane = lanes[Math.floor(Math.random() * lanes.length)];
-            coin.style.left = `${randomLane}px`;
-            coin.style.top = "-50px";
-
+            coin.style.left = `${randomLane + 10}px`; 
+            
             let moveInterval = setInterval(() => {
-                if (!gameRunning) {
-                    clearInterval(moveInterval);
-                    coin.remove();
-                    return;
-                }
-
+                if (!gameRunning) return clearInterval(moveInterval);
                 let coinTop = parseInt(window.getComputedStyle(coin).top);
                 if (coinTop > 600) {
                     clearInterval(moveInterval);
                     coin.remove();
                 } else {
                     coin.style.top = coinTop + speed + "px";
-                    checkCoinCollision(coin, moveInterval);
+                    checkCoinCollection(coin);
                 }
             }, 50);
         }
 
-        function checkCoinCollision(coin, interval) {
+        function checkCoinCollection(coin) {
             let carRect = car.getBoundingClientRect();
             let coinRect = coin.getBoundingClientRect();
 
@@ -224,24 +267,16 @@
                 carRect.bottom > coinRect.top
             ) {
                 coinSound.play();
-                coins++;
-                coinDisplay.innerText = `Coins: ${coins}`;
-                clearInterval(interval);
                 coin.remove();
+                coinsCollected++;
+                coinDisplay.innerText = `Coins: ${coinsCollected}`;
             }
         }
 
-        function startGame() {
-            gameRunning = true;
-            score = 0;
-            coins = 0;
-        }
-
-        restartButton.addEventListener("click", startGame);
-
-        setInterval(createOpponent, 2000);
+        let coinsCollected = 0;
         setInterval(createCoin, 3000);
-        setInterval(() => { if (gameRunning) { score++; scoreDisplay.innerText = `Score: ${score}`; }}, 1000);
+
+        countdown();
     </script>
 </body>
 </html>

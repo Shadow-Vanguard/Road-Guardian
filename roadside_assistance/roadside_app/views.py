@@ -16,8 +16,11 @@ from django.contrib import messages
 from .forms import RegistrationForm, ServiceProviderForm
 from .models import ServiceProvider
 
+from .utils import calculate_optimized_route, plot_route
 
-  
+import matplotlib
+print(matplotlib.__version__)
+
 #login
 from django.contrib.auth import authenticate, login as auth_login
 from django.shortcuts import render, redirect
@@ -996,6 +999,7 @@ from django.http import JsonResponse
 def accept_booking(request, booking_id):
     """
     Accept a booking request and update the booking with the service provider's location
+    and optionally the user's location.
     """
     if request.method == 'POST':
         try:
@@ -1005,6 +1009,12 @@ def accept_booking(request, booking_id):
             # Get the live location from the request
             live_location = request.POST.get('live_location')
             booking.service_provider_location = live_location  # Store the live location
+            
+            # Get the user's location from the request
+            user_location = request.POST.get('user_location')
+            if user_location:
+                booking.user_location = user_location  # Store the user's location if needed
+            
             booking.save()
 
             messages.success(request, 'Booking accepted successfully!')
@@ -1375,57 +1385,337 @@ def vehicle_list(request):
 
 
 
-# #Report Incident View
+#Report Incident View
 
-# from django.http import JsonResponse
-# from django.shortcuts import render, redirect
-# from django.contrib import messages
-# from .forms import IncidentForm
-# from django.contrib.auth.decorators import login_required
-# from django.views.decorators.csrf import csrf_exempt
-# from .templatetags.image_detection import detect_ai_image
+from django.http import JsonResponse
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .forms import IncidentForm
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+from .templatetags.image_detection import detect_ai_image
 
-# @login_required  # Add login required decorator
-# def report_incident(request):
-#     error_message = None
-#     success_message = None
+@login_required  # Add login required decorator
+def report_incident(request):
+    error_message = None
+    success_message = None
 
-#     if request.method == 'POST':
-#         form = IncidentForm(request.POST, request.FILES)
-#         if form.is_valid():
-#             incident = form.save(commit=False)
-#             incident.user = request.user
+    if request.method == 'POST':
+        form = IncidentForm(request.POST, request.FILES)
+        if form.is_valid():
+            incident = form.save(commit=False)
+            incident.user = request.user
             
-#             image_file = request.FILES['image']
-#             image_data = image_file.read()
-#             result = detect_ai_image(image_data)
+            image_file = request.FILES['image']
+            image_data = image_file.read()
+            result = detect_ai_image(image_data)
 
-#             if result == 'AI-generated':
-#                 error_message = 'The image appears to be AI-generated. Please upload a real photo.'
-#             else:
-#                 incident.image = image_file
-#                 incident.save()
-#                 success_message = 'Incident reported successfully!'
-#                 return redirect('user_dashboard')
+            if result == 'AI-generated':
+                error_message = 'The image appears to be AI-generated. Please upload a real photo.'
+            else:
+                incident.image = image_file
+                incident.save()
+                success_message = 'Incident reported successfully!'
+                return redirect('user_dashboard')
 
-#     else:
-#         form = IncidentForm()
+    else:
+        form = IncidentForm()
 
-#     return render(request, 'user/report_incident.html', {
-#         'form': form,
-#         'error_message': error_message,
-#         'success_message': success_message
-#     })
+    return render(request, 'user/report_incident.html', {
+        'form': form,
+        'error_message': error_message,
+        'success_message': success_message
+    })
 
-# @csrf_exempt
-# def process_image(request):
-#     if request.method == 'POST':
-#         image_data = request.body
-#         result = detect_ai_image(image_data)
-#         return JsonResponse({'classification': result})
-#     return JsonResponse({'error': 'Invalid request method'})
+@csrf_exempt
+def process_image(request):
+    if request.method == 'POST':
+        image_data = request.body
+        result = detect_ai_image(image_data)
+        return JsonResponse({'classification': result})
+    return JsonResponse({'error': 'Invalid request method'})
 
 
 def car_game(request):
     return render(request, 'user/car_game.html')
+
+from django.http import JsonResponse
+
+
+# @csrf_exempt
+# @login_required
+# def optimize_route(request):
+#     if request.method == 'POST':
+#         # Extract user and service provider locations from the request
+#         user_location = request.POST.get('user_location')
+#         service_provider_location = request.POST.get('service_provider_location')
+
+#         # Validate locations
+#         if not user_location or not service_provider_location:
+#             return JsonResponse({'status': 'error', 'message': 'Invalid location data'}, status=400)
+
+#         try:
+#             # Fetch incidents near the route
+#             # Replace `None` with actual route data if available
+#             incidents = get_incidents_near_route(route=None)
+
+#             # Calculate optimized route (this is a placeholder)
+#             optimized_route = calculate_optimized_route(user_location, service_provider_location, incidents)
+
+#             # Create the graph again to plot the route
+#             G = ox.graph_from_point((user_lat, user_lon), dist=1000, network_type='drive')
+
+#             # Plot the route
+#             plot_route(G, optimized_route)
+
+#             return JsonResponse({'status': 'success', 'optimized_route': optimized_route})
+#         except Exception as e:
+#             return JsonResponse({'status': 'error', 'message': str(e)}, status=500)
+#     else:
+#         return JsonResponse({'status': 'error', 'message': 'Invalid request method'}, status=400)
+
+# from django.http import JsonResponse
+# from .models import Incident
+# import json
+
+# def get_incidents(request):
+#     incidents = Incident.objects.all()
+    
+#     incident_list = []
+#     for incident in incidents:
+#         lat, lng = map(str.strip, incident.location.split(','))  # Extract lat, lng
+#         incident_list.append({
+#             'latitude': lat,
+#             'longitude': lng,
+#             'type': incident.incident_type,
+#             'description': incident.description
+#         })
+
+#     return JsonResponse(incident_list, safe=False)
+
+
+# from django.shortcuts import render
+# from django.http import JsonResponse
+# from .models import Incident
+
+# def map_view(request):
+#     user_lat = request.GET.get('user_lat')
+#     user_lng = request.GET.get('user_lng')
+#     provider_lat = request.GET.get('provider_lat')
+#     provider_lng = request.GET.get('provider_lng')
+
+#     # Fetch reported incidents from the database
+#     incidents = []
+#     for incident in Incident.objects.all():
+#         try:
+#             lat, lng = [x.strip() for x in incident.location.split(',')]
+#             incidents.append({
+#                 'latitude': lat,
+#                 'longitude': lng,
+#                 'description': incident.description
+#             })
+#         except ValueError:
+#             continue  # Skip invalid locations
+
+#     context = {
+#         'user_lat': user_lat,
+#         'user_lng': user_lng,
+#         'provider_lat': provider_lat,
+#         'provider_lng': provider_lng,
+#         'incidents': incidents
+#     }
+#     return render(request, 'service_provider/map.html', context)
+
+
+# def map(request):
+#     return render(request, 'service_provider/map.html')
+
+
+# from django.shortcuts import render
+
+# def map_page(request):
+#     # Fetch user and provider coordinates from URL parameters
+#     user_lat = request.GET.get("user_lat", None)
+#     user_lng = request.GET.get("user_lng", None)
+#     provider_lat = request.GET.get("provider_lat", None)
+#     provider_lng = request.GET.get("provider_lng", None)
+
+#     # Ensure all values are present before rendering
+#     if not all([user_lat, user_lng, provider_lat, provider_lng]):
+#         return render(request, "map.html", {"error": "Invalid coordinates!"})
+
+#     context = {
+#         "user_lat": user_lat,
+#         "user_lng": user_lng,
+#         "provider_lat": provider_lat,
+#         "provider_lng": provider_lng,
+#     }
+#     return render(request, "map.html", context)
+
+
+# import requests
+# from django.shortcuts import render
+# from .models import Incident
+
+# GOOGLE_MAPS_API_KEY = "AIzaSyA05M_9MLDxDZ3UxeiGXWzqY0aRpyFF114"
+
+# def get_lat_long(address):
+#     """Convert address to latitude and longitude using Google Geocoding API"""
+#     url = f"https://maps.googleapis.com/maps/api/geocode/json?address={address}&key={GOOGLE_MAPS_API_KEY}"
+#     response = requests.get(url)
+#     data = response.json()
+
+#     if data['status'] == 'OK':
+#         location = data['results'][0]['geometry']['location']
+#         return location['lat'], location['lng']
+#     return None, None  # Return None if geocoding fails
+
+# def accident_map(request):
+#     location_query = request.GET.get('location')  # Get location from query string
+#     focus_location = None
+
+#     if location_query:
+#         lat, lng = get_lat_long(location_query)
+#         if lat and lng:
+#             focus_location = {"latitude": lat, "longitude": lng}  # Save focus location
+
+#     # Get all accidents
+#     accidents = Incident.objects.filter(incident_type="accident")
+#     accident_data = []
+
+#     for accident in accidents:
+#         lat, lng = get_lat_long(accident.location)
+#         if lat and lng:
+#             accident_data.append({
+#                 "latitude": lat,
+#                 "longitude": lng,
+#                 "description": accident.description
+#             })
+
+#     return render(request, 'service_provider/accident_map.html', {'accidents': accident_data, 'focus_location': focus_location})
+
+
+
+
+
+
+# Google map
+# 
+# from django.shortcuts import render
+# from .models import Incident
+
+# def accident_map(request):
+#     accidents = Incident.objects.filter(incident_type="Accident")
+#     return render(request, 'service_provider/accident_map.html', {'accidents': accidents})
+
+
+# from django.shortcuts import render
+# from django.http import JsonResponse
+# from .models import Incident
+
+# def accident_map(request):
+#     return render(request, 'service_provider/accident_map.html')
+
+# def get_accidents(request):
+#     if request.method == 'GET':
+#         incidents = Incident.objects.values('location', 'description', 'image')
+#         print(f"Number of incidents fetched: {len(incidents)}")
+#         incidents_list = [
+#             {
+#                 'location': incident['location'],
+#                 'description': incident['description'],
+#                 'image': request.build_absolute_uri(settings.MEDIA_URL + incident['image']) if incident['image'] else None
+#             }
+#             for incident in incidents
+#         ]
+#         return JsonResponse(incidents_list, safe=False)
+#     else:
+#         return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# from django.shortcuts import render
+# from django.http import JsonResponse
+# from .models import Incident
+# from django.contrib.auth.decorators import login_required
+# # from django.contrib.gis.geos import Point
+# # from django.contrib.gis.db.models.functions import Distance
+# from roadside_app.models import Booking  # Assuming user location is stored here
+
+# @login_required
+# def map_view(request):
+#     return render(request, 'service_provider/OpenMap.html')
+
+# @login_required
+# def get_user_location(request):
+#     user = request.user
+#     return JsonResponse({'latitude': user.latitude, 'longitude': user.longitude})
+
+# @login_required
+# def get_incidents(request):
+#     incidents = Incident.objects.all()
+#     data = [
+#         {
+#             'id': incident.id,
+#             'incident_type': incident.incident_type,
+#             'location': incident.location,
+#         }
+#         for incident in incidents
+#     ]
+#     return JsonResponse(data, safe=False)
+
+
+
+
+from django.shortcuts import render
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Booking, ServiceProvider
+
+@login_required
+def map(request):
+    user = request.user
+    selected_location = request.GET.get("location")
+
+    # Get user's saved location (from button click or DB)
+    if not selected_location:
+        last_booking = Booking.objects.filter(user=user).order_by('-created_at').first()
+        selected_location = last_booking.location if last_booking else None
+
+    context = {
+        'selected_location': selected_location,  # User's location
+        'is_service_provider': hasattr(user, 'serviceprovider'),  # Check if user is service provider
+    }
+    return render(request, 'service_provider/map.html', context)
+
+@login_required
+def update_live_location(request):
+    """API to update service provider's live location"""
+    if request.method == "POST" and hasattr(request.user, 'serviceprovider'):
+        lat = request.POST.get("latitude")
+        lon = request.POST.get("longitude")
+        request.user.serviceprovider.location = f"{lat},{lon}"
+        request.user.serviceprovider.save()
+        return JsonResponse({"status": "success"})
+    return JsonResponse({"status": "failed"}, status=400)
+
+from django.http import JsonResponse
+from .models import Incident
+
+def get_incidents(request):
+    incidents = Incident.objects.values("image", "location", "description", "created_at")
+    return JsonResponse(list(incidents), safe=False)
+
 

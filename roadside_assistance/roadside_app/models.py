@@ -218,3 +218,4 @@ class Incident(models.Model):
 
     def __str__(self):
         return f"{self.incident_type} reported by {self.user.username} on {self.created_at}"
+

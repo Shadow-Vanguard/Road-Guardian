@@ -337,9 +337,16 @@
                                 <td>{{ booking.user.name }}</td>
                                 <td>{{ booking.service_type_category.category_name }}</td>
                         
+
+
                                 <td>
-                                    <a href="https://www.google.com/maps/search/?api=1&query={{ booking.location }}" target="_blank" class="map-button">{{ booking.location }}</a>
+                                    <a href="{% url 'map' %}?location={{ booking.location }}" class="map-button">
+                                        {{ booking.location }}
+                                    </a>                                    
                                 </td>
+                                
+
+                                
                         
                                 <td>{{ booking.description }}</td>
                                 <td>{{ booking.created_at|date:"F d, Y H:i" }}</td>

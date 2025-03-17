@@ -1,3 +1,4 @@
+
 from django import template
 import tensorflow as tf
 import numpy as np
@@ -174,4 +175,3 @@ def detect_ai_image(image_data):
         
     except Exception as e:
         return f'Error: {str(e)}' 
-
