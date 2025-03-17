@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     'localhost',
     '127.0.0.1',
     'a6a9-136-232-57-110.ngrok-free.app'
+    'road-guardian-1.onrender.com'
 ]
 
 CSRF_TRUSTED_ORIGINS = [
