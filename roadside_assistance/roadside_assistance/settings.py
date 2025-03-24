@@ -35,6 +35,10 @@ ALLOWED_HOSTS = [
 CSRF_TRUSTED_ORIGINS = ['https://4148-2402-3a80-1cbc-1f15-e852-b6c1-a58d-c8d4.ngrok-free.app']
 
 
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:8000/",
+    "https://two4-7-roadside-assistance.onrender.com",
+]
 # Application definition
 
 INSTALLED_APPS = [
@@ -47,7 +51,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'roadside_app',   
     'social_django',  
-    'corsheaders',
+    'corsheaders'
+    'django-cors-headers',
 ]
 
 MIDDLEWARE = [
@@ -63,6 +68,7 @@ MIDDLEWARE = [
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.cache.FetchFromCacheMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'roadside_assistance.urls'
