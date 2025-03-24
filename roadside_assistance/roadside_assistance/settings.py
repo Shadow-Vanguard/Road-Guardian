@@ -28,22 +28,12 @@ SECRET_KEY = 'django-insecure-1ldg4t@)k#6@#&lf9xqyhaf7@iz2#o*yv%gd@-x_l(2w#168k-
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    'a6a9-136-232-57-110.ngrok-free.app'
-    'road-guardian-1.onrender.com'
-]
+    '*'
+    'two4-7-roadside-assistance.onrender.com'
+    ]
 
-CSRF_TRUSTED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "https://a6a9-136-232-57-110.ngrok-free.app"
-    "https://road-guardian-1.onrender.com/"
-]
+CSRF_TRUSTED_ORIGINS = ['https://4148-2402-3a80-1cbc-1f15-e852-b6c1-a58d-c8d4.ngrok-free.app']
 
-# Get additional trusted origins from environment variable
-if os.environ.get('CSRF_TRUSTED_ORIGINS'):
-    CSRF_TRUSTED_ORIGINS.extend(os.environ.get('CSRF_TRUSTED_ORIGINS').split(','))
 
 # Application definition
 
@@ -57,11 +47,11 @@ INSTALLED_APPS = [
     'django_extensions',
     'roadside_app',   
     'social_django',  
-    # 'corsheaders',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
-    # 'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -103,34 +93,34 @@ WSGI_APPLICATION = 'roadside_assistance.wsgi.application'
 
 #databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'new_roadside_assistance',
-#         'USER': 'root',
-#         'PASSWORD': '',
-#         'HOST': 'localhost',
-#         'PORT': '3306',
-#         'OPTIONS': {
-#             'charset': 'utf8mb4',
-#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1, character_set_server=utf8mb4, collation_server=utf8mb4_unicode_ci",
-#         }
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'roadside_supplymany',
-        'USER': 'roadside_supplymany',
-        'PASSWORD': 'f719dde48b162c42612de645efacf3572aabbfdf',
-        'HOST': 'h2ch9.h.filess.io',
-        'PORT': '3307',
+        'NAME': 'new_roadside_assistance',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
         'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+            'charset': 'utf8mb4',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES', innodb_strict_mode=1, character_set_server=utf8mb4, collation_server=utf8mb4_unicode_ci",
         }
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'roadside_supplymany',
+#         'USER': 'roadside_supplymany',
+#         'PASSWORD': 'f719dde48b162c42612de645efacf3572aabbfdf',
+#         'HOST': 'h2ch9.h.filess.io',
+#         'PORT': '3307',
+#         'OPTIONS': {
+#             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+#         }
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -227,6 +217,8 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '1027267612516-lf0dtag0ccaa0e6773q6ufrq9aqiro15.
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 
+
+
 # settings.py
 
 from decouple import config
@@ -244,6 +236,8 @@ DATA_UPLOAD_MAX_MEMORY_SIZE = 3 * 1024 * 1024  # 10 MB
 CORS_ALLOW_ALL_ORIGINS = True  # For development only
 CORS_ALLOW_CREDENTIALS = True
 CSRF_COOKIE_SECURE = True
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False  # Set to True in production
 CSRF_COOKIE_SAMESITE = 'None'
-SESSION_COOKIE_SAMESITE = 'None'
+# SESSION_COOKIE_SAMESITE = 'None'
+
+LOGIN_URL = '/login/'  # Update this to the correct login URL

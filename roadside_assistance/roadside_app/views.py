@@ -45,7 +45,9 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.http import HttpResponseRedirect
 from django.utils.cache import add_never_cache_headers
+from django.views.decorators.cache import never_cache
 
+@never_cache
 def login_view(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -72,6 +74,7 @@ def login_view(request):
                     
                     elif user.role == 'user':
                         request.session['user_id'] = user.id  # Store the user ID in session
+                        print(request.session['user_id'])
                         return redirect('user_dashboard')
                     
                     elif user.role == 'service_provider':
@@ -230,9 +233,8 @@ from django.contrib.auth.decorators import login_required
 from .models import CustomUser, ServiceType, Incident
 from .forms import CustomUserUpdateForm
 
-@never_cache
-@login_required
 def user_dashboard(request):
+    print(request.session['user_id'])
     # Check if the user exists in the CustomUser model
     if 'user_id' in request.session:
         try:
@@ -871,6 +873,7 @@ from django.views.decorators.cache import never_cache
 from .models import ServiceProvider, Booking 
 
 @never_cache
+@login_required
 def service_provider_dashboard(request):
     """
     Service provider dashboard view showing summary of requests and services
@@ -1163,7 +1166,6 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from .models import Booking
 
-@login_required
 def view_service_history(request):
     # Get all completed bookings for the current service provider
     service_history = Booking.objects.filter(
@@ -1707,4 +1709,27 @@ def get_incidents(request):
     incidents = Incident.objects.values("image", "location", "description", "created_at")
     return JsonResponse(list(incidents), safe=False)
 
+# Example in Python Flask
+from flask import Flask, request, jsonify
 
+app = Flask(__name__)
+
+@app.route('/api/report-traffic/', methods=['POST'])
+def report_traffic():
+    data = request.json
+    location = data.get('location')
+    traffic_type = data.get('type')
+
+    if traffic_type == 'heavy_traffic':
+        # Logic to handle heavy traffic
+        # Update your routing service or database to reflect heavy traffic at this location
+        update_traffic_data(location, 'heavy')
+
+    return jsonify({"status": "success"}), 200
+
+def update_traffic_data(location, traffic_type):
+    # Implement your logic to update traffic data in your routing service
+    pass
+
+if __name__ == '__main__':
+    app.run()

@@ -11,39 +11,18 @@ body {
     background-position: center 60%; 
     background-repeat: no-repeat;
     background-attachment: fixed;     /* Fix the background image */
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f0f4f8;
+    background-color: #f4f7fa;
     color: #333;
 }
 
-header {
-    background-color: #ffffff;
-    color: rgb(0, 0, 0);
-    padding: 15px 25px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-header h1 {
-    font-size: 28px;
-    margin: 0;
-}
-
-header nav a {
-    color: white;
-    text-decoration: none;
-    margin-left: 20px;
-    font-size: 20px;
-}
 
 .dashboard-container {
     display: flex;
-    margin: 30px;
-
+    margin-top: 100px;
+    padding: 20px;
 }
 
 .logout {
@@ -68,11 +47,11 @@ header nav a {
 
 .sidebar {
     width: 20%;
-    height:max-content;
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-right: 2%;
 }
 
 .sidebar button {
@@ -81,15 +60,15 @@ header nav a {
     margin-bottom: 15px;
     font-size: 18px;
     border-radius: 6px;
-    color: #4CAF50;
+    color: #007BFF;
     font-weight: bold;
     background-color: #fff;
-    border: 1px solid #4CAF50;
+    border: 1px solid #007BFF;
     transition: background-color 0.3s;
 }
 
 .sidebar button:hover {
-    background-color: #4CAF50;
+    background-color: #007BFF;
     color: #fff;
 }
 
@@ -165,7 +144,6 @@ header nav a {
     margin-bottom: 10px;
 }
 
-
 footer {
     background-color: #ffffff84;
     color: rgb(0, 0, 0);
@@ -220,8 +198,6 @@ footer .quick-links a:hover, footer .social a:hover {
     background-color: #48f14d;
 }
 
-
-
 /* Style for the custom success message */
 .success-message {
     position: fixed;
@@ -234,6 +210,50 @@ footer .quick-links a:hover, footer .social a:hover {
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     z-index: 1000;
+}
+
+.content {
+    width: 78%;
+    background-color: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.content h2 {
+    margin: 0;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #007BFF;
+    font-size: 24px;
+    color: #007BFF;
+}
+
+.chart-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 30px;
+}
+
+.chart {
+    width: 45%;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.chart canvas {
+    width: 100% !important;
+    height: 430px !important;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.chart {
+    animation: fadeIn 1s ease-in-out;
 }
 
 

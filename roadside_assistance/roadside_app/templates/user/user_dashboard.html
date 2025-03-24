@@ -602,6 +602,20 @@
             color: #555; /* Darker gray for text */
             font-size: 1rem; /* Font size for details */
         }
+
+        .location-button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .location-button:hover {
+            background-color: var(--secondary-color);
+        }
     </style>
 </head>
 <body>
@@ -673,7 +687,11 @@
                 <div class="incident-info" id="incidentInfo">
                     <h3>Incident Details</h3>
                     <p><strong>Reported by:</strong> {{ incidents.0.user.name }}</p>
-                    <p><strong>Location:</strong> <span id="incidentLocation">{{ incidents.0.location }}</span></p>
+                    <p><strong>Location:</strong> 
+                        <button onclick="window.open('https://www.google.com/maps/search/?api=1&query={{ incidents.0.location }}', '_blank')" id="incidentLocation" class="location-button">
+                            View on Google Maps
+                        </button>
+                    </p>
                     <p><strong>Description:</strong> <span id="incidentDescription">{{ incidents.0.description }}</span></p>
                     <p><strong>Date:</strong> <span id="incidentDate">{{ incidents.0.created_at|date:"Y-M-d H:i" }}</span></p>
                 </div>

@@ -236,6 +236,8 @@ class BookAssistanceForm(forms.ModelForm):
 
 from django import forms
 from .models import Feedback, ServiceProvider, Booking
+from django.core.exceptions import ValidationError
+import re
 
 class FeedbackForm(forms.ModelForm):
     service_provider = forms.ModelChoiceField(queryset=ServiceProvider.objects.all(), empty_label="Select a Service Provider")
@@ -255,6 +257,12 @@ class FeedbackForm(forms.ModelForm):
         if user:
             self.fields['service_provider'].queryset = ServiceProvider.objects.filter(booking__user=user, booking__status='completed').distinct()
             self.fields['booking'].queryset = Booking.objects.filter(user=user, status='completed')
+
+    def clean_feedback_text(self):
+        feedback_text = self.cleaned_data.get('feedback_text')
+        if not re.match(r'^[A-Za-z\s]+$', feedback_text):
+            raise ValidationError("Please enter only alphabetic characters.")
+        return feedback_text
 
 
             

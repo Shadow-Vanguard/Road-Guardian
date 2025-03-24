@@ -248,9 +248,9 @@
     <div class="main-container">
         <div class="feedback-container">
             <h2> Give A Feedback</h2>
-            <form method="post" id="feedbackForm">
+            <form method="post" id="feedbackForm" onsubmit="return validateFeedback()">
                 {% csrf_token %}
-                {{ form.non_field_errors }}
+                
                 
                 <div class="form-group">
                     <label for="{{ form.service_provider.id_for_label }}">Service Provider:</label>
@@ -265,6 +265,9 @@
                 <div class="form-group">
                     <label for="{{ form.feedback_text.id_for_label }}">Your Feedback:</label>
                     {{ form.feedback_text }}
+                    {% if form.feedback_text.errors %}
+                        <span style="color: red;">{{ form.feedback_text.errors.0 }}</span>
+                    {% endif %}
                 </div>
                 
                 <div class="form-group">
@@ -361,6 +364,20 @@
                 $('#id_booking').empty();
             }
         });
+
+        function validateFeedback() {
+            const feedbackText = document.querySelector('[name="{{ form.feedback_text.name }}"]').value;
+            const feedbackError = document.getElementById('feedbackError');
+            const regex = /^[A-Za-z\s]+$/;
+
+            if (!regex.test(feedbackText)) {
+                feedbackError.style.display = 'block';
+                return false;
+            } else {
+                feedbackError.style.display = 'none';
+                return true;
+            }
+        }
     });
     </script>
     <script>
