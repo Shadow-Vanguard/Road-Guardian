@@ -51,8 +51,7 @@ INSTALLED_APPS = [
     'django_extensions',
     'roadside_app',   
     'social_django',  
-    'corsheaders'
-    'django-cors-headers',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
